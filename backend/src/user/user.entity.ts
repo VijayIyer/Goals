@@ -1,19 +1,36 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryColumn } from "typeorm";
+import { 
+    AfterInsert, 
+    AfterRemove,
+    AfterUpdate,
+    Entity, 
+    Column, 
+    PrimaryGeneratedColumn,  
+    OneToMany
+} from "typeorm";
 
-@Entity('User')
+@Entity()
 export class User {
-    @PrimaryColumn({type: Number})
-    id:number;
-    
-    @Column({type: String})
-    userName: string;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column({type: String})
+    @Column()
+    username: string;
+
+    @Column()
     password: string;
 
-    @CreateDateColumn()
-    createdDate: Date;
-
-    @UpdateDateColumn()
-    updatedDate: Date;
+    @AfterInsert()
+    logInsert() {
+      console.log('Inserted User with id', this.id);
+    }
+  
+    @AfterUpdate()
+    logUpdate() {
+      console.log('Updated User with id', this.id);
+    }
+  
+    @AfterRemove()
+    logRemove() {
+      console.log('Removed User with id', this.id);
+    }
 }
