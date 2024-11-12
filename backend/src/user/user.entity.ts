@@ -1,7 +1,10 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryColumn } from "typeorm";
 
 @Entity('User')
 export class User {
+    @PrimaryColumn({type: Number})
+    id:number;
+    
     @Column({type: String})
     userName: string;
 

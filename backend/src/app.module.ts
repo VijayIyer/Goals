@@ -10,16 +10,15 @@ import { UserModule } from './user/user.module';
     ConfigModule.forRoot({
       envFilePath: '.env'
     }),
-    TypeOrmModule.forRoot({
-      type: 'mongodb',
-      url: process.env.MONGODB_CONNECTION_STRING,
-      database: process.env.MONGODB_DATABASE,
-      entities: [
-        __dirname + '/**/*.entity{.ts,.js}',
-      ],
-      ssl: true,
-      useUnifiedTopology: true,
-      useNewUrlParser: true
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],      
+      useFactory: (configService: ConfigService) => ({
+        type: 'mongodb',
+        url: configService.get<string>('MONGODB_CONNECTION_STRING'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: true,
+      }),
+      inject: [ConfigService],
     }),
     UserModule,
   ],
