@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Task from './task';
-import { TaskType } from '../types/task';
+import { TaskType } from '../../types/task';
 import './task.css';
 
 export default function Tasks() {
