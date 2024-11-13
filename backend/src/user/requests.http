@@ -1,0 +1,17 @@
+### POST Create a user
+POST http://localhost:4200/user/signup
+content-type: application/json
+
+{
+    "username": "user 2",
+    "password": "password"
+}
+
+### POST Sign in user
+POST http://localhost:4200/user/signin
+content-type: application/json
+
+{
+    "username": "user 2",
+    "password": "password"
+}
