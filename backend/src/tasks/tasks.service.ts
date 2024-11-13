@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from './tasks.entity';
 import { User } from '../user/user.entity';
@@ -11,7 +12,7 @@ interface CreateTask {
 
 @Injectable()
 export class TasksService {
-    constructor(private repo: Repository<Task>) {}
+    constructor(@InjectRepository(Task) private repo: Repository<Task>) {}
 
     create(user: User, task: CreateTask) {
         return this.repo.create({
