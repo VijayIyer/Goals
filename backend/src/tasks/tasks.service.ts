@@ -22,4 +22,8 @@ export class TasksService {
             user
         }); 
     }
+
+    findOne(id: number) {
+        return this.repo.find({where: {id}});
+    }
 }

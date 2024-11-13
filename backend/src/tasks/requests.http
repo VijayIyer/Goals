@@ -1,0 +1,9 @@
+### POST Create new task
+POST http://localhost:3000/tasks
+content-type: application/json
+
+{
+    "title": "Task 1",
+    "description": "Task 1 description",
+    "userId": "673406f53b3dc237b925b5b9"
+}
