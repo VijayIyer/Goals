@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { Post, Body } from '@nestjs/common';
+import { Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthService } from './auth.service';
 
@@ -28,6 +28,7 @@ export class UserController {
     }
   
     @Post('/signin')
+    @HttpCode(HttpStatus.NO_CONTENT)
     async signin(@Body() body: SignInRequest) {
       const user = await this.authService.signin(body.username, body.password);
       return user;

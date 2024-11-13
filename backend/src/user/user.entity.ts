@@ -4,13 +4,16 @@ import {
     AfterUpdate,
     Entity, 
     Column, 
-    PrimaryGeneratedColumn,  
-    OneToMany
+    ObjectIdColumn,  
+    OneToMany,
+    CreateDateColumn,
+    UpdateDateColumn
 } from "typeorm";
+import { Task } from "src/tasks/tasks.entity";
 
-@Entity()
+@Entity('user')
 export class User {
-    @PrimaryGeneratedColumn()
+    @ObjectIdColumn()
     id: number;
 
     @Column()
@@ -18,6 +21,15 @@ export class User {
 
     @Column()
     password: string;
+
+    @OneToMany(() => Task, (task) => task.user)
+    tasks: Task[];
+
+    @CreateDateColumn()
+    created_at: Date; // Creation date
+
+    @UpdateDateColumn()
+    updated_at: Date; // Last updated date
 
     @AfterInsert()
     logInsert() {
