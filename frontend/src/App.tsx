@@ -6,7 +6,7 @@ import SignIn from './components/auth/signin';
 import SignUp from './components/auth/signup';
 import {Tasks} from './components/task';
 import { Alert } from '@mui/material';
-const rootUrl = "https://goals-gt72.onrender.com";
+const rootUrl = process.env.REACT_APP_SERVER_URL;
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
