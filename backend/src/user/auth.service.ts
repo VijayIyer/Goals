@@ -11,22 +11,22 @@ export class AuthService {
         
     }
 
-    async signup(email: string, password: string) {
-        // see if email is in use
-        const users = await this.userService.find(email);
+    async signup(username: string, password: string) {
+        // see if username is in use
+        const users = await this.userService.find(username);
         if(users.length) {
-            throw new BadRequestException('email in use');
+            throw new BadRequestException('username in use');
         }
         
         // Create a new user and save it
-        const user = await this.userService.create(email, password);
+        const user = await this.userService.create(username, password);
 
         // return the user
         return user;
     }
 
-    async signin(email: string, password: string) {
-        const [user] = await this.userService.find(email);
+    async signin(username: string, password: string) {
+        const [user] = await this.userService.find(username);
         if(!user) {
             throw new NotFoundException('user not found');
         }
