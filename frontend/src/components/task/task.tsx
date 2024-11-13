@@ -1,5 +1,5 @@
 import React from 'react';
-import { TaskType } from "../types/task";
+import { TaskType } from "../../types/task";
 import './task.css';
 
 interface TaskProps {
