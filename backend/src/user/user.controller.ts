@@ -14,6 +14,10 @@ interface SignInRequest {
   password: string;
 }
 
+interface SignInResponse {
+  id: number;
+}
+
 @Controller('user')
 export class UserController {
     constructor(
@@ -28,9 +32,9 @@ export class UserController {
     }
   
     @Post('/signin')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    async signin(@Body() body: SignInRequest) {
+    @HttpCode(HttpStatus.OK)
+    async signin(@Body() body: SignInRequest): Promise<SignInResponse> {
       const user = await this.authService.signin(body.username, body.password);
-      return user;
+      return {id: user.id};
     }
 }

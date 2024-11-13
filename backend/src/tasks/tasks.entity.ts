@@ -1,4 +1,5 @@
 import { 
+    Entity,
     ObjectIdColumn, 
     Column, 
     CreateDateColumn,
@@ -7,6 +8,7 @@ import {
 } from "typeorm";
 import { User } from "src/user/user.entity";
 
+@Entity('task')
 export class Task {
     @ObjectIdColumn()
     id: number;
