@@ -11,7 +11,7 @@ import { User } from "src/user/user.entity";
 @Entity('task')
 export class Task {
     @ObjectIdColumn()
-    id: number;
+    _id: number;
 
     @Column()
     title:string

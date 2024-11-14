@@ -35,6 +35,6 @@ export class UserController {
     @HttpCode(HttpStatus.OK)
     async signin(@Body() body: SignInRequest): Promise<SignInResponse> {
       const user = await this.authService.signin(body.username, body.password);
-      return {id: user.id};
+      return {id: user._id};
     }
 }

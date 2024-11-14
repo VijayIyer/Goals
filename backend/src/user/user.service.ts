@@ -16,7 +16,7 @@ export class UserService {
         if(!id) {
             return null;
         }
-        return this.repo.findOneBy({ id });
+        return this.repo.findOneById(id);
     }
 
     find(username: string) {

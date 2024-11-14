@@ -3,7 +3,10 @@ POST http://localhost:4200/tasks
 content-type: application/json
 
 {
-    "title": "Task 1",
-    "description": "Task 1 description",
-    "userId": "673406f53b3dc237b925b5b9"
+    "title": "Task 2",
+    "description": "Task 2 description",
+    "userId": "67352cebe41824ee695c57cf"
 }
+
+### GET Get all tasks for user
+GET http://localhost:4200/tasks/67352cebe41824ee695c57cf

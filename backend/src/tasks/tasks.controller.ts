@@ -21,21 +21,27 @@ export class TasksController {
         if(!user) {
             throw new NotFoundException('user not found')
         }
-        const newTask = this.taskService.create(user, task);
-        return newTask;
+        const newTask = await this.taskService.create(user, task);
+        return {
+            id: newTask._id,
+            title: newTask.title,
+            description: newTask.description
+        };
     }
 
-    @Get("/:id")
-    async get(@Param() userId:number, @Param() id: number) {
+    @Get('/:userId')
+    async get(@Param() userId: number) {
         const user = await this.userService.findOne(userId);
+        console.log(user)
         if(!user) {
             throw new NotFoundException('user not found')
         }
-        const task = await this.taskService.findOne(id);
-        if(!task) {
-            throw new NotFoundException('Task not found');
-        }
-        return task;
+        const userTasks = await this.taskService.findAll(user);
+        return userTasks.map(task => ({
+            id: task._id,
+            title: task.title,
+            description: task.description
+        }))
     }
 
     @Delete("/:id")

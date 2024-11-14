@@ -14,7 +14,7 @@ import { Task } from "src/tasks/tasks.entity";
 @Entity('user')
 export class User {
     @ObjectIdColumn()
-    id: number;
+    _id: number;
 
     @Column()
     username: string;
@@ -33,16 +33,16 @@ export class User {
 
     @AfterInsert()
     logInsert() {
-      console.log('Inserted User with id', this.id);
+      console.log('Inserted User with id', this._id);
     }
   
     @AfterUpdate()
     logUpdate() {
-      console.log('Updated User with id', this.id);
+      console.log('Updated User with id', this._id);
     }
   
     @AfterRemove()
     logRemove() {
-      console.log('Removed User with id', this.id);
+      console.log('Removed User with id', this._id);
     }
 }
