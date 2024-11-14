@@ -15,15 +15,19 @@ export class TasksService {
     constructor(@InjectRepository(Task) private repo: Repository<Task>) {}
 
     create(user: User, task: CreateTask) {
-        return this.repo.create({
+        const newTask = this.repo.create({
             title: task.title,
             description: task.description,
-            deadlineDate: task.deadlineDate,
-            user
         }); 
+        newTask.user = user;
+        return this.repo.save(newTask);
+    }
+
+    findAll(user: User) {
+        return this.repo.find({where: {user}})
     }
 
     findOne(id: number) {
-        return this.repo.find({where: {id}});
+        return this.repo.findOne({where: {_id: id}});
     }
 }
