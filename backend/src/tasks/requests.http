@@ -3,8 +3,8 @@ POST http://localhost:4200/tasks
 content-type: application/json
 
 {
-    "title": "Task 2",
-    "description": "Task 2 description",
+    "title": "Task 3",
+    "description": "Task 3 description",
     "userId": "67352cebe41824ee695c57cf"
 }
 

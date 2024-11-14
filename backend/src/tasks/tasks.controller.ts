@@ -30,9 +30,9 @@ export class TasksController {
     }
 
     @Get('/:userId')
-    async get(@Param() userId: number) {
+    async get(@Param('userId') userId: number) {
+        console.log(userId)
         const user = await this.userService.findOne(userId);
-        console.log(user)
         if(!user) {
             throw new NotFoundException('user not found')
         }
