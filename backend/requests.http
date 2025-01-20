@@ -1,0 +1,2 @@
+### Get the currently signed in user
+GET http://localhost:3000/
