@@ -4,6 +4,7 @@
     [ ] Add routers and controllers for tasks
 [ ] Add a backend solution!!
     [ ] Add sequelize and sqlite to interact with db
+    [ ] Add model for task
 [ ] Add controllers for parsing logic
 [ ] Add required GET and POST endpoints
     [ ] Create a task with title and description
