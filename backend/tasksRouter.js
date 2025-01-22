@@ -1,21 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const controller = require("./tasksController.js");
 
-router.get("/", (req, res) => {
-    return res.status(200).json({
-        tasks: [
-            {
-                id: 1
-            }, 
-            {
-                id: 2
-            }
-        ]
-    })
-});
+router.get("/", controller.get);
 
 router.post("/", (req, res) => {
-    res.status(200).send('added task!')
+    console.log(`req is ${req.body}`)
+    return controller.post(req, res)
 });
 
 module.exports = router;

@@ -3,9 +3,11 @@
 [ ] Add routers for different endpoints
     [ ] Add routers and controllers for tasks
 [ ] Add a backend solution!!
-    [ ] Add sequelize and sqlite to interact with db
-    [ ] Add model for task
+    [X] Add sequelize and sqlite to interact with db
+    [X] Add model for task
 [ ] Add controllers for parsing logic
+    [X] Add controller for tasks
+    [ ] Update controller methods for tasks
 [ ] Add required GET and POST endpoints
     [ ] Create a task with title and description
     [ ] Add deadline date property
