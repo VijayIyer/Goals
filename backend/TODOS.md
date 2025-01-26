@@ -11,6 +11,6 @@
 [ ] Add required GET and POST endpoints
     [X] Create a task with title and description
     [X] Add get task by id endpoint
-    [ ] Add delete task endpoint
-    [ ] Add update task endpoint
+    [X] Add delete task endpoint
+    [X] Add update task endpoint
     [ ] Add deadline date property
