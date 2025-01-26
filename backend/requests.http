@@ -1,5 +1,8 @@
-### Get the currently signed in user
+### Get all tasks
 GET http://localhost:9000/tasks
+
+### Get task by id
+GET http://localhost:9000/tasks/2
 
 ### Add task
 POST http://localhost:9000/tasks

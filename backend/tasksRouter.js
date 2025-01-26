@@ -3,10 +3,7 @@ const router = express.Router();
 const controller = require("./tasksController.js");
 
 router.get("/", controller.get);
-
-router.post("/", (req, res) => {
-    console.log(`req is ${req.body}`)
-    return controller.post(req, res)
-});
+router.get("/:id", controller.getById);
+router.post("/", controller.post);
 
 module.exports = router;

@@ -9,5 +9,6 @@
     [X] Add controller for tasks
     [ ] Update controller methods for tasks
 [ ] Add required GET and POST endpoints
-    [ ] Create a task with title and description
+    [X] Create a task with title and description
+    [X] Add get task by id endpoint
     [ ] Add deadline date property
