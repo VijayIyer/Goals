@@ -8,12 +8,10 @@ const sequelize = new Sequelize({
   storage: 'db.sqlite'
 });
 
-
 const PORT = process.env.PORT || 3000;
 const tasksRouter = require("./tasksRouter");
 app.use(express.json());
 app.use("/tasks", tasksRouter);
-
 app.listen(PORT, () => {
     console.log(`listening on port - ${PORT}`);
 });
