@@ -10,10 +10,21 @@ Task.init(
     {
         title: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: false,
+            validate: { len: [0,32] }
         },
         description: {
             type: DataTypes.STRING,
+            allowNull: true,
+            validate: { len: [0,300] }
+        },
+        deferred: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
+        deadline: {
+            type: DataTypes.DATE,
             allowNull: true
         }
     },

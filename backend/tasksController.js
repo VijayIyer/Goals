@@ -36,11 +36,9 @@ const controller = {
         }
     },
     create: async (req, res) => {
-        console.log(req.body);
-        const {title, description} = req.body;
         try {
-            const task = await TaskModel.create({title: "title", description: "description"});
-            return res.status(201).json(JSON.stringify(task));
+            const task = await TaskModel.create({...req.body});
+            return res.status(201).json(task);
         } catch(err) {
             console.error(err);
             return res.status(500).json(err);

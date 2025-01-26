@@ -1,15 +1,11 @@
 const express = require("express");
 const { Sequelize } = require('sequelize');
+const tasksRouter = require("./tasksRouter");
 require('dotenv').config();
+const PORT = process.env.PORT || 3000;
 
 const app = express();
-const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: 'db.sqlite'
-});
 
-const PORT = process.env.PORT || 3000;
-const tasksRouter = require("./tasksRouter");
 app.use(express.json());
 app.use("/tasks", tasksRouter);
 app.listen(PORT, () => {
