@@ -1,16 +1,10 @@
-[X] Read port from dot env
+[ ] Use industry practices, like a config file for using sequelize instance
 [ ] Convert to es6 syntax
 [ ] Add routers for different endpoints
-    [X] Add routers for tasks
-[ ] Add a backend solution!!
-    [X] Add sequelize and sqlite to interact with db
-    [X] Add model for task
-[ ] Add controllers for parsing logic
+    [ ] Add auth router for user auth functionality to support multiple users
+[ ] Add services for communicating with backend, instead of doing DB communication in controller itself
+[X] Add controllers for parsing logic
     [X] Add controller for tasks
-    [ ] Update controller methods for tasks
+    [X] Update controller methods for tasks
 [ ] Add required GET and POST endpoints
-    [X] Create a task with title and description
-    [X] Add get task by id endpoint
-    [X] Add delete task endpoint
-    [X] Add update task endpoint
     [ ] Add deadline date property
