@@ -25,10 +25,26 @@ Task.init(
         },
         deadline: {
             type: DataTypes.DATE,
-            allowNull: true
+            allowNull: true,
+            validate: {
+                isNotInThePast(value) {
+                    const now = new Date();
+                    if(now > value) {
+                        throw new Error("Deadline cannot be in the past!!")
+                    }
+                }
+            }
         }
     },
     {
+    hooks: {
+        beforeCreate: (task, options) => {
+            if(!task.deadline) {
+                const today = new Date();
+                task.deadline = today.setDate(today.getDate() + 1);
+            }
+        }
+    },
      sequelize,
      freezeTableName: true,
     }
