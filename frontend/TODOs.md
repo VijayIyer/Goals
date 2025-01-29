@@ -2,6 +2,8 @@
 
 ### TODOs
 [X] Add material ui in project
+[X] Put Add Task modal into separate component
+[ ] Add Proper types to all components
 [ ] Add a suitable date picker component library and a date library
 [ ] Create Form for adding task
 [ ] Create view for displaying tasks
