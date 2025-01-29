@@ -1,66 +1,78 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
-// Components
-import SignIn from './components/auth/signin';
-import SignUp from './components/auth/signup';
-import {Tasks} from './components/task';
-import { Alert } from '@mui/material';
-const rootUrl = process.env.REACT_APP_SERVER_URL;
+import { FormEvent, useState } from "react";
+import {Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField} from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [userId, setUserId] = useState(null)
-
-  const handleSignIn = async (signInFormData: {username: string, password: string}) => {
-    // Perform authentication logic here
-    fetch(`${rootUrl}/user/signin`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(signInFormData)
-    })
-    .then(response => response.json())
-    .then(() => setIsAuthenticated(true))
-    .catch(() => {
-      setErrorMessage('Error signing in, please try again or use different credentials')
-    });
-  };
-
-  const handleSignUp = (signUpFormData: {
-    username: string,
-    password: string,
-    confirmPassword: string
-  }) => {
-    // Perform authentication logic here
-    fetch(`${rootUrl}/user/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(signUpFormData)
-    })
-    .then(response => response.json())
-    .then(data => {
-      setUserId(data.id)
-      setIsAuthenticated(true);
-      setErrorMessage("");
-    })
-    .catch(() => {
-      setErrorMessage('Error signing up, please try again later or use different credentials')
-    });
-  };
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const handleAddTaskButtonClick = () => {
+    setIsAddTaskModalOpen(true);
+  }
+  const handleAddTaskModalClose = () => {
+    setIsAddTaskModalOpen(false);
+  }
+  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      const formJson = Object.fromEntries((formData as any).entries());
+      const {title, description, deadline} = formJson;
+      console.log(title, description, deadline);
+      setIsAddTaskModalOpen(false);
+  }
 
   return (
-    <>
-      {errorMessage && <Alert severity='error'>{errorMessage}</Alert>}
-      <Router>
-        <Routes>
-          <Route path="/" element={isAuthenticated ? <Navigate to="/tasks" /> : <SignIn onSignIn={handleSignIn} />} />
-          <Route path="/signup" element={isAuthenticated ? <Navigate to="/tasks" /> : <SignUp onSignUp={handleSignUp} />} />
-          <Route path="/tasks" element={isAuthenticated ? <Tasks userId={userId || ""} /> : <Navigate to="/" />} />
-        </Routes>
-      </Router>
-    </>
-  );
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div style={{textAlign: "center"}}>
+            <Button onClick={handleAddTaskButtonClick} variant="contained" startIcon={<AddIcon />}>
+              Create Task
+            </Button>
+            <Dialog
+              open={isAddTaskModalOpen}
+              onClose={handleAddTaskModalClose}
+              PaperProps={{
+                component: 'form',
+                onSubmit: handleSubmit
+              }}
+            >
+              <DialogContent>
+                <DialogContentText>
+                  Add a task with a deadline (default deadline will be the end of the day)
+                </DialogContentText>
+                  <TextField
+                    required
+                    margin="dense"
+                    id="title"
+                    name="title"
+                    label="Title"
+                    fullWidth
+                    variant="standard"
+                    style={{marginBottom: "2em"}}
+                  />
+                  <TextField
+                    id="description"
+                    label="Description"
+                    name="description"
+                    placeholder="Add a description to add details of the task"
+                    multiline
+                    fullWidth
+                    rows={2}
+                    style={{marginBottom: "2em"}}
+                  />
+                  <DatePicker
+                    name="deadline"
+                    label="Deadline"
+                  />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleAddTaskModalClose}>Cancel</Button>
+                <Button type="submit">Create</Button>
+              </DialogActions>
+            </Dialog>
+      </div>
+    </LocalizationProvider>
+  )
 };
 
 export default App;
