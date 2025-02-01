@@ -5,7 +5,40 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
+type Task =  {
+  id: number,
+  title: string, 
+  description: string,
+  deferred: boolean,
+  deadline: Date  
+}
+type NewTask = {
+  title: string, 
+  description: string,
+  deferred: boolean,
+  deadline: Date
+}
+
+const mockTasks: Array<Task> = [];
+const listTasksService = () => {
+  return Promise.resolve(mockTasks);
+}
+const addTaskService = (newTask: NewTask) => {
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      const {title, description, deadline, deferred} = newTask;
+      if(!title || !description || !deadline) rej('Error creating new task!');
+      mockTasks.push({
+        id: mockTasks.length,
+        ...newTask
+      });
+      res(newTask);
+    }, 1000);
+  });
+}
+
 const App = () => {
+  const [tasks, setTasks] = useState<Array<Task>>([]);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const handleAddTaskButtonClick = () => {
     setIsAddTaskModalOpen(true);
@@ -13,8 +46,9 @@ const App = () => {
   const handleAddTaskModalClose = () => {
     setIsAddTaskModalOpen(false);
   }
-  const handleAddTaskModalSubmit = () => {
-    console.log(`refresh tasks!`);
+  const handleAddTaskModalSubmit = async () => {
+    const tempTasks = await listTasksService();
+    setTasks(tempTasks);
     setIsAddTaskModalOpen(false);
   }
   return (
@@ -29,6 +63,11 @@ const App = () => {
         onClose={handleAddTaskModalClose}
         onSubmit={handleAddTaskModalSubmit}
       />
+      <>
+      {tasks.map(task => {
+        return <div key={task.id}>{JSON.stringify(task)}</div>
+      })}
+      </>
     </LocalizationProvider>
   )
 };
@@ -42,13 +81,20 @@ const AddTaskModal = ({
   onClose: () => void,
   onSubmit: () => void
 }) => {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
-    const {title, description, deadline} = formJson;
+    const {title, description, deadline, deferred} = formJson;
     console.log(title, description, deadline);
-    onSubmit();
+    addTaskService({
+      title,
+      description,
+      deadline: new Date(deadline),
+      deferred: !!deferred
+    })
+    .then(onSubmit)
+    .catch(console.error)
   }
   return (
     <Dialog

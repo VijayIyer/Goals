@@ -3,6 +3,8 @@
 ### TODOs
 [X] Add material ui in project
 [X] Put Add Task modal into separate component
+[X] Add mock services in same file
+[ ] Move components and services to new files 
 [ ] Add Proper types to all components
 [ ] Add a suitable date picker component library and a date library
 [ ] Create Form for adding task
