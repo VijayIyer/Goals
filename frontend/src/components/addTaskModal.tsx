@@ -2,10 +2,10 @@ import {FormEvent} from "react";
 import { Button, Dialog, DialogContent, DialogContentText, DialogActions, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 
-import { mockTasks } from "./mockTasks";
-import { NewTask } from "./taskTypes";
+import { mockTasks } from "../mockTasks";
+import { NewTask } from "../taskTypes";
 
-import { addTaskService } from "./services";
+import { addTask } from "../services/taskServices";
 
 const AddTaskModal = ({
     onClose,
@@ -22,13 +22,16 @@ const AddTaskModal = ({
       const formJson = Object.fromEntries((formData as any).entries());
       const {title, description, deadline, deferred} = formJson;
       console.log(title, description, deadline);
-      addTaskService({
+      addTask({
         title,
         description,
         deadline: new Date(deadline),
         deferred: !!deferred
       })
-      .then(onSubmit)
+      .then(response => {
+        console.log(`response - ${JSON.stringify(response)}`);
+        onSubmit();
+      })
       .catch(console.error)
     }
     return (

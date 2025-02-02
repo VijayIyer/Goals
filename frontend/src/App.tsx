@@ -4,25 +4,29 @@ import AddIcon from '@mui/icons-material/Add';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-import { Task } from "./taskTypes";
+import { Task as TaskType } from "./taskTypes";
 
-import { listTasks } from "./services";
+import { listTasks } from "./services/taskServices";
 
-import Tasks from "./tasks";
-import AddTaskModal from "./addTaskModal";
+import Task from "./components/task";
+import AddTaskModal from "./components/addTaskModal";
 
 const App = () => {
-  const [tasks, setTasks] = useState<Array<Task>>([]);
+  const [tasks, setTasks] = useState<Array<TaskType>>([]);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const handleAddTaskButtonClick = () => {
     setIsAddTaskModalOpen(true);
   }
+  const refreshTasks = async () => {
+    const tempTasks = await listTasks();
+    setTasks(tempTasks);
+    console.log(`updated tasks - ${JSON.stringify(tempTasks)}, ${typeof tempTasks}`)
+  }
   const handleAddTaskModalClose = () => {
     setIsAddTaskModalOpen(false);
   }
-  const handleAddTaskModalSubmit = async () => {
-    const tempTasks = await listTasks();
-    setTasks(tempTasks);
+  const handleAddTaskModalSubmit = () => {
+    refreshTasks();
     setIsAddTaskModalOpen(false);
   }
   console.log(`tasks are - ${JSON.stringify(tasks)}`)
@@ -33,7 +37,7 @@ const App = () => {
             Create Task
           </Button>
       </div>
-      <Tasks tasks={tasks} />
+      {<>{tasks.map(task => <Task key={task.id} task={task} onTaskEdited={refreshTasks} onTaskDeleted={refreshTasks} />)}</>}
       <AddTaskModal
         isAddTaskModalOpen={isAddTaskModalOpen}
         onClose={handleAddTaskModalClose}
