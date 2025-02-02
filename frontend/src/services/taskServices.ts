@@ -34,7 +34,7 @@ export function deleteTask(deleteTaskId: number) {
         setTimeout(() => {
         const taskToBeEditedIndex = mockTasks.findIndex(task => task.id === deleteTaskId);
         mockTasks.splice(taskToBeEditedIndex, 1);
-        if(!taskToBeEditedIndex) return rej(`No task with id ${deleteTaskId} exists`);
+        if(taskToBeEditedIndex === null) return rej(`No task with id ${deleteTaskId} exists`);
         res(`Deleted task with id ${deleteTaskId}`);
         }, 1000);
     });

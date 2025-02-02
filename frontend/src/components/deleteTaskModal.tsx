@@ -1,14 +1,32 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText } from "@mui/material"
+import { deleteTask } from "../services/taskServices"
+import { FormEvent } from "react"
 
 type DeleteTaskModalProps = {
     id: number,
     isOpen: boolean,
-    onClose: () => void
+    onClose: () => void,
+    onSubmit: () => void
 }
 
-export default ({id, isOpen, onClose}: DeleteTaskModalProps) => {
+export default ({id, isOpen, onClose, onSubmit}: DeleteTaskModalProps) => {
+    const handleDeleteTaskSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        deleteTask(id)
+            .then(res => {
+                console.log(`res - ${res}`);
+                onSubmit();
+            })
+            .catch(console.error)
+    }
     return (
-        <Dialog open={isOpen} onClose={onClose}>
+        <Dialog 
+            PaperProps={{
+                component: 'form',
+                onSubmit: handleDeleteTaskSubmit
+            }}
+            open={isOpen} 
+            onClose={onClose}>
             <DialogContent>
                 <DialogContentText>
                     Are you sure you want to delete the task?

@@ -26,6 +26,11 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
         setIsEditTaskModalOpen(false); 
     }
 
+    const handleDeleteTaskModalSubmit = () => {
+        onTaskDeleted();
+        setIsDeleteTaskModalOpen(false);
+    }
+
     return (
         <>
             <div key={task.id} style={{marginBottom: "2em", textAlign: "center", padding: "0.2em", border: "1px solid"}}>
@@ -46,9 +51,11 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
                 onClose={() => setIsEditTaskModalOpen(false)}
                 onSubmit={handleEditTaskModalSubmit}
             />
-            <DeleteTaskModal 
+            <DeleteTaskModal
+                id={task.id}
                 isOpen={isDeleteTaskModalOpen}
                 onClose={() => setIsDeleteTaskModalOpen(false)}
+                onSubmit={handleDeleteTaskModalSubmit}
             />
         </>
     )

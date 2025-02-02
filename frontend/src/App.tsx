@@ -8,7 +8,7 @@ import { Task as TaskType } from "./taskTypes";
 
 import { listTasks } from "./services/taskServices";
 
-import Task from "./components/task";
+import Tasks from "./components/tasks";
 import AddTaskModal from "./components/addTaskModal";
 
 const App = () => {
@@ -37,7 +37,11 @@ const App = () => {
             Create Task
           </Button>
       </div>
-      {<>{tasks.map(task => <Task key={task.id} task={task} onTaskEdited={refreshTasks} onTaskDeleted={refreshTasks} />)}</>}
+      <Tasks
+        tasks={tasks}
+        onTaskEdited={refreshTasks}
+        onTaskDeleted={refreshTasks}
+      />
       <AddTaskModal
         isAddTaskModalOpen={isAddTaskModalOpen}
         onClose={handleAddTaskModalClose}
