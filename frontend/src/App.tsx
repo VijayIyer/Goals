@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {Button} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -12,14 +12,17 @@ import Tasks from "./components/tasks";
 import AddTaskModal from "./components/addTaskModal";
 
 const App = () => {
+  const [areTasksLoading, setAreTasksLoading] = useState<boolean>(false);
   const [tasks, setTasks] = useState<Array<TaskType>>([]);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const handleAddTaskButtonClick = () => {
     setIsAddTaskModalOpen(true);
   }
   const refreshTasks = async () => {
+    setAreTasksLoading(true);
     const tempTasks = await listTasks();
     setTasks(tempTasks);
+    setAreTasksLoading(false);
     console.log(`updated tasks - ${JSON.stringify(tempTasks)}, ${typeof tempTasks}`)
   }
   const handleAddTaskModalClose = () => {
@@ -37,16 +40,25 @@ const App = () => {
             Create Task
           </Button>
       </div>
-      <Tasks
-        tasks={tasks}
-        onTaskEdited={refreshTasks}
-        onTaskDeleted={refreshTasks}
-      />
-      <AddTaskModal
-        isAddTaskModalOpen={isAddTaskModalOpen}
-        onClose={handleAddTaskModalClose}
-        onSubmit={handleAddTaskModalSubmit}
-      />
+      {areTasksLoading && (
+        <div style={{textAlign: "center"}}>
+          <CircularProgress size="2rem" />
+        </div>
+      )}
+      {!areTasksLoading && (
+        <Tasks
+          tasks={tasks}
+          onTaskEdited={refreshTasks}
+          onTaskDeleted={refreshTasks}
+        />
+      )}
+      {isAddTaskModalOpen && (
+        <AddTaskModal
+          isAddTaskModalOpen={isAddTaskModalOpen}
+          onClose={handleAddTaskModalClose}
+          onSubmit={handleAddTaskModalSubmit}
+        />
+      )}
     </LocalizationProvider>
   )
 };

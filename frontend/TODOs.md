@@ -7,6 +7,7 @@
 [ ] Create Form for adding task
     - [ ] Improve form with validations (enable / disable submit, show error message)
 [ ] Improve overall view with loading indicators
+[ ] Improve error handling by displaying error alert within modal
 [X] Move components, services and types to separate folders
 [ ] Add Proper types to all components
     - [ ] Read about --isolatedComponents exporting type error
@@ -22,6 +23,7 @@
 [ ] Add styles for showing tasks closer to deadline
 [ ] Add view for how far from deadline
 [ ] Add tools with project scope that make it easier to develop (basic ones like prettier, eslint)
+[ ] Use useReducer for form submission
 
 
 ### Take to backend

@@ -1,9 +1,6 @@
-import {FormEvent} from "react";
-import { Button, Dialog, DialogContent, DialogContentText, DialogActions, TextField } from "@mui/material";
+import {FormEvent, useState} from "react";
+import { Alert, Button, Dialog, DialogContent, DialogContentText, DialogActions, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-
-import { mockTasks } from "../mockTasks";
-import { NewTask } from "../taskTypes";
 
 import { addTask } from "../services/taskServices";
 
@@ -16,23 +13,23 @@ const AddTaskModal = ({
     onClose: () => void,
     onSubmit: () => void
   }) => {
+    const [isAddTaskLoading, setIsAddTaskLoading] = useState<boolean>(false);
+    const [addTaskError, setAddTaskError] = useState<string>("");
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const formData = new FormData(event.currentTarget);
       const formJson = Object.fromEntries((formData as any).entries());
       const {title, description, deadline, deferred} = formJson;
-      console.log(title, description, deadline);
+      setIsAddTaskLoading(true)
       addTask({
         title,
         description,
         deadline: new Date(deadline),
         deferred: !!deferred
       })
-      .then(response => {
-        console.log(`response - ${JSON.stringify(response)}`);
-        onSubmit();
-      })
-      .catch(console.error)
+      .then(onSubmit)
+      .catch(setAddTaskError)
+      .finally(() => setIsAddTaskLoading(false))
     }
     return (
       <Dialog
@@ -47,6 +44,7 @@ const AddTaskModal = ({
           <DialogContentText>
             Add a task with a deadline (default deadline will be the end of the day)
           </DialogContentText>
+            {addTaskError && <Alert severity="error">{addTaskError}</Alert>}
             <TextField
               required
               margin="dense"
@@ -73,8 +71,8 @@ const AddTaskModal = ({
             />
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit">Create</Button>
+          <Button onClick={onClose} variant="contained">Cancel</Button>
+          <Button type="submit" loading={isAddTaskLoading} loadingPosition="start" variant="contained">Create</Button>
         </DialogActions>
       </Dialog>
     )

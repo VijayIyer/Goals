@@ -1,6 +1,7 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText } from "@mui/material"
-import { deleteTask } from "../services/taskServices"
-import { FormEvent } from "react"
+import { FormEvent, useState } from "react";
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText } from "@mui/material";
+
+import { deleteTask } from "../services/taskServices";
 
 type DeleteTaskModalProps = {
     id: number,
@@ -10,14 +11,18 @@ type DeleteTaskModalProps = {
 }
 
 export default ({id, isOpen, onClose, onSubmit}: DeleteTaskModalProps) => {
+    const [isDeleteTaskSubmitLoading, setIsDeleteTaskSubmitLoading] = useState<boolean>(false);
+    const [deleteTaskError, setDeleteTaskError] = useState<string>("");
     const handleDeleteTaskSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setIsDeleteTaskSubmitLoading(true)
         deleteTask(id)
             .then(res => {
                 console.log(`res - ${res}`);
                 onSubmit();
             })
-            .catch(console.error)
+            .catch(setDeleteTaskError)
+            .finally(() => setIsDeleteTaskSubmitLoading(false));
     }
     return (
         <Dialog 
@@ -30,11 +35,12 @@ export default ({id, isOpen, onClose, onSubmit}: DeleteTaskModalProps) => {
             <DialogContent>
                 <DialogContentText>
                     Are you sure you want to delete the task?
+                    {deleteTaskError && <Alert severity="error">{deleteTaskError}</Alert>}
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
-                <Button type="submit">Delete</Button>
+                <Button onClick={onClose} variant="contained">Cancel</Button>
+                <Button type="submit" variant="contained" loading={isDeleteTaskSubmitLoading} loadingPosition="start">Delete</Button>
             </DialogActions>
         </Dialog>
     )
