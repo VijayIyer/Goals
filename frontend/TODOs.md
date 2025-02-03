@@ -10,7 +10,9 @@
     - [ ] Explore standard practices
 [ ] Create view for displaying tasks
     - [ ] Improve Edit Task View
-        - [ ] Add marking task completed ability
+        - [X] Add marking task completed ability
+        - [ ] Find better way to style when task marked completed
+        - [ ] Decide how to structure services for task marking completion
     - [ ] Improve Delete Task view - decide how much detail of the task to show
     - [ ] Read why you need to use `slice()` while returning a simple list!
 [ ] Add styles for showing tasks closer to deadline
