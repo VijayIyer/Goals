@@ -44,3 +44,13 @@ export function deleteTask(deleteTaskId: number) {
         }, 1000);
     });
 }
+
+export function markTaskCompleted(taskId: number) {
+    return new Promise<Task>((res, rej) => {
+        setTimeout(() => {
+            const taskToBeEditedIndex = mockTasks.findIndex(task => task.id === taskId);
+            mockTasks[taskToBeEditedIndex].completed = !mockTasks[taskToBeEditedIndex].completed;
+            res(mockTasks[taskToBeEditedIndex])
+        }, 1000)
+    })
+}

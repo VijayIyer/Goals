@@ -25,7 +25,8 @@ const AddTaskModal = ({
         title,
         description,
         deadline: new Date(deadline),
-        deferred: !!deferred
+        deferred: !!deferred,
+        completed: false
       })
       .then(onSubmit)
       .catch(setAddTaskError)

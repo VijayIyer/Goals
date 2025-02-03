@@ -3,12 +3,14 @@ type Task =  {
     title: string, 
     description: string,
     deferred: boolean,
-    deadline: Date  
+    deadline: Date,
+    completed: boolean
 }
 type NewTask = {
     title: string, 
     description: string,
     deferred: boolean,
-    deadline: Date
+    deadline: Date,
+    completed: boolean
 }
 export type {Task, NewTask};
