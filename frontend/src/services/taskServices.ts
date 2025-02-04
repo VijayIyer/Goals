@@ -23,6 +23,7 @@ export function addTask(newTask: NewTask) {
 }
 
 export function editTask(editedTask: Task) {
+    console.log(`edited task - ${JSON.stringify(editedTask)}`)
     return new Promise((res, rej) => {
         setTimeout(() => {
             console.log(mockTasks);
