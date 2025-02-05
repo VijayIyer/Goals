@@ -4,7 +4,7 @@ import { Alert, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogCo
 import { Task } from "../taskTypes";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { editTask } from "../services/taskServices";
-import { DatePicker, PickerChangeHandlerContext } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
 
 type EditTaskModalProps = {
     task: Task,
