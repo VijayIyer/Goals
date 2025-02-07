@@ -61,6 +61,7 @@ const AddTaskModal = ({
               label="Description"
               name="description"
               placeholder="Add a description to add details of the task"
+              required
               multiline
               fullWidth
               rows={2}

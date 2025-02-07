@@ -48,10 +48,16 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
             <div key={task.id} style={{marginBottom: "2em", textAlign: "center", padding: "0.2em", border: `5px solid ${isTaskCompleted ? "green" : "black"}`}}>
                 <Typography>{task.title}</Typography>
                 <Typography>{task.description}</Typography>
-                <Typography>{String(task.deferred)}</Typography>
-                <Typography>
-                    {`${task.deadline.getMonth() + 1}/${task.deadline.getDate()}/${task.deadline.getFullYear()}`}
-                </Typography>
+                {task.deferred && (
+                    <Typography>
+                        This task is backlogged. Please update with a new deadline
+                    </Typography>
+                )}
+                {!task.deferred && (
+                    <Typography>
+                        {`${task.deadline.getMonth() + 1}/${task.deadline.getDate()}/${task.deadline.getFullYear()}`}
+                    </Typography>
+                )}
                 <IconButton size="large" color="primary" onClick={handleEditTaskModalButtonClick}>
                     <Edit />
                 </IconButton>

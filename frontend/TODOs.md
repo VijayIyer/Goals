@@ -3,6 +3,7 @@
 ### TODOs
 [ ] Add a suitable date picker component library and a date library
    - [ ] Improve and add validation to date field 
+   - [ ] Improve the way date is displayed (should be as per localization, customer choosen format, etc.)
 [ ] Create Form for adding task
     - [ ] Improve form with validations (enable / disable submit, show error message)
 [ ] Add Proper types to all components
@@ -23,6 +24,7 @@
     - [ ] Make error alerts dismissible
     - [ ] Make error type more than just string
 [ ] Unit testing
+[ ] Move common code into a common components or utils folder!
 
 
 ### Take to backend

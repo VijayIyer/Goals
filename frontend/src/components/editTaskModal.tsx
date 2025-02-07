@@ -19,7 +19,6 @@ export default ({task, isOpen, onClose, onSubmit}: EditTaskModalProps) => {
     const [editedTask, setEditedTask] = useState<Task>(task);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        console.log(`event - ${event.target.name}, ${event.target.checked}`)
         if(event.target.name === "deferred") {
             setEditedTask({
                 ...editedTask,
@@ -48,7 +47,6 @@ export default ({task, isOpen, onClose, onSubmit}: EditTaskModalProps) => {
             deadline: dayjs(deadline).toDate()
         });
     }
-    console.log(`edited task - ${JSON.stringify(editedTask)}`)
     return (
         <Dialog 
             open={isOpen} 
@@ -90,12 +88,14 @@ export default ({task, isOpen, onClose, onSubmit}: EditTaskModalProps) => {
                 <FormControl>
                    <FormControlLabel control={<Checkbox name="deferred" onChange={handleChange} checked={editedTask.deferred} />} label="Defer Task?" />
                 </FormControl>
-                <DatePicker
-                    name="deadline"
-                    label="Deadline"
-                    value={dayjs(editedTask.deadline)}
-                    onChange={handleDateChange}
-                />
+                <div>
+                    <DatePicker
+                        name="deadline"
+                        label="Deadline"
+                        value={dayjs(editedTask.deadline)}
+                        onChange={handleDateChange}
+                    />
+                </div>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} variant="contained">Cancel</Button>

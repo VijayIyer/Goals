@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState } from "react"
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText } from "@mui/material";
 
 import { deleteTask } from "../services/taskServices";
@@ -18,7 +18,6 @@ export default ({id, isOpen, onClose, onSubmit}: DeleteTaskModalProps) => {
         setIsDeleteTaskSubmitLoading(true)
         deleteTask(id)
             .then(res => {
-                console.log(`res - ${res}`);
                 onSubmit();
             })
             .catch(setDeleteTaskError)

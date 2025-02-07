@@ -23,7 +23,6 @@ const App = () => {
     const tempTasks = await listTasks();
     setTasks(tempTasks);
     setAreTasksLoading(false);
-    console.log(`updated tasks - ${JSON.stringify(tempTasks)}, ${typeof tempTasks}`)
   }
   const handleAddTaskModalClose = () => {
     setIsAddTaskModalOpen(false);
@@ -32,7 +31,6 @@ const App = () => {
     refreshTasks();
     setIsAddTaskModalOpen(false);
   }
-  console.log(`tasks are - ${JSON.stringify(tasks)}`)
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div style={{textAlign: "center"}}>
