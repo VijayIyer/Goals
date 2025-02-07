@@ -1,26 +1,26 @@
 ## This file is being used temporarily to add quick features (might later migrate to a Changelog.md or some form of user story tracking third-party software)
 
 ### TODOs
-[ ] Add a suitable date picker component library and a date library
+[ ] Improve all work regarding Dates
    - [ ] Improve and add validation to date field 
    - [ ] Improve the way date is displayed (should be as per localization, customer choosen format, etc.)
-[ ] Create Form for adding task
-    - [ ] Improve form with validations (enable / disable submit, show error message)
-[ ] Add Proper types to all components
+   - [ ] Add validation for when to display date
+[ ] Improve forms (validations, masking, change handlers)
+    - [ ] Use useReducer for form submission
+    - [ ] Showing error messages
+[ ] Improvement usage and organizaiton of types
     - [ ] Read about --isolatedComponents exporting type error
     - [ ] Explore standard practices
-[ ] Create view for displaying tasks
-    - [ ] Improve Edit Task View
-        - [X] Add marking task completed ability
-        - [ ] Find better way to style when task marked completed
-        - [ ] Decide how to structure services for task marking completion
-    - [ ] Improve Delete Task view - decide how much detail of the task to show
+[ ] Improve main view of tasks
     - [ ] Read why you need to use `slice()` while returning a simple list!
-[ ] Add styles for showing tasks closer to deadline
-[ ] Add view for how far from deadline
+    - [ ] Add styles for showing tasks closer to deadline
+    - [ ] Add view for how far from deadline
+[ ] Improve Edit Task View
+    - [ ] Find better way to style when task marked completed
+    - [ ] Decide how to structure services for task marking completion
+[ ] Improve Delete Task view - decide how much detail of the task to show
 [ ] Add tools with project scope that make it easier to develop (basic ones like prettier, eslint)
-[ ] Use useReducer for form submission
-[ ] Improve loading and error indicators
+[ ] Improve loading and error indicators overall
     - [ ] Make error alerts dismissible
     - [ ] Make error type more than just string
 [ ] Unit testing
