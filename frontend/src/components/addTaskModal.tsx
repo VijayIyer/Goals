@@ -24,7 +24,7 @@ const AddTaskModal = ({
       addTask({
         title,
         description,
-        deadline: new Date(deadline),
+        deadline: deadline? new Date(deadline) : new Date(),
         deferred: !!deferred,
         completed: false
       })
