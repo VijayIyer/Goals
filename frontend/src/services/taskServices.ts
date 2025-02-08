@@ -9,7 +9,7 @@ export function listTasks() {
     }); // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
 }
 export function addTask(newTask: NewTask) {
-    return new Promise((res, rej) => {
+    return new Promise<Task>((res, rej) => {
         setTimeout(() => {
             const {title, description, deadline, deferred} = newTask;
             if(!title || !description || !deadline) rej('Error creating new task!');
@@ -17,13 +17,26 @@ export function addTask(newTask: NewTask) {
                 id: mockTasks.length,
                 ...newTask
             });
-            res(newTask);
+            res({
+                id: mockTasks.length,
+                ...newTask
+            });
         }, 1000);
     });
 }
 
+export function getTaskById(id: number) {
+    return new Promise<Task>((res, rej) => {
+        setTimeout(() => {
+            const task = mockTasks.find(task => task.id === id) as Task;
+            if(!task) rej('No task with id found');
+            res(task);
+        }, 1000);
+    })
+}
+
 export function editTask(editedTask: Task) {
-    return new Promise((res, rej) => {
+    return new Promise<Task>((res, rej) => {
         setTimeout(() => {
             const taskToBeEditedIndex = mockTasks.findIndex(task => task.id === editedTask.id);
             mockTasks[taskToBeEditedIndex] = editedTask;
