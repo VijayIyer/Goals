@@ -10,7 +10,7 @@ type EditTaskModalProps = {
     task: Task,
     isOpen: boolean,
     onClose: () => void,
-    onSubmit: () => void
+    onSubmit: (editedTask: Task) => void
 }
 
 export default ({task, isOpen, onClose, onSubmit}: EditTaskModalProps) => {

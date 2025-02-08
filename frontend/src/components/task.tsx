@@ -12,7 +12,8 @@ import EditTaskModal from "./editTaskModal";
 import DeleteTaskModal from "./deleteTaskModal";
 import { markTaskCompleted } from "../services/taskServices";
 
-export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: () => Promise<void>, onTaskDeleted: () => Promise<void>}) => {
+export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: (id: number) => Promise<void>, onTaskDeleted: () => Promise<void>}) => {
+    const [editedTask, setEditedTask] = useState<Task>(task);
     const [isTaskCompleted, setIsTaskCompleted] = useState<boolean>(false)
     const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
     const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
@@ -24,8 +25,9 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
         setIsDeleteTaskModalOpen(true);
     }
 
-    const handleEditTaskModalSubmit = () => {
-        onTaskEdited();
+    const handleEditTaskModalSubmit = (submittedTaskUpdate: Task) => {
+        setEditedTask(submittedTaskUpdate)
+        onTaskEdited(submittedTaskUpdate.id);
         setIsEditTaskModalOpen(false); 
     }
 
@@ -36,7 +38,7 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
 
     const handleEditTaskMarkedCompletedClick = async () => {
         await markTaskCompleted(task.id)
-        onTaskEdited();
+        onTaskEdited(task.id);
     }
 
     useEffect(() => {
@@ -46,16 +48,16 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
     return (
         <>
             <div key={task.id} style={{marginBottom: "2em", textAlign: "center", padding: "0.2em", border: `5px solid ${isTaskCompleted ? "green" : "black"}`}}>
-                <Typography>{task.title}</Typography>
-                <Typography>{task.description}</Typography>
-                {task.deferred && (
+                <Typography>{editedTask.title}</Typography>
+                <Typography>{editedTask.description}</Typography>
+                {editedTask.deferred && (
                     <Typography>
                         This task is backlogged. Please update with a new deadline
                     </Typography>
                 )}
-                {!task.deferred && (
+                {!editedTask.deferred && (
                     <Typography>
-                        {`${task.deadline.getMonth() + 1}/${task.deadline.getDate()}/${task.deadline.getFullYear()}`}
+                        {`${editedTask.deadline.getMonth() + 1}/${editedTask.deadline.getDate()}/${editedTask.deadline.getFullYear()}`}
                     </Typography>
                 )}
                 <IconButton size="large" color="primary" onClick={handleEditTaskModalButtonClick}>
@@ -70,13 +72,13 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
                 </IconButton>
             </div>
             <EditTaskModal
-                task={task}
+                task={editedTask}
                 isOpen={isEditTaskModalOpen}
                 onClose={() => setIsEditTaskModalOpen(false)}
                 onSubmit={handleEditTaskModalSubmit}
             />
             <DeleteTaskModal
-                id={task.id}
+                id={editedTask.id}
                 isOpen={isDeleteTaskModalOpen}
                 onClose={() => setIsDeleteTaskModalOpen(false)}
                 onSubmit={handleDeleteTaskModalSubmit}

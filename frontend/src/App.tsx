@@ -12,17 +12,14 @@ import Tasks from "./components/tasks";
 import AddTaskModal from "./components/addTaskModal";
 
 const App = () => {
-  const [areTasksLoading, setAreTasksLoading] = useState<boolean>(false);
   const [tasks, setTasks] = useState<Array<TaskType>>([]);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const handleAddTaskButtonClick = () => {
     setIsAddTaskModalOpen(true);
   }
   const refreshTasks = async () => {
-    setAreTasksLoading(true);
     const tempTasks = await listTasks();
     setTasks(tempTasks);
-    setAreTasksLoading(false);
   }
   const handleAddTaskModalClose = () => {
     setIsAddTaskModalOpen(false);
@@ -31,6 +28,7 @@ const App = () => {
     refreshTasks();
     setIsAddTaskModalOpen(false);
   }
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div style={{textAlign: "center"}}>
@@ -38,18 +36,11 @@ const App = () => {
             Create Task
           </Button>
       </div>
-      {areTasksLoading && (
-        <div style={{textAlign: "center"}}>
-          <CircularProgress size="2rem" />
-        </div>
-      )}
-      {!areTasksLoading && (
-        <Tasks
-          tasks={tasks}
-          onTaskEdited={refreshTasks}
-          onTaskDeleted={refreshTasks}
-        />
-      )}
+      <Tasks
+        tasks={tasks}
+        onTaskEdited={refreshTasks}
+        onTaskDeleted={refreshTasks}
+      />
       {isAddTaskModalOpen && (
         <AddTaskModal
           isAddTaskModalOpen={isAddTaskModalOpen}
