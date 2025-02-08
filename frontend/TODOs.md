@@ -5,6 +5,8 @@
    - [ ] Improve and add validation to date field 
    - [ ] Improve the way date is displayed (should be as per localization, customer choosen format, etc.)
    - [ ] Add validation for when to display date
+   - [X] Defaults to Today's date when no deadline date provided
+   - [ ] Improve logic for selecting date when no deadline date is provided
 [ ] Improve forms (validations, masking, change handlers)
     - [ ] Use useReducer for form submission
     - [ ] Showing error messages
@@ -18,6 +20,7 @@
 [ ] Improve Edit Task View
     - [ ] Find better way to style when task marked completed
     - [ ] Decide how to structure services for task marking completion
+    - [ ] On marking completion, update single task, no refresh for all tasks
 [ ] Improve Delete Task view - decide how much detail of the task to show
 [ ] Add tools with project scope that make it easier to develop (basic ones like prettier, eslint)
 [ ] Improve loading and error indicators overall
@@ -25,7 +28,8 @@
     - [ ] Make error type more than just string
 [ ] Unit testing
 [ ] Move common code into a common components or utils folder!
-
+[ ] Tooltips on controls
+[ ] Make it so services are interchangeable (mockserver or express) with no difference in how it is called
 
 ### Take to backend
 [ ] Improve overall website capabilities
