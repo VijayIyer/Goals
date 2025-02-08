@@ -36,9 +36,11 @@ const AddTaskModal = ({
       <Dialog
         open={isAddTaskModalOpen}
         onClose={onClose}
-        PaperProps={{
-          component: 'form',
-          onSubmit: handleSubmit
+        slotProps={{
+          paper: {
+              component: 'form',
+              onSubmit: handleSubmit
+          }
         }}
       >
         <DialogContent>
