@@ -28,8 +28,15 @@ const controller = {
             const updatedTask = await TaskModel.update({
                 title,
                 description
-            }, {where: {id}});
-            return res.status(200).json(updatedTask);
+            }, {
+                where: {id},
+                returning: true,
+                plain: true
+            })
+            .then(async result => {
+                const response = await TaskModel.findByPk(id)
+                return res.status(200).json(response);
+            })
         } catch(err) {
             console.error(err);
             return res.status(500).json(err);
