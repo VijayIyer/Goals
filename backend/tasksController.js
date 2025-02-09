@@ -23,11 +23,14 @@ const controller = {
     },    
     update: async (req, res) => {
         const {id} = req.params;
-        const {title, description} = req.body;
+        const {title, description, deferred, deadline, completed} = req.body;
         try {
-            const updatedTask = await TaskModel.update({
+            await TaskModel.update({
                 title,
-                description
+                description,
+                deferred,
+                deadline,
+                completed
             }, {
                 where: {id},
                 returning: true,
