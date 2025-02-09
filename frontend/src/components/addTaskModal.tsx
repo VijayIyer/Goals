@@ -27,16 +27,16 @@ const AddTaskModal = ({
       const {title, description, deadline, deferred} = formJson;
       setIsAddTaskLoading(true)
       service.createTask({
-		title, 
-		description,
-		deadline: deadline? new Date(deadline) : new Date(),
-		deferred: !!deferred,
-		completed: false
+          title, 
+          description,
+          deadline: deadline? new Date(deadline) : new Date(),
+          deferred: !!deferred,
+          completed: false
       })
       .then((res: Task) => {
-		console.log(JSON.stringify(res));
-		onSubmit();
-	  })
+        console.log(JSON.stringify(res), res.deadline.getMonth());
+        onSubmit();
+	    })
       .catch(setAddTaskError)
       .finally(() => setIsAddTaskLoading(false))
     }
