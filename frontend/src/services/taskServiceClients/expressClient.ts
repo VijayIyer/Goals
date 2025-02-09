@@ -12,7 +12,8 @@ class ExpressClient extends TaskServiceClient {
 				method: "POST",
 				body: JSON.stringify(newTask),
 				headers: {
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
+					'Access-Control-Allow-Origin':'*'
 				}
 		})
 			.then(res => res.json())
@@ -40,7 +41,8 @@ class ExpressClient extends TaskServiceClient {
 			method: "PUT",
 			body: JSON.stringify(editedTask),
 			headers: {
-				"Content-Type": "application/json"
+				"Content-Type": "application/json",
+				'Access-Control-Allow-Origin':'*'
 			}
 		})
 			.then(res => res.json())
