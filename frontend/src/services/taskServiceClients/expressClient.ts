@@ -10,18 +10,32 @@ class ExpressClient extends TaskServiceClient {
 	createTask(newTask: NewTask): Promise<Task> {
 		return fetch(this.baseUrl + `/tasks`, {
 				method: "POST",
-				body: JSON.stringify(newTask),
+				body: JSON.stringify({
+					...newTask,
+					deadline: newTask.deadline.toDateString()
+				}),
 				headers: {
 					"Content-Type": "application/json",
 					'Access-Control-Allow-Origin':'*'
 				}
 		})
 			.then(res => res.json())
+			.then(res => {
+				console.log(`date is ${res.deadline}`)
+				return {
+					...res,
+					deadline: new Date(res.deadline)
+				}
+			})
 			.catch(console.error)
 	}
 	async listTasks(): Promise<Array<Task>> {
 		return fetch(this.baseUrl + `/tasks`)
 			.then(res => res.json())
+			.then((res: any) => res.map((task: any):Task => ({
+				...task,
+				deadline: new Date(task.deadline)
+		})))
 			.catch(console.error)
  	} // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
 	getTaskById(id: number): Promise<Task> {
@@ -46,6 +60,10 @@ class ExpressClient extends TaskServiceClient {
 			}
 		})
 			.then(res => res.json())
+			.then(res => ({
+				...res,
+				deadline: new Date(res.deadline)
+			}))
 			.catch(console.error)
 	}
 }
