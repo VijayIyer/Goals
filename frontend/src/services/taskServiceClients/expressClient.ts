@@ -19,19 +19,32 @@ class ExpressClient extends TaskServiceClient {
 					'Access-Control-Allow-Origin':'*'
 				}
 		})
-			.then(res => res.json())
+			.then(response => {
+				if (!response.ok) {
+					throw `HTTP error ${response.status}`;
+				};
+				return response.json();
+			})
 			.then(res => {
-				console.log(`date is ${res.deadline}`)
 				return {
 					...res,
 					deadline: new Date(res.deadline)
 				}
 			})
-			.catch(console.error)
 	}
 	async listTasks(): Promise<Array<Task>> {
-		return fetch(this.baseUrl + `/tasks`)
-			.then(res => res.json())
+		return fetch(this.baseUrl + `/tasks`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				'Access-Control-Allow-Origin':'*'
+			}
+		}).then(response => {
+			if (!response.ok) {
+				throw `HTTP error ${response.status}`;
+			};
+			return response.json();
+		})
 			.then((res: any) => res.map((task: any):Task => ({
 				...task,
 				deadline: new Date(task.deadline)
@@ -39,15 +52,33 @@ class ExpressClient extends TaskServiceClient {
 			.catch(console.error)
  	} // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
 	getTaskById(id: number): Promise<Task> {
-		return fetch(this.baseUrl + `/tasks/${id}`)
-			.then(res => res.json())
+		return fetch(this.baseUrl + `/tasks/${id}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				'Access-Control-Allow-Origin':'*'
+			}
+		}).then(response => {
+			if (!response.ok) {
+				throw `HTTP error ${response.status}`;
+			};
+			return response.json();
+		})
 			.catch(console.error)
 	}
 	deleteTaskById(deletedTaskId: number) {
 		return fetch(this.baseUrl + `/tasks/${deletedTaskId}`, {
-			method: "DELETE"
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				'Access-Control-Allow-Origin':'*'
+			}
+		}).then(response => {
+			if (!response.ok) {
+				throw `HTTP error ${response.status}`;
+			};
+			return response.json();
 		})
-			.then(res => res.json())
 			.catch(console.error)
 	}
 	editTask(editedTask: Task) {
@@ -59,12 +90,16 @@ class ExpressClient extends TaskServiceClient {
 				'Access-Control-Allow-Origin':'*'
 			}
 		})
-			.then(res => res.json())
+		.then(response => {
+			if (!response.ok) {
+				throw `HTTP error ${response.status}`;
+			};
+			return response.json();
+		})
 			.then(res => ({
 				...res,
 				deadline: new Date(res.deadline)
 			}))
-			.catch(console.error)
 	}
 }
 

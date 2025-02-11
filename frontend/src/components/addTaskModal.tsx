@@ -16,8 +16,8 @@ const AddTaskModal = ({
     onClose: () => void,
     onSubmit: () => void
   }) => {
-	const {serviceType} = useContext(ServicesContext);
-	const service = new TaskServiceClientFactory(serviceType).getServiceClient();
+    const {serviceType} = useContext(ServicesContext);
+    const service = new TaskServiceClientFactory(serviceType).getServiceClient();
     const [isAddTaskLoading, setIsAddTaskLoading] = useState<boolean>(false);
     const [addTaskError, setAddTaskError] = useState<string>("");
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -33,10 +33,7 @@ const AddTaskModal = ({
           deferred: !!deferred,
           completed: false
       })
-      .then((res: Task) => {
-        console.log(JSON.stringify(res), res.deadline.getMonth());
-        onSubmit();
-	    })
+      .then(onSubmit)
       .catch(setAddTaskError)
       .finally(() => setIsAddTaskLoading(false))
     }

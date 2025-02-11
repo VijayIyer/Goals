@@ -41,10 +41,6 @@ export default ({task, isOpen, onClose, onSubmit}: EditTaskModalProps) => {
         event.preventDefault();
         setIsEditTaskSubmitLoading(true);
         service.editTask(editedTask)
-            .then((editedTask: any) => ({
-                ...editedTask,
-                deadline: dayjs(editedTask).toDate()
-            }))
             .then(onSubmit)
             .catch(setEditTaskError)
             .finally(() => setIsEditTaskSubmitLoading(false))
