@@ -48,6 +48,10 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
                 completed: !editedTask.completed
             })
             .then((editedTask: Task) => {
+                setEditedTask(task => ({
+                    ...task,
+                    completed: !task.completed
+                }))
                 onTaskEdited(editedTask.id)
             })
     }
