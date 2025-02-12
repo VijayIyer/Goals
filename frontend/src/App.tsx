@@ -1,66 +1,55 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useState } from "react";
+import {Button, CircularProgress} from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-// Components
-import SignIn from './components/auth/signin';
-import SignUp from './components/auth/signup';
-import {Tasks} from './components/task';
-import { Alert } from '@mui/material';
-const rootUrl = process.env.REACT_APP_SERVER_URL;
+import { Task as TaskType } from "./taskTypes";
+
+import { listTasks } from "./services/taskServices";
+
+import Tasks from "./components/tasks";
+import AddTaskModal from "./components/addTaskModal";
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [userId, setUserId] = useState(null)
-
-  const handleSignIn = async (signInFormData: {username: string, password: string}) => {
-    // Perform authentication logic here
-    fetch(`${rootUrl}/user/signin`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(signInFormData)
-    })
-    .then(response => response.json())
-    .then(() => setIsAuthenticated(true))
-    .catch(() => {
-      setErrorMessage('Error signing in, please try again or use different credentials')
-    });
-  };
-
-  const handleSignUp = (signUpFormData: {
-    username: string,
-    password: string,
-    confirmPassword: string
-  }) => {
-    // Perform authentication logic here
-    fetch(`${rootUrl}/user/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(signUpFormData)
-    })
-    .then(response => response.json())
-    .then(data => {
-      setUserId(data.id)
-      setIsAuthenticated(true);
-      setErrorMessage("");
-    })
-    .catch(() => {
-      setErrorMessage('Error signing up, please try again later or use different credentials')
-    });
-  };
+  const [tasks, setTasks] = useState<Array<TaskType>>([]);
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const handleAddTaskButtonClick = () => {
+    setIsAddTaskModalOpen(true);
+  }
+  const refreshTasks = async () => {
+    const tempTasks = await listTasks();
+    setTasks(tempTasks);
+  }
+  const handleAddTaskModalClose = () => {
+    setIsAddTaskModalOpen(false);
+  }
+  const handleAddTaskModalSubmit = () => {
+    refreshTasks();
+    setIsAddTaskModalOpen(false);
+  }
 
   return (
-    <>
-      {errorMessage && <Alert severity='error'>{errorMessage}</Alert>}
-      <Router>
-        <Routes>
-          <Route path="/" element={isAuthenticated ? <Navigate to="/tasks" /> : <SignIn onSignIn={handleSignIn} />} />
-          <Route path="/signup" element={isAuthenticated ? <Navigate to="/tasks" /> : <SignUp onSignUp={handleSignUp} />} />
-          <Route path="/tasks" element={isAuthenticated ? <Tasks userId={userId || ""} /> : <Navigate to="/" />} />
-        </Routes>
-      </Router>
-    </>
-  );
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div style={{textAlign: "center"}}>
+          <Button onClick={handleAddTaskButtonClick} variant="contained" startIcon={<AddIcon />}>
+            Create Task
+          </Button>
+      </div>
+      <Tasks
+        tasks={tasks}
+        onTaskEdited={refreshTasks}
+        onTaskDeleted={refreshTasks}
+      />
+      {isAddTaskModalOpen && (
+        <AddTaskModal
+          isAddTaskModalOpen={isAddTaskModalOpen}
+          onClose={handleAddTaskModalClose}
+          onSubmit={handleAddTaskModalSubmit}
+        />
+      )}
+    </LocalizationProvider>
+  )
 };
 
 export default App;
