@@ -19,6 +19,7 @@ type EditTaskModalProps = {
 export default ({task, isOpen, onClose, onSubmit}: EditTaskModalProps) => {
 	const {serviceType} = useContext(ServicesContext);
 	const service = new TaskServiceClientFactory(serviceType).getServiceClient();
+
     const [editTaskError, setEditTaskError] = useState<string>("");
     const [isEditedTaskSubmitLoading, setIsEditTaskSubmitLoading] = useState<boolean>(false);
     const [editedTask, setEditedTask] = useState<Task>(task);
