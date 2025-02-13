@@ -9,7 +9,6 @@ import { TaskServiceClientFactory } from "./services/taskServiceClientFactory";
 
 import Tasks from "./components/tasks";
 import AddTaskModal from "./components/addTaskModal";
-import task from "./components/task";
 
 const App = () => {
 	const {serviceType} = useContext(ServicesContext);
@@ -17,18 +16,18 @@ const App = () => {
 	const [tasks, setTasks] = useState<Array<TaskType>>([]);
 	const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
 	const handleAddTaskButtonClick = () => {
-    	setIsAddTaskModalOpen(true);
+    		setIsAddTaskModalOpen(true);
 	}
   	const refreshTasks = async () => {
-    	const tempTasks = await service.listTasks();
-    	setTasks(tempTasks);
+		const tempTasks = await service.listTasks();
+		setTasks(tempTasks);
  	}
   	const handleAddTaskModalClose = () => {
-    	setIsAddTaskModalOpen(false);
+ 	   	setIsAddTaskModalOpen(false);
   	}
   	const handleAddTaskModalSubmit = () => {
-    	refreshTasks();
-    	setIsAddTaskModalOpen(false);
+    		refreshTasks();
+    		setIsAddTaskModalOpen(false);
   	}
 	return (
 		<>
@@ -51,5 +50,6 @@ const App = () => {
 			)}
 		</>	
 	)
+}
 
 export default App;
