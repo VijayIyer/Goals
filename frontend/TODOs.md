@@ -1,6 +1,15 @@
 ## This file is being used temporarily to add quick features (might later migrate to a Changelog.md or some form of user story tracking third-party software)
 
-### TODOs
+### Note - No longer feasible to be working on branches in parallel. Branch out from frontend/features and merge back
+
+### TODOs (merged TODOs from services-abstraction, add-tasks)
+[X] Make it so services are interchangeable (mockserver or express) with no difference in how it is called
+	- [ ] Make this better, compare with standard solutions
+	- [ ] Why was it required to export an instance itself, is this done everytime?
+[X] Refactor Services folder with all implementations of a particular services e.g taskServices with express, mock, ...etc implementation
+[X] Get service type from .env file
+[ ] Add unit tests only for testing services
+[ ] Seperate out types for sending request vs parsing
 [ ] Improve all work regarding Dates
    - [ ] Improve and add validation to date field 
    - [ ] Improve the way date is displayed (should be as per localization, customer choosen format, etc.)

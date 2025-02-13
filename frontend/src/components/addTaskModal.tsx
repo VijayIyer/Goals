@@ -1,8 +1,11 @@
-import {FormEvent, useState} from "react";
+import {FormEvent, useState, useContext} from "react";
 import { Alert, Button, Dialog, DialogContent, DialogContentText, DialogActions, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 
+import ServicesContext from "../services/servicesProvider";
+import {TaskServiceClientFactory} from "../services/taskServiceClientFactory";
 import { addTask } from "../services/taskServices";
+import { Task } from "../taskTypes";
 
 const AddTaskModal = ({
     onClose,
@@ -13,6 +16,8 @@ const AddTaskModal = ({
     onClose: () => void,
     onSubmit: () => void
   }) => {
+    const {serviceType} = useContext(ServicesContext);
+    const service = new TaskServiceClientFactory(serviceType).getServiceClient();
     const [isAddTaskLoading, setIsAddTaskLoading] = useState<boolean>(false);
     const [addTaskError, setAddTaskError] = useState<string>("");
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -21,12 +26,12 @@ const AddTaskModal = ({
       const formJson = Object.fromEntries((formData as any).entries());
       const {title, description, deadline, deferred} = formJson;
       setIsAddTaskLoading(true)
-      addTask({
-        title,
-        description,
-        deadline: deadline? new Date(deadline) : new Date(),
-        deferred: !!deferred,
-        completed: false
+      service.createTask({
+          title, 
+          description,
+          deadline: deadline? new Date(deadline) : new Date(),
+          deferred: !!deferred,
+          completed: false
       })
       .then(onSubmit)
       .catch(setAddTaskError)

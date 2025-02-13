@@ -1,10 +1,13 @@
 import dayjs, { Dayjs } from 'dayjs';
 
+import { useContext } from 'react';
 import { Alert, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, FormControl, FormControlLabel, TextField, Typography } from "@mui/material";
 import { Task } from "../taskTypes";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { editTask } from "../services/taskServices";
 import { DatePicker } from "@mui/x-date-pickers";
+
+import ServicesContext from "../services/servicesProvider";
+import { TaskServiceClientFactory } from "../services/taskServiceClientFactory";
 
 type EditTaskModalProps = {
     task: Task,
@@ -14,6 +17,9 @@ type EditTaskModalProps = {
 }
 
 export default ({task, isOpen, onClose, onSubmit}: EditTaskModalProps) => {
+	const {serviceType} = useContext(ServicesContext);
+	const service = new TaskServiceClientFactory(serviceType).getServiceClient();
+
     const [editTaskError, setEditTaskError] = useState<string>("");
     const [isEditedTaskSubmitLoading, setIsEditTaskSubmitLoading] = useState<boolean>(false);
     const [editedTask, setEditedTask] = useState<Task>(task);
@@ -35,7 +41,7 @@ export default ({task, isOpen, onClose, onSubmit}: EditTaskModalProps) => {
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsEditTaskSubmitLoading(true);
-        editTask(editedTask)
+        service.editTask(editedTask)
             .then(onSubmit)
             .catch(setEditTaskError)
             .finally(() => setIsEditTaskSubmitLoading(false))

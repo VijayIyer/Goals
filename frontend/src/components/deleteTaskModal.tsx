@@ -1,7 +1,9 @@
-import { FormEvent, useState } from "react"
+import { FormEvent, useState, useContext } from "react"
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText } from "@mui/material";
 
-import { deleteTask } from "../services/taskServices";
+import ServicesContext from "../services/servicesProvider";
+import { TaskServiceClientFactory } from "../services/taskServiceClientFactory";
+import { Task } from "../taskTypes";
 
 type DeleteTaskModalProps = {
     id: number,
@@ -11,13 +13,15 @@ type DeleteTaskModalProps = {
 }
 
 export default ({id, isOpen, onClose, onSubmit}: DeleteTaskModalProps) => {
+	const {serviceType} = useContext(ServicesContext);
+	const service = new TaskServiceClientFactory(serviceType).getServiceClient();
     const [isDeleteTaskSubmitLoading, setIsDeleteTaskSubmitLoading] = useState<boolean>(false);
     const [deleteTaskError, setDeleteTaskError] = useState<string>("");
     const handleDeleteTaskSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsDeleteTaskSubmitLoading(true)
-        deleteTask(id)
-            .then(res => {
+        service.deleteTaskById(id)
+            .then((res: Task) => {
                 onSubmit();
             })
             .catch(setDeleteTaskError)

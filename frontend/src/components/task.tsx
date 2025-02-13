@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { IconButton, Paper, Typography } from "@mui/material"
 
 import { Task } from "../taskTypes";
@@ -10,9 +10,14 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
 import EditTaskModal from "./editTaskModal";
 import DeleteTaskModal from "./deleteTaskModal";
-import { markTaskCompleted } from "../services/taskServices";
+
+import ServicesContext from "../services/servicesProvider";
+import { TaskServiceClientFactory } from "../services/taskServiceClientFactory";
+import { TaskServiceClient } from "../services/taskServiceClients/client";
 
 export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: (id: number) => Promise<void>, onTaskDeleted: () => Promise<void>}) => {
+    const {serviceType} = useContext(ServicesContext);
+    const service: TaskServiceClient = new TaskServiceClientFactory(serviceType).getServiceClient();
     const [editedTask, setEditedTask] = useState<Task>(task);
     const [isTaskCompleted, setIsTaskCompleted] = useState<boolean>(false)
     const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
@@ -37,8 +42,18 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
     }
 
     const handleEditTaskMarkedCompletedClick = async () => {
-        await markTaskCompleted(task.id)
-        onTaskEdited(task.id);
+        await service
+            .editTask({
+                ...editedTask,
+                completed: !editedTask.completed
+            })
+            .then((editedTask: Task) => {
+                setEditedTask(task => ({
+                    ...task,
+                    completed: !task.completed
+                }))
+                onTaskEdited(editedTask.id)
+            })
     }
 
     useEffect(() => {
