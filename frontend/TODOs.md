@@ -37,7 +37,8 @@
     - [ ] Make error type more than just string
 [ ] Unit testing
 [ ] Move common code into a common components or utils folder!
-[ ] Tooltips on controls
+[ ] Tooltips
+    - [X] Add tooltip on buttons in main view
 [ ] Make it so services are interchangeable (mockserver or express) with no difference in how it is called
 [ ] Turn tasks into Card container - (this should be possible to easily revert)
 

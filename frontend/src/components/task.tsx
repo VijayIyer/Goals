@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { Card, CardActions, CardContent, IconButton, Paper, Typography } from "@mui/material"
+import { Box, Card, CardActions, CardContent, IconButton, Paper, Tooltip, Typography } from "@mui/material"
 
 import { Task } from "../taskTypes";
 
@@ -78,16 +78,22 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
                     )}
                 </CardContent>
                 <CardActions>
-                    <IconButton size="large" color="primary" onClick={handleEditTaskModalButtonClick}>
-                        <Edit />
-                    </IconButton>
-                    <IconButton size="large" color="primary" onClick={handleEditTaskMarkedCompletedClick}>
-                        {!isTaskCompleted && <CheckBoxOutlineBlankIcon />}
-                        {isTaskCompleted && <CheckBoxIcon />}
-                    </IconButton>
-                    <IconButton size="large" color="primary" onClick={handleDeleteTaskModalButtonClick}>
-                        <DeleteIcon />
-                    </IconButton>
+                    <Tooltip title="Edit Task Contents">
+                        <IconButton size="large" color="primary" onClick={handleEditTaskModalButtonClick}>
+                            <Edit />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Mark Task as Completed">
+                        <IconButton size="large" color="primary" onClick={handleEditTaskMarkedCompletedClick}>
+                            {!isTaskCompleted && <CheckBoxOutlineBlankIcon />}
+                            {isTaskCompleted && <CheckBoxIcon />}
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete Task">
+                        <IconButton size="large" color="primary" onClick={handleDeleteTaskModalButtonClick}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
                 </CardActions>
             </Card>
             <EditTaskModal
