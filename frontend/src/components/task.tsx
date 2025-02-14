@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { IconButton, Paper, Typography } from "@mui/material"
+import { Card, CardActions, CardContent, IconButton, Paper, Typography } from "@mui/material"
 
 import { Task } from "../taskTypes";
 
@@ -62,30 +62,34 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
 
     return (
         <>
-            <div key={task.id} style={{marginBottom: "2em", textAlign: "center", padding: "0.2em", border: `5px solid ${isTaskCompleted ? "green" : "black"}`}}>
-                <Typography>{editedTask.title}</Typography>
-                <Typography>{editedTask.description}</Typography>
-                {editedTask.deferred && (
-                    <Typography>
-                        This task is backlogged. Please update with a new deadline
-                    </Typography>
-                )}
-                {!editedTask.deferred && (
-                    <Typography>
-                        {`${editedTask.deadline.getMonth() + 1}/${editedTask.deadline.getDate()}/${editedTask.deadline.getFullYear()}`}
-                    </Typography>
-                )}
-                <IconButton size="large" color="primary" onClick={handleEditTaskModalButtonClick}>
-                    <Edit />
-                </IconButton>
-                <IconButton size="large" color="primary" onClick={handleEditTaskMarkedCompletedClick}>
-                    {!isTaskCompleted && <CheckBoxOutlineBlankIcon />}
-                    {isTaskCompleted && <CheckBoxIcon />}
-                </IconButton>
-                <IconButton size="large" color="primary" onClick={handleDeleteTaskModalButtonClick}>
-                    <DeleteIcon />
-                </IconButton>
-            </div>
+            <Card sx={{ maxWidth: 345, borderRadius: 5 }} raised>
+                <CardContent>
+                    <Typography noWrap gutterBottom variant="h5" component="div" textAlign={"center"}>{editedTask.title}</Typography>
+                    <Typography gutterBottom variant="body2">{editedTask.description}</Typography>
+                    {editedTask.deferred && (
+                        <Typography>
+                            This task is backlogged. Please update with a new deadline
+                        </Typography>
+                    )}
+                    {!editedTask.deferred && (
+                        <Typography textAlign={"center"}>
+                            {editedTask.deadline.toLocaleDateString("en-US", {year: "numeric", day: "numeric", month: "long"})}
+                        </Typography>
+                    )}
+                </CardContent>
+                <CardActions>
+                    <IconButton size="large" color="primary" onClick={handleEditTaskModalButtonClick}>
+                        <Edit />
+                    </IconButton>
+                    <IconButton size="large" color="primary" onClick={handleEditTaskMarkedCompletedClick}>
+                        {!isTaskCompleted && <CheckBoxOutlineBlankIcon />}
+                        {isTaskCompleted && <CheckBoxIcon />}
+                    </IconButton>
+                    <IconButton size="large" color="primary" onClick={handleDeleteTaskModalButtonClick}>
+                        <DeleteIcon />
+                    </IconButton>
+                </CardActions>
+            </Card>
             <EditTaskModal
                 task={editedTask}
                 isOpen={isEditTaskModalOpen}

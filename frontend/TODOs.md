@@ -39,6 +39,7 @@
 [ ] Move common code into a common components or utils folder!
 [ ] Tooltips on controls
 [ ] Make it so services are interchangeable (mockserver or express) with no difference in how it is called
+[ ] Turn tasks into Card container - (this should be possible to easily revert)
 
 ### Take to backend
 [ ] Improve overall website capabilities
