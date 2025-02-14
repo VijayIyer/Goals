@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { Box, Card, CardActions, CardContent, IconButton, Paper, Tooltip, Typography } from "@mui/material"
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
 import { Task } from "../taskTypes";
 
@@ -64,17 +65,23 @@ export default ({task, onTaskEdited, onTaskDeleted}: {task: Task, onTaskEdited: 
         <>
             <Card sx={{ maxWidth: 345, borderRadius: 5 }} raised>
                 <CardContent>
-                    <Typography noWrap gutterBottom variant="h5" component="div" textAlign={"center"}>{editedTask.title}</Typography>
-                    <Typography gutterBottom variant="body2">{editedTask.description}</Typography>
+                    <Typography noWrap gutterBottom variant="h5" component="div">{editedTask.title}</Typography>
+                    {!editedTask.description && <Typography gutterBottom sx={{fontWeight: 'light'}}>No description added</Typography>}
+                    {editedTask.description && <Typography gutterBottom>{editedTask.description}</Typography>}
                     {editedTask.deferred && (
                         <Typography>
                             This task is backlogged. Please update with a new deadline
                         </Typography>
                     )}
                     {!editedTask.deferred && (
-                        <Typography textAlign={"center"}>
-                            {editedTask.deadline.toLocaleDateString("en-US", {year: "numeric", day: "numeric", month: "long"})}
-                        </Typography>
+                        <Tooltip title="Deadline for completing task">
+                            <Typography>
+                                <Box sx={{ fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: 1}}>
+                                    <HourglassTopIcon color="primary" />
+                                    {editedTask.deadline.toLocaleDateString("en-US", {year: "numeric", day: "numeric", month: "long"})}
+                                </Box>
+                            </Typography>
+                        </Tooltip>
                     )}
                 </CardContent>
                 <CardActions>
