@@ -5,6 +5,8 @@
     [ ] Add auth router for user auth functionality to support multiple users
 [ ] Add services for communicating with backend, instead of doing DB communication in controller itself
 [ ] Update Task Model
-    [X] Add logic to make default deadline 1 day from when created
-    [X] Validation logic to prevent deadlines in the past
+    [ ] Add more validations as required
 [ ] Points Model for summarizing and keeping track of user's points on completed tasks!
+    - [X] Start with creating an endpoint for getting filtered value of how many tasks are completed vs total
+[ ] Complete Project to Typescript
+[ ] Tasks controller - return error for date in the past
