@@ -1,7 +1,7 @@
 import { mockTasks } from '../mockTasks';
 import { Task, NewTask } from '../taskTypes';
 
-export function listTasks() {
+export function getAllTasks() {
     return new Promise<Array<Task>>(res => {
         setTimeout(() => {
             res(mockTasks.slice());
