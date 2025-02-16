@@ -10,7 +10,7 @@ class MockClient extends TaskServiceClient {
 		console.log(`creating new task in mock client`)
 		return new Promise<Task>((res, rej) => {
 			setTimeout(() => {
-				const {title, description, deadline, deferred} = newTask;
+				const {title, description, deadline} = newTask;
 				if(!title || !description || !deadline) rej('Error creating new task!');
 				this.mockTasks.push({
 					id: this.mockTasks.length,
@@ -25,12 +25,12 @@ class MockClient extends TaskServiceClient {
 	}
 	async listTasks(): Promise<Array<Task>> {
 		console.log(`getting tasks from mock client`)
-		return new Promise<Array<Task>>((res, rej) => {
+		return new Promise<Array<Task>>((res) => {
 			setTimeout(() => {
 				res(this.mockTasks.slice())
 			}, 1000);
-    	});
- 	} // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
+		});
+	} // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
 	getTaskById(id: number): Promise<Task> {
 		return new Promise<Task>((res, rej) => {
 			setTimeout(() => {

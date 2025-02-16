@@ -15,7 +15,7 @@ const serviceType = process.env.REACT_APP_SERVICE_TYPE === "MOCK" ? ServiceType.
 
 root.render(
 	<React.StrictMode>
-    	<ServicesContext.Provider 
+		<ServicesContext.Provider 
 			value={{
 				serviceType
 			}}>

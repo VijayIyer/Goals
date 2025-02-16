@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { Box, Card, CardActions, CardContent, IconButton, Paper, Tooltip, Typography } from "@mui/material"
+import { Box, Card, CardActions, CardContent, IconButton, Tooltip, Typography } from "@mui/material"
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
 import { Task } from "../taskTypes";

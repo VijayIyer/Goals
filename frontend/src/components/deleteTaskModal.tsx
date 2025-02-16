@@ -3,7 +3,6 @@ import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText 
 
 import ServicesContext from "../services/servicesProvider";
 import { TaskServiceClientFactory } from "../services/taskServiceClientFactory";
-import { Task } from "../taskTypes";
 
 type DeleteTaskModalProps = {
     id: number,
@@ -21,7 +20,7 @@ export default ({id, isOpen, onClose, onSubmit}: DeleteTaskModalProps) => {
         event.preventDefault();
         setIsDeleteTaskSubmitLoading(true)
         service.deleteTaskById(id)
-            .then((res: Task) => {
+            .then(() => {
                 onSubmit();
             })
             .catch(setDeleteTaskError)

@@ -2,7 +2,7 @@ import { mockTasks } from "../mockTasks";
 import { Task, NewTask } from "../taskTypes";
 
 export function listTasks() {
-    return new Promise<Array<Task>>((res, rej) => {
+    return new Promise<Array<Task>>((res) => {
         setTimeout(() => {
             res(mockTasks.slice())
         }, 1000);
@@ -11,7 +11,7 @@ export function listTasks() {
 export function addTask(newTask: NewTask) {
     return new Promise<Task>((res, rej) => {
         setTimeout(() => {
-            const {title, description, deadline, deferred} = newTask;
+            const {title, description, deadline} = newTask;
             if(!title || !description || !deadline) rej('Error creating new task!');
             mockTasks.push({
                 id: mockTasks.length,
@@ -58,7 +58,7 @@ export function deleteTask(deleteTaskId: number) {
 }
 
 export function markTaskCompleted(taskId: number) {
-    return new Promise<Task>((res, rej) => {
+    return new Promise<Task>((res) => {
         setTimeout(() => {
             const taskToBeEditedIndex = mockTasks.findIndex(task => task.id === taskId);
             mockTasks[taskToBeEditedIndex].completed = !mockTasks[taskToBeEditedIndex].completed;

@@ -2,7 +2,7 @@ import { NewTask, Task } from "../../taskTypes";
 import { TaskServiceClient } from "./client";
 
 class ExpressClient extends TaskServiceClient {
-	baseUrl: String = "";
+	baseUrl: string = "";
 	constructor(baseUrl: string) {
 		super();
 		this.baseUrl = baseUrl;
@@ -22,7 +22,7 @@ class ExpressClient extends TaskServiceClient {
 			.then(response => {
 				if (!response.ok) {
 					throw `HTTP error ${response.status}`;
-				};
+				}
 				return response.json();
 			})
 			.then(res => {
@@ -42,15 +42,17 @@ class ExpressClient extends TaskServiceClient {
 		}).then(response => {
 			if (!response.ok) {
 				throw `HTTP error ${response.status}`;
-			};
+			}
 			return response.json();
 		})
-			.then((res: any) => res.map((task: any):Task => ({
+			.then((res: Array<Task>) => res.map((task: Task):Task => ({
 				...task,
 				deadline: new Date(task.deadline)
 		})))
-			.catch(console.error)
- 	} // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
+			.catch((err) => {
+				console.error(err);
+			})
+	} // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
 	getTaskById(id: number): Promise<Task> {
 		return fetch(this.baseUrl + `/tasks/${id}`, {
 			method: "GET",
@@ -61,7 +63,7 @@ class ExpressClient extends TaskServiceClient {
 		}).then(response => {
 			if (!response.ok) {
 				throw `HTTP error ${response.status}`;
-			};
+			}
 			return response.json();
 		})
 			.catch(console.error)
@@ -76,7 +78,7 @@ class ExpressClient extends TaskServiceClient {
 		}).then(response => {
 			if (!response.ok) {
 				throw `HTTP error ${response.status}`;
-			};
+			}
 			return response.json();
 		})
 			.catch(console.error)
@@ -93,7 +95,7 @@ class ExpressClient extends TaskServiceClient {
 		.then(response => {
 			if (!response.ok) {
 				throw `HTTP error ${response.status}`;
-			};
+			}
 			return response.json();
 		})
 			.then(res => ({

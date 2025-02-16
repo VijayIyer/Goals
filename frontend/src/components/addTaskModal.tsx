@@ -4,8 +4,6 @@ import { DatePicker } from "@mui/x-date-pickers";
 
 import ServicesContext from "../services/servicesProvider";
 import {TaskServiceClientFactory} from "../services/taskServiceClientFactory";
-import { addTask } from "../services/taskServices";
-import { Task } from "../taskTypes";
 
 const AddTaskModal = ({
     onClose,

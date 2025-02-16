@@ -16,19 +16,19 @@ const App = () => {
 	const [tasks, setTasks] = useState<Array<TaskType>>([]);
 	const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
 	const handleAddTaskButtonClick = () => {
-    		setIsAddTaskModalOpen(true);
+		setIsAddTaskModalOpen(true);
 	}
-  	const refreshTasks = async () => {
+	const refreshTasks = async () => {
 		const tempTasks = await service.listTasks();
 		setTasks(tempTasks);
- 	}
-  	const handleAddTaskModalClose = () => {
- 	   	setIsAddTaskModalOpen(false);
-  	}
-  	const handleAddTaskModalSubmit = () => {
-    		refreshTasks();
-    		setIsAddTaskModalOpen(false);
-  	}
+	}
+	const handleAddTaskModalClose = () => {
+		setIsAddTaskModalOpen(false);
+	}
+	const handleAddTaskModalSubmit = () => {
+		refreshTasks();
+		setIsAddTaskModalOpen(false);
+	}
 	return (
 		<>
 			<div style={{textAlign: "center"}}>

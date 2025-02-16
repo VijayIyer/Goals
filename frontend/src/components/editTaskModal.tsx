@@ -1,7 +1,7 @@
 import dayjs, { Dayjs } from 'dayjs';
 
 import { useContext } from 'react';
-import { Alert, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, FormControl, FormControlLabel, TextField, Typography } from "@mui/material";
+import { Alert, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, FormControl, FormControlLabel, TextField } from "@mui/material";
 import { Task } from "../taskTypes";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -47,7 +47,7 @@ export default ({task, isOpen, onClose, onSubmit}: EditTaskModalProps) => {
             .finally(() => setIsEditTaskSubmitLoading(false))
     }
 
-    const handleDateChange = (deadline: any) => {
+    const handleDateChange = (deadline: Dayjs | null) => {
         setEditedTask({
             ...editedTask,
             deadline: dayjs(deadline).toDate()
@@ -98,7 +98,7 @@ export default ({task, isOpen, onClose, onSubmit}: EditTaskModalProps) => {
                     <DatePicker
                         name="deadline"
                         label="Deadline"
-                        value={dayjs(editedTask.deadline)}
+                        value={dayjs(editedTask.deadline) || ""}
                         onChange={handleDateChange}
                     />
                 </div>
