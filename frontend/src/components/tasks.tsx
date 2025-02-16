@@ -10,7 +10,7 @@ type TasksProps = {
 export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
     return (
         <>
-            {tasks.map((task) => (
+            {tasks.map(task => (
                 <Task
                     key={task.id}
                     task={task}

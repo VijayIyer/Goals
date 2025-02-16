@@ -2,7 +2,7 @@ import { mockTasks } from '../mockTasks';
 import { Task, NewTask } from '../taskTypes';
 
 export function listTasks() {
-    return new Promise<Array<Task>>((res) => {
+    return new Promise<Array<Task>>(res => {
         setTimeout(() => {
             res(mockTasks.slice());
         }, 1000);
@@ -29,7 +29,7 @@ export function addTask(newTask: NewTask) {
 export function getTaskById(id: number) {
     return new Promise<Task>((res, rej) => {
         setTimeout(() => {
-            const task = mockTasks.find((task) => task.id === id) as Task;
+            const task = mockTasks.find(task => task.id === id) as Task;
             if (!task) rej('No task with id found');
             res(task);
         }, 1000);
@@ -40,7 +40,7 @@ export function editTask(editedTask: Task) {
     return new Promise<Task>((res, rej) => {
         setTimeout(() => {
             const taskToBeEditedIndex = mockTasks.findIndex(
-                (task) => task.id === editedTask.id,
+                task => task.id === editedTask.id,
             );
             mockTasks[taskToBeEditedIndex] = editedTask;
             if (taskToBeEditedIndex === null)
@@ -54,7 +54,7 @@ export function deleteTask(deleteTaskId: number) {
     return new Promise((res, rej) => {
         setTimeout(() => {
             const taskToBeEditedIndex = mockTasks.findIndex(
-                (task) => task.id === deleteTaskId,
+                task => task.id === deleteTaskId,
             );
             mockTasks.splice(taskToBeEditedIndex, 1);
             if (taskToBeEditedIndex === null)
@@ -65,10 +65,10 @@ export function deleteTask(deleteTaskId: number) {
 }
 
 export function markTaskCompleted(taskId: number) {
-    return new Promise<Task>((res) => {
+    return new Promise<Task>(res => {
         setTimeout(() => {
             const taskToBeEditedIndex = mockTasks.findIndex(
-                (task) => task.id === taskId,
+                task => task.id === taskId,
             );
             mockTasks[taskToBeEditedIndex].completed =
                 !mockTasks[taskToBeEditedIndex].completed;

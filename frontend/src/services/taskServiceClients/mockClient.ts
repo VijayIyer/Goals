@@ -26,7 +26,7 @@ class MockClient extends TaskServiceClient {
     }
     async listTasks(): Promise<Array<Task>> {
         console.log(`getting tasks from mock client`);
-        return new Promise<Array<Task>>((res) => {
+        return new Promise<Array<Task>>(res => {
             setTimeout(() => {
                 res(this.mockTasks.slice());
             }, 1000);
@@ -36,7 +36,7 @@ class MockClient extends TaskServiceClient {
         return new Promise<Task>((res, rej) => {
             setTimeout(() => {
                 const task = this.mockTasks.find(
-                    (task) => task.id === id,
+                    task => task.id === id,
                 ) as Task;
                 if (!task) rej('No task with id found');
                 res(task);
@@ -47,7 +47,7 @@ class MockClient extends TaskServiceClient {
         return new Promise((res, rej) => {
             setTimeout(() => {
                 const taskToBeEditedIndex = this.mockTasks.findIndex(
-                    (task) => task.id === deletedTaskId,
+                    task => task.id === deletedTaskId,
                 );
                 this.mockTasks.splice(taskToBeEditedIndex, 1);
                 if (taskToBeEditedIndex === null)
@@ -60,7 +60,7 @@ class MockClient extends TaskServiceClient {
         return new Promise<Task>((res, rej) => {
             setTimeout(() => {
                 const taskToBeEditedIndex = this.mockTasks.findIndex(
-                    (task) => task.id === editedTask.id,
+                    task => task.id === editedTask.id,
                 );
                 this.mockTasks[taskToBeEditedIndex] = editedTask;
                 if (taskToBeEditedIndex === null)

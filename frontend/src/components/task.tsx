@@ -67,7 +67,7 @@ export default ({
                 completed: !editedTask.completed,
             })
             .then((editedTask: Task) => {
-                setEditedTask((task) => ({
+                setEditedTask(task => ({
                     ...task,
                     completed: !task.completed,
                 }));

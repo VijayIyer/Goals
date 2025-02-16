@@ -19,13 +19,13 @@ class ExpressClient extends TaskServiceClient {
                 'Access-Control-Allow-Origin': '*',
             },
         })
-            .then((response) => {
+            .then(response => {
                 if (!response.ok) {
                     throw `HTTP error ${response.status}`;
                 }
                 return response.json();
             })
-            .then((res) => {
+            .then(res => {
                 return {
                     ...res,
                     deadline: new Date(res.deadline),
@@ -40,7 +40,7 @@ class ExpressClient extends TaskServiceClient {
                 'Access-Control-Allow-Origin': '*',
             },
         })
-            .then((response) => {
+            .then(response => {
                 if (!response.ok) {
                     throw `HTTP error ${response.status}`;
                 }
@@ -54,7 +54,7 @@ class ExpressClient extends TaskServiceClient {
                     }),
                 ),
             )
-            .catch((err) => {
+            .catch(err => {
                 console.error(err);
             });
     } // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
@@ -66,7 +66,7 @@ class ExpressClient extends TaskServiceClient {
                 'Access-Control-Allow-Origin': '*',
             },
         })
-            .then((response) => {
+            .then(response => {
                 if (!response.ok) {
                     throw `HTTP error ${response.status}`;
                 }
@@ -82,7 +82,7 @@ class ExpressClient extends TaskServiceClient {
                 'Access-Control-Allow-Origin': '*',
             },
         })
-            .then((response) => {
+            .then(response => {
                 if (!response.ok) {
                     throw `HTTP error ${response.status}`;
                 }
@@ -99,13 +99,13 @@ class ExpressClient extends TaskServiceClient {
                 'Access-Control-Allow-Origin': '*',
             },
         })
-            .then((response) => {
+            .then(response => {
                 if (!response.ok) {
                     throw `HTTP error ${response.status}`;
                 }
                 return response.json();
             })
-            .then((res) => ({
+            .then(res => ({
                 ...res,
                 deadline: new Date(res.deadline),
             }));
