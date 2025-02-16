@@ -1,2 +1,2 @@
-import { Task } from "./taskTypes";
+import { Task } from './taskTypes';
 export const mockTasks: Array<Task> = [];
