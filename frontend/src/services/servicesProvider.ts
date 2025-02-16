@@ -1,16 +1,16 @@
 import { createContext } from 'react';
 
 export enum ServiceType {
-	MOCK,
-	EXPRESS
+    MOCK,
+    EXPRESS,
 }
 
 type ServicesContextProviderType = {
-	serviceType: ServiceType
-}
+    serviceType: ServiceType;
+};
 
 const ServicesContext = createContext<ServicesContextProviderType>({
-	serviceType: ServiceType.MOCK
+    serviceType: ServiceType.MOCK,
 });
 
 export default ServicesContext;
