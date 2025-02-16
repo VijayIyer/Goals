@@ -13,4 +13,9 @@ type NewTask = {
     deadline: Date;
     completed: boolean;
 };
-export type { Task, NewTask };
+
+type CompletedTasksInfo = {
+    completed: number;
+    total: number
+}
+export type { CompletedTasksInfo, Task, NewTask };
