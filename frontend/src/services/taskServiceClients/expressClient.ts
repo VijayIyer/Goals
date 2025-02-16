@@ -56,6 +56,7 @@ class ExpressClient extends TaskServiceClient {
             )
             .catch(err => {
                 console.error(err);
+                return err;
             });
     } // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
     getTaskById(id: number): Promise<Task> {
