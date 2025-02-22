@@ -1,11 +1,12 @@
 import { ServiceType } from './servicesProvider';
+import { TaskServiceClient } from './taskServiceClients/client';
 import ExpressClientInstance from './taskServiceClients/expressClient';
 import MockClientInstance from './taskServiceClients/mockClient';
 
 export class TaskServiceClientFactory {
     serviceType: ServiceType;
-    mockClientInstance: any;
-    expressClientInstance: any;
+    mockClientInstance: TaskServiceClient;
+    expressClientInstance: TaskServiceClient;
     constructor(serviceType: ServiceType) {
         this.serviceType = serviceType;
         this.expressClientInstance = ExpressClientInstance;

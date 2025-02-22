@@ -1,8 +1,8 @@
-import { useContext, useState } from 'react';
-import { Button } from '@mui/material';
+import { useContext, useEffect, useState } from 'react';
+import { Button, CircularProgress } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import { Task as TaskType } from './taskTypes';
+import { CompletedTasksInfo, Task as TaskType } from './taskTypes';
 
 import ServicesContext from './services/servicesProvider';
 import { TaskServiceClientFactory } from './services/taskServiceClientFactory';
@@ -15,14 +15,20 @@ const App = () => {
     const service = new TaskServiceClientFactory(
         serviceType,
     ).getServiceClient();
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     const [tasks, setTasks] = useState<Array<TaskType>>([]);
+    const [completedTasks, setCompletedTasks] = useState<CompletedTasksInfo>();
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
     const handleAddTaskButtonClick = () => {
         setIsAddTaskModalOpen(true);
     };
     const refreshTasks = async () => {
-        const tempTasks = await service.listTasks();
+        setIsRefreshing(true);
+        const tempTasks = await service.getAllTasks();
+        const tempCompletedTasks = await service.getCompletedTasks();
         setTasks(tempTasks);
+        setCompletedTasks(tempCompletedTasks);
+        setIsRefreshing(false);
     };
     const handleAddTaskModalClose = () => {
         setIsAddTaskModalOpen(false);
@@ -31,16 +37,30 @@ const App = () => {
         refreshTasks();
         setIsAddTaskModalOpen(false);
     };
+
+    useEffect(() => {
+        refreshTasks();
+    }, []);
+
     return (
         <>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2em' }}>
                 <Button
                     onClick={handleAddTaskButtonClick}
                     variant="contained"
                     startIcon={<AddIcon />}
+                    disabled={isRefreshing}
                 >
                     Create Task
                 </Button>
+                {tasks.length > 0 && (
+                    <h4>
+                        Completed Tasks : {completedTasks?.completed || 0}
+                        &nbsp;/&nbsp;
+                        {completedTasks?.total || tasks.length}
+                    </h4>
+                )}
+                {isRefreshing && <CircularProgress />}
             </div>
             <Tasks
                 tasks={tasks}

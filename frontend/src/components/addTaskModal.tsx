@@ -31,15 +31,17 @@ const AddTaskModal = ({
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        const formJson = Object.fromEntries((formData as any).entries());
-        const { title, description, deadline, deferred } = formJson;
         setIsAddTaskLoading(true);
+        const title = formData.get("title") as string;
+        const description = formData.get("description") as string;
+        const deadline = formData.get("deadline") as string;
+        const deferred = formData.get("deferred") as string;
         service
             .createTask({
                 title,
                 description,
                 deadline: deadline ? new Date(deadline) : new Date(),
-                deferred: !!deferred,
+                deferred: Boolean(deferred),
                 completed: false,
             })
             .then(onSubmit)
