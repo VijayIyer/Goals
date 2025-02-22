@@ -1,10 +1,9 @@
-import { NewTask, Task } from '../../taskTypes';
+import { CompletedTasksInfo, NewTask, Task } from '../../taskTypes';
 import { TaskServiceClient } from './client';
 
-class ExpressClient extends TaskServiceClient {
+class ExpressClient implements TaskServiceClient {
     baseUrl: string = '';
     constructor(baseUrl: string) {
-        super();
         this.baseUrl = baseUrl;
     }
     createTask(newTask: NewTask): Promise<Task> {
@@ -32,7 +31,7 @@ class ExpressClient extends TaskServiceClient {
                 };
             });
     }
-    async listTasks(): Promise<Array<Task>> {
+    async getAllTasks(): Promise<Array<Task>> {
         return fetch(this.baseUrl + `/tasks`, {
             method: 'GET',
             headers: {
@@ -56,8 +55,16 @@ class ExpressClient extends TaskServiceClient {
             )
             .catch(err => {
                 console.error(err);
+                return err
             });
     } // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
+    async getCompletedTasks(): Promise<CompletedTasksInfo> {
+        return Promise.resolve({
+            completed: 0,
+            total: 0
+        })
+    }
+    
     getTaskById(id: number): Promise<Task> {
         return fetch(this.baseUrl + `/tasks/${id}`, {
             method: 'GET',

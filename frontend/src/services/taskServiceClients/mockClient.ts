@@ -1,11 +1,8 @@
-import { NewTask, Task } from '../../taskTypes';
+import { CompletedTasksInfo, NewTask, Task } from '../../taskTypes';
 import { TaskServiceClient } from './client';
 
-class MockClient extends TaskServiceClient {
+class MockClient implements TaskServiceClient {
     mockTasks: Array<Task> = [];
-    constructor() {
-        super();
-    }
     createTask(newTask: NewTask): Promise<Task> {
         console.log(`creating new task in mock client`);
         return new Promise<Task>((res, rej) => {
@@ -24,7 +21,7 @@ class MockClient extends TaskServiceClient {
             }, 1000);
         });
     }
-    async listTasks(): Promise<Array<Task>> {
+    async getAllTasks(): Promise<Array<Task>> {
         console.log(`getting tasks from mock client`);
         return new Promise<Array<Task>>(res => {
             setTimeout(() => {
@@ -32,6 +29,19 @@ class MockClient extends TaskServiceClient {
             }, 1000);
         });
     } // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
+
+    async getCompletedTasks(): Promise<CompletedTasksInfo> {
+        return new Promise<CompletedTasksInfo>(res => {
+            setTimeout(() => {
+                const tasks = this.mockTasks.slice();
+                const completedTasks = tasks.filter(task => task.completed)
+                res({
+                    completed: completedTasks.length,
+                    total: tasks.length
+                });
+            }, 1000);
+        });
+    }
     getTaskById(id: number): Promise<Task> {
         return new Promise<Task>((res, rej) => {
             setTimeout(() => {
@@ -44,7 +54,7 @@ class MockClient extends TaskServiceClient {
         });
     }
     deleteTaskById(deletedTaskId: number) {
-        return new Promise((res, rej) => {
+        return new Promise<object>((res, rej) => {
             setTimeout(() => {
                 const taskToBeEditedIndex = this.mockTasks.findIndex(
                     task => task.id === deletedTaskId,
@@ -52,7 +62,7 @@ class MockClient extends TaskServiceClient {
                 this.mockTasks.splice(taskToBeEditedIndex, 1);
                 if (taskToBeEditedIndex === null)
                     return rej(`No task with id ${deletedTaskId} exists`);
-                res(`Deleted task with id ${deletedTaskId}`);
+                res({message: `Deleted task with id ${deletedTaskId}`});
             }, 1000);
         });
     }
