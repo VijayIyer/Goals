@@ -86,7 +86,7 @@ const AddTaskModal = ({
                     rows={2}
                     style={{ marginBottom: '2em' }}
                 />
-                <DatePicker name="deadline" label="Deadline" />
+                <DatePicker name="deadline" label="Deadline" disablePast />
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} variant="contained">
