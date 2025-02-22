@@ -44,7 +44,7 @@ const App = () => {
 
     return (
         <>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2em' }}>
                 <Button
                     onClick={handleAddTaskButtonClick}
                     variant="contained"
@@ -53,9 +53,15 @@ const App = () => {
                 >
                     Create Task
                 </Button>
+                {tasks.length > 0 && (
+                    <h1>
+                        Completed Tasks : {completedTasks?.completed || 0}
+                        &nbsp;/&nbsp;
+                        {completedTasks?.total || tasks.length}
+                    </h1>
+                )}
                 {isRefreshing && <CircularProgress />}
             </div>
-            {tasks.length && <div>{completedTasks?.completed || 0} / {completedTasks?.total || tasks.length}</div>}
             <Tasks
                 tasks={tasks}
                 onTaskEdited={refreshTasks}
