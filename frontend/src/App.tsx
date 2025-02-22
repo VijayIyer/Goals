@@ -54,11 +54,11 @@ const App = () => {
                     Create Task
                 </Button>
                 {tasks.length > 0 && (
-                    <h1>
+                    <h4>
                         Completed Tasks : {completedTasks?.completed || 0}
                         &nbsp;/&nbsp;
                         {completedTasks?.total || tasks.length}
-                    </h1>
+                    </h4>
                 )}
                 {isRefreshing && <CircularProgress />}
             </div>
