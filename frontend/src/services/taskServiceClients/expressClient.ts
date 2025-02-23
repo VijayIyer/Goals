@@ -65,7 +65,7 @@ class ExpressClient implements TaskServiceClient {
                 console.error(err);
                 return err;
             });
-    } // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
+    }
     async getCompletedTasks(
         viewingDate: Date | null,
     ): Promise<CompletedTasksInfo> {
