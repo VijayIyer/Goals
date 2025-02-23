@@ -12,16 +12,21 @@ import { DatePicker } from '@mui/x-date-pickers';
 
 import ServicesContext from '../services/servicesProvider';
 import { TaskServiceClientFactory } from '../services/taskServiceClientFactory';
+import dayjs from 'dayjs';
 
-const AddTaskModal = ({
-    onClose,
-    isAddTaskModalOpen = false,
-    onSubmit,
-}: {
+type AddTaskModalProps = {
     isAddTaskModalOpen: boolean;
     onClose: () => void;
     onSubmit: () => void;
-}) => {
+    viewingDate: Date;
+};
+
+const AddTaskModal = ({
+    onClose,
+    onSubmit,
+    isAddTaskModalOpen = false,
+    viewingDate = new Date(),
+}: AddTaskModalProps) => {
     const { serviceType } = useContext(ServicesContext);
     const service = new TaskServiceClientFactory(
         serviceType,
@@ -32,10 +37,10 @@ const AddTaskModal = ({
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         setIsAddTaskLoading(true);
-        const title = formData.get("title") as string;
-        const description = formData.get("description") as string;
-        const deadline = formData.get("deadline") as string;
-        const deferred = formData.get("deferred") as string;
+        const title = formData.get('title') as string;
+        const description = formData.get('description') as string;
+        const deadline = formData.get('deadline') as string;
+        const deferred = formData.get('deferred') as string;
         service
             .createTask({
                 title,
@@ -86,7 +91,12 @@ const AddTaskModal = ({
                     rows={2}
                     style={{ marginBottom: '2em' }}
                 />
-                <DatePicker name="deadline" label="Deadline" disablePast />
+                <DatePicker
+                    name="deadline"
+                    label="Deadline"
+                    disablePast
+                    defaultValue={dayjs(viewingDate)}
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} variant="contained">
