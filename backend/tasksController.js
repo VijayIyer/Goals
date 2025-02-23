@@ -1,17 +1,21 @@
+const { Op } = require("sequelize");
 const TaskModel = require("./taskModel.js");
 const controller = {
     get: async (req, res) => {
         try {
-            const {completed} = req.query;
-            console.log(`req.params - ${JSON.stringify(req.query)}`)
-            if(completed) {
-                const tasks = await TaskModel.findAll({
-                    where: {completed: true}
-                });
-                return res.status(200).json(tasks);
-            } else {
-                return res.status(200).json(await TaskModel.findAll());
-            }
+            const {completed, viewingDate} = req.query;
+            console.log(`req.query - ${JSON.stringify(req.query)}, ${completed === 'true'}}`)
+            if(completed) return res.status(200).json(await TaskModel.findAll({
+                where: {
+                    [Op.and]: [
+                        {completed: completed === 'true'},
+                        {deadline:{[Op.startsWith]: viewingDate ? viewingDate : ''}}
+                    ]
+                }
+            }));
+            return res.status(200).json(await TaskModel.findAll({
+                where: {deadline:{[Op.startsWith]: viewingDate ? viewingDate : ''}}
+            }));
         } catch(err) {
             return res.status(500).json(err)
         }
@@ -22,8 +26,11 @@ const controller = {
         return res.status(200).json(task);
     },
     getCompletedTasks: async (req, res) => {
+        const {viewingDate} = req.query;
         try {
-            const tasks = await TaskModel.findAll();
+            const tasks = await TaskModel.findAll({
+                where: {deadline: {[Op.startsWith]: viewingDate?  viewingDate: ''}}
+            });
             const completedTasks = tasks.filter(task => Boolean(task.completed));
             console.log(`tasks - ${tasks.length}, completedTasks = ${completedTasks.length}`);
             return res.status(200).json({
