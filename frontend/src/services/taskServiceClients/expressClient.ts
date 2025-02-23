@@ -35,8 +35,9 @@ class ExpressClient implements TaskServiceClient {
         return fetch(
             this.baseUrl +
                 `/tasks` +
+                `?` +
                 new URLSearchParams({
-                    viewingDate: viewingDate?.toLocaleDateString() || '',
+                    viewingDate: viewingDate?.toISOString().split('T')[0] || '',
                 }),
             {
                 method: 'GET',
