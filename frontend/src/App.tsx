@@ -20,10 +20,20 @@ const App = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(signInFormData)
     })
-    .then(response => response.json())
-    .then(() => setIsAuthenticated(true))
+    .then(response => {
+      if (response.ok) { 
+        return response.json();
+       }
+       return Promise.reject(response);
+    })
+    .then(data => {
+      setUserId(data.id)
+      setIsAuthenticated(true);
+      setErrorMessage("");
+    })
     .catch(() => {
-      setErrorMessage('Error signing in, please try again or use different credentials')
+      // if(isAuthenticated) setIsAuthenticated(false);
+      setErrorMessage('Error signing in')
     });
   };
 
@@ -38,14 +48,22 @@ const App = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(signUpFormData)
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response.ok) { 
+        console.log(`response was successful`)
+        return response.json();
+       }
+       return Promise.reject(response); 
+    })
     .then(data => {
+      console.log(`authenticating`)
       setUserId(data.id)
       setIsAuthenticated(true);
       setErrorMessage("");
     })
-    .catch(() => {
-      setErrorMessage('Error signing up, please try again later or use different credentials')
+    .catch(err => {
+      // if(isAuthenticated) setIsAuthenticated(false);
+      setErrorMessage('Error signing up')
     });
   };
 
