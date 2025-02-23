@@ -31,14 +31,21 @@ class ExpressClient implements TaskServiceClient {
                 };
             });
     }
-    async getAllTasks(): Promise<Array<Task>> {
-        return fetch(this.baseUrl + `/tasks`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
+    async getAllTasks(viewingDate: Date | null): Promise<Array<Task>> {
+        return fetch(
+            this.baseUrl +
+                `/tasks` +
+                new URLSearchParams({
+                    viewingDate: viewingDate?.toLocaleDateString() || '',
+                }),
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                },
             },
-        })
+        )
             .then(response => {
                 if (!response.ok) {
                     throw `HTTP error ${response.status}`;
@@ -58,13 +65,19 @@ class ExpressClient implements TaskServiceClient {
                 return err;
             });
     } // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
-    async getCompletedTasks(): Promise<CompletedTasksInfo> {
+    async getCompletedTasks(
+        viewingDate: Date | null,
+    ): Promise<CompletedTasksInfo> {
+        const querySearchParams = new URLSearchParams({
+            viewingDate: viewingDate?.toLocaleDateString() || '',
+        });
+        console.log(querySearchParams);
         return Promise.resolve({
             completed: 0,
-            total: 0
-        })
+            total: 0,
+        });
     }
-    
+
     getTaskById(id: number): Promise<Task> {
         return fetch(this.baseUrl + `/tasks/${id}`, {
             method: 'GET',
