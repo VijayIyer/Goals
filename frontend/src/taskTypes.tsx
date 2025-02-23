@@ -16,6 +16,6 @@ type NewTask = {
 
 type CompletedTasksInfo = {
     completed: number;
-    total: number
-}
+    total: number;
+};
 export type { CompletedTasksInfo, Task, NewTask };
