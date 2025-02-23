@@ -70,7 +70,7 @@ class ExpressClient implements TaskServiceClient {
         viewingDate: Date | null,
     ): Promise<CompletedTasksInfo> {
         const querySearchParams = new URLSearchParams({
-            viewingDate: viewingDate?.toLocaleDateString() || '',
+            viewingDate: viewingDate?.toISOString().split('T')[0] || '',
         });
         console.log(querySearchParams);
         return Promise.resolve({
