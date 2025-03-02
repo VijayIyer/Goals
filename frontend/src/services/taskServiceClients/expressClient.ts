@@ -7,7 +7,7 @@ class ExpressClient implements TaskServiceClient {
         this.baseUrl = baseUrl;
     }
     createTask(newTask: NewTask): Promise<Task> {
-        return fetch(this.baseUrl + `/tasks`, {
+        return fetch(`${this.baseUrl}/tasks`, {
             method: 'POST',
             body: JSON.stringify({
                 ...newTask,
@@ -32,13 +32,9 @@ class ExpressClient implements TaskServiceClient {
             });
     }
     async getAllTasks(viewingDate: Date | null): Promise<Array<Task>> {
-        return fetch(
-            this.baseUrl +
-                `/tasks` +
-                `?` +
-                new URLSearchParams({
+        return fetch(`${this.baseUrl}/tasks?${new URLSearchParams({
                     viewingDate: viewingDate?.toISOString().split('T')[0] || '',
-                }),
+                })}`,
             {
                 method: 'GET',
                 headers: {
@@ -72,11 +68,19 @@ class ExpressClient implements TaskServiceClient {
         const querySearchParams = new URLSearchParams({
             viewingDate: viewingDate?.toISOString().split('T')[0] || '',
         });
-        console.log(querySearchParams);
-        return Promise.resolve({
-            completed: 0,
-            total: 0,
-        });
+        return fetch(`${this.baseUrl}/tasks?${querySearchParams}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw `HTTP error ${response.status}`;
+            }
+            return response.json();
+        })
     }
 
     getTaskById(id: number): Promise<Task> {
