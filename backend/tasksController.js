@@ -25,22 +25,6 @@ const controller = {
         const task = await TaskModel.findOne({ where: {id}});
         return res.status(200).json(task);
     },
-    getCompletedTasks: async (req, res) => {
-        const {viewingDate} = req.query;
-        try {
-            const tasks = await TaskModel.findAll({
-                where: {deadline: {[Op.startsWith]: viewingDate?  viewingDate: ''}}
-            });
-            const completedTasks = tasks.filter(task => Boolean(task.completed));
-            console.log(`tasks - ${tasks.length}, completedTasks = ${completedTasks.length}`);
-            return res.status(200).json({
-                completed: completedTasks.length,
-                total: tasks.length
-            })
-        } catch (err) {
-            return res.status(500).json(err);
-        }
-    },
     delete: async (req, res) => {
         try{ 
             const {id} = req.params;
