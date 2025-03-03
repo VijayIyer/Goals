@@ -1,4 +1,4 @@
-import { CompletedTasksInfo, NewTask, Task } from '../../taskTypes';
+import { NewTask, Task } from '../../taskTypes';
 import { TaskServiceClient } from './client';
 
 class ExpressClient implements TaskServiceClient {
@@ -31,9 +31,10 @@ class ExpressClient implements TaskServiceClient {
                 };
             });
     }
-    async getAllTasks(viewingDate: Date | null): Promise<Array<Task>> {
+    async getAllTasks(viewingDate: Date | null, completed: boolean = false): Promise<Array<Task>> {
         return fetch(`${this.baseUrl}/tasks?${new URLSearchParams({
                     viewingDate: viewingDate?.toISOString().split('T')[0] || '',
+                    completed: completed.toString()
                 })}`,
             {
                 method: 'GET',
@@ -61,26 +62,6 @@ class ExpressClient implements TaskServiceClient {
                 console.error(err);
                 return err;
             });
-    }
-    async getCompletedTasks(
-        viewingDate: Date | null,
-    ): Promise<CompletedTasksInfo> {
-        const querySearchParams = new URLSearchParams({
-            viewingDate: viewingDate?.toISOString().split('T')[0] || '',
-        });
-        return fetch(`${this.baseUrl}/tasks?${querySearchParams}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw `HTTP error ${response.status}`;
-            }
-            return response.json();
-        })
     }
 
     getTaskById(id: number): Promise<Task> {

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { CompletedTasksInfo, NewTask, Task } from '../../taskTypes';
+import { NewTask, Task } from '../../taskTypes';
 import { TaskServiceClient } from './client';
 
 class MockClient implements TaskServiceClient {
@@ -29,7 +29,7 @@ class MockClient implements TaskServiceClient {
             }, 10);
         });
     }
-    async getAllTasks(viewingDate: Date | null): Promise<Array<Task>> {
+    async getAllTasks(viewingDate: Date | null, completed: boolean = false): Promise<Array<Task>> {
         console.log(viewingDate);
         return new Promise<Array<Task>>(res => {
             setTimeout(() => {
@@ -43,38 +43,12 @@ class MockClient implements TaskServiceClient {
                                   )
                                 : true,
                         )
+                        .filter(task => completed ? task.completed === completed : true)
                         .slice(),
                 );
             }, 10);
         });
     } // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
-
-    async getCompletedTasks(
-        viewingDate: Date | null,
-    ): Promise<CompletedTasksInfo> {
-        return new Promise<CompletedTasksInfo>(res => {
-            setTimeout(() => {
-                const tasks = this.mockTasks
-                    .filter(task =>
-                        viewingDate
-                            ? dayjs(task.deadline).isSame(viewingDate, 'day')
-                            : true,
-                    )
-                    .slice();
-                const completedTasks = tasks
-                    .filter(task =>
-                        viewingDate
-                            ? dayjs(task.deadline).isSame(viewingDate, 'day')
-                            : true,
-                    )
-                    .filter(task => task.completed);
-                res({
-                    completed: completedTasks.length,
-                    total: tasks.length,
-                });
-            }, 10);
-        });
-    }
     getTaskById(id: number): Promise<Task> {
         return new Promise<Task>((res, rej) => {
             setTimeout(() => {

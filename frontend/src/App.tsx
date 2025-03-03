@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Button, CircularProgress, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import { CompletedTasksInfo, Task as TaskType } from './taskTypes';
+import { Task as TaskType } from './taskTypes';
 
 import ServicesContext from './services/servicesProvider';
 import { TaskServiceClientFactory } from './services/taskServiceClientFactory';
@@ -21,7 +21,7 @@ const App = () => {
     ).getServiceClient();
     const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     const [tasks, setTasks] = useState<Array<TaskType>>([]);
-    const [completedTasks, setCompletedTasks] = useState<CompletedTasksInfo>();
+    const [completedTasks, setCompletedTasks] = useState<Array<TaskType>>([]);
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
     const handleAddTaskButtonClick = () => {
         setIsAddTaskModalOpen(true);
@@ -29,7 +29,7 @@ const App = () => {
     const refreshTasks = async () => {
         setIsRefreshing(true);
         const tempTasks = await service.getAllTasks(viewingDate);
-        const tempCompletedTasks = await service.getCompletedTasks(viewingDate);
+        const tempCompletedTasks = await service.getAllTasks(viewingDate, true);
         console.log(
             JSON.stringify(tempTasks),
             JSON.stringify(tempCompletedTasks),
@@ -74,9 +74,9 @@ const App = () => {
                 </Button>
                 {tasks.length > 0 && (
                     <h4>
-                        Completed Tasks : {completedTasks?.completed || 0}
+                        Completed Tasks : {completedTasks.length || 0}
                         &nbsp;/&nbsp;
-                        {completedTasks?.total || tasks.length}
+                        {tasks.length}
                     </h4>
                 )}
                 {isRefreshing && <CircularProgress />}
