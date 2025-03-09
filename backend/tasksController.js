@@ -22,14 +22,22 @@ const controller = {
     },
     getById: async (req, res) => {
         const {id} = req.params;
-        const task = await TaskModel.findOne({ where: {id}});
-        return res.status(200).json(task);
+        try {
+            const task = await TaskModel.findOne({ where: {id}});
+            if(!task) return res.status(404).json({
+                message: `No task with id ${id} was found`
+            })
+            return res.status(200).json(task);
+        } catch (err) {
+            return res.status(500).json(err);
+        }
+        
     },
     delete: async (req, res) => {
         try{ 
             const {id} = req.params;
             const task = await TaskModel.destroy({ where: {id}});
-            return res.status(200).json(task);
+            return res.status(204).send();
         }
         catch(err) {
             console.error(err);
