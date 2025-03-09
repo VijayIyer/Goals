@@ -2,24 +2,37 @@
 
 ### Note - No longer feasible to be working on branches in parallel. Branch out from frontend/features and merge back
 
-### TODOs (merged TODOs from services-abstraction, add-tasks)
+### TODOs
 
-[X] Make it so services are interchangeable (mockserver or express) with no difference in how it is called - [ ] Make this better, compare with standard solutions - [ ] Why was it required to export an instance itself, is this done everytime?
+#### Use cases
+[ ] Ability to add priority to tasks
+[ ] Ability to add one or more tags to tasks
+[ ] Ability to sort tasks by deadline date, priority
+[ ] Ability to filter tasks by date, tag
+[ ] There should be a calendar view - overview of tasks by month, week, year
+[ ] Seperate view for backlogged / deferred tasks
+[ ] When backlogged / deferred task is marked as no longer backlogged, prompt user for date with current viewing date as the default
+[ ] Description field should be rich-text
+
+
+### Tech-Debt
+[X] Make it so services are interchangeable (mockserver or express) with no difference in how it is called 
+      - [ ] Make this better, compare with standard solutions 
+      - [ ] Why was it required to export an instance itself, is this done everytime?
 [X] Refactor Services folder with all implementations of a particular services e.g taskServices with express, mock, ...etc implementation
 [X] Get service type from .env file
 [ ] Add unit tests only for testing services
 [ ] Seperate out types for sending request vs parsing
 [ ] Improve all work regarding Dates
-
-- [ ] Improve and add validation to date field
-- [ ] Improve the way date is displayed (should be as per localization, customer choosen format, etc.)
-- [ ] Add validation for when to display date
-- [x] Defaults to Today's date when no deadline date provided
-- [ ] Improve logic for selecting date when no deadline date is provided
+      - [ ] Improve and add validation to date field
+      - [ ] Improve the way date is displayed (should be as per localization, customer choosen format, etc.)
+      - [ ] Add validation for when to display date
+      - [x] Defaults to Today's date when no deadline date provided
+      - [ ] Improve logic for selecting date when no deadline date is provided
       [ ] Improve forms (validations, masking, change handlers)
 - [ ] Use useReducer for form submission
 - [ ] Showing error messages
-      [ ] Improvement usage and organizaiton of types
+      [ ] Improvement usage and organization of types
 - [ ] Read about --isolatedComponents exporting type error
 - [ ] Explore standard practices
       [ ] Improve main view of tasks
@@ -39,8 +52,7 @@
       [ ] Move common code into a common components or utils folder!
       [ ] Tooltips
 - [x] Add tooltip on buttons in main view
-      [ ] Make it so services are interchangeable (mockserver or express) with no difference in how it is called
-      [ ] Turn tasks into Card container - (this should be possible to easily revert)
+- [ ] Turn tasks into Card container - (this should be possible to easily revert)
 
 ### Take to backend
 
