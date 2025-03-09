@@ -27,12 +27,12 @@ Task.init(
             type: DataTypes.DATE,
             allowNull: true,
             validate: {
-                isNotInThePast(value) {
-                    const now = new Date();
-                    if(now > value) {
-                        throw new Error("Deadline cannot be in the past!!")
-                    }
-                }
+                // isNotInThePast(value) {
+                //     const now = new Date();
+                //     if(now > value) {
+                //         throw new Error("Deadline cannot be in the past!!")
+                //     }
+                // }
             }
         },
         completed: {
