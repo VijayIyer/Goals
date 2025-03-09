@@ -53,7 +53,3 @@
       [ ] Tooltips
 - [x] Add tooltip on buttons in main view
 - [ ] Turn tasks into Card container - (this should be possible to easily revert)
-
-### Take to backend
-
-[ ] Improve overall website capabilities - [ ] Add marking task completed ability - [ ] Sub-tasks - [ ] Daily / Repeated tasks - [ ] Percentage completed - [ ] Individual sub-tasks can hold a percentage of overall task - [ ] Long running tasks
