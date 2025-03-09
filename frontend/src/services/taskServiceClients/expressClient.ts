@@ -1,4 +1,4 @@
-import { CompletedTasksInfo, NewTask, Task } from '../../taskTypes';
+import { NewTask, Task } from '../../taskTypes';
 import { TaskServiceClient } from './client';
 
 class ExpressClient implements TaskServiceClient {
@@ -7,7 +7,7 @@ class ExpressClient implements TaskServiceClient {
         this.baseUrl = baseUrl;
     }
     createTask(newTask: NewTask): Promise<Task> {
-        return fetch(this.baseUrl + `/tasks`, {
+        return fetch(`${this.baseUrl}/tasks`, {
             method: 'POST',
             body: JSON.stringify({
                 ...newTask,
@@ -31,14 +31,19 @@ class ExpressClient implements TaskServiceClient {
                 };
             });
     }
-    async getAllTasks(): Promise<Array<Task>> {
-        return fetch(this.baseUrl + `/tasks`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
+    async getAllTasks(viewingDate: Date | null, completed: boolean = false): Promise<Array<Task>> {
+        return fetch(`${this.baseUrl}/tasks?${new URLSearchParams({
+                    viewingDate: viewingDate?.toISOString().split('T')[0] || '',
+                    completed: completed.toString()
+                })}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                },
             },
-        })
+        )
             .then(response => {
                 if (!response.ok) {
                     throw `HTTP error ${response.status}`;
@@ -57,14 +62,8 @@ class ExpressClient implements TaskServiceClient {
                 console.error(err);
                 return err;
             });
-    } // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
-    async getCompletedTasks(): Promise<CompletedTasksInfo> {
-        return Promise.resolve({
-            completed: 0,
-            total: 0
-        })
     }
-    
+
     getTaskById(id: number): Promise<Task> {
         return fetch(this.baseUrl + `/tasks/${id}`, {
             method: 'GET',

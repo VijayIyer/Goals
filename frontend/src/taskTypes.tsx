@@ -14,8 +14,4 @@ type NewTask = {
     completed: boolean;
 };
 
-type CompletedTasksInfo = {
-    completed: number;
-    total: number
-}
-export type { CompletedTasksInfo, Task, NewTask };
+export type {Task, NewTask };
