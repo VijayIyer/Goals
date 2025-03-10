@@ -1,84 +1,128 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { Button, CircularProgress, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
-// Components
-import SignIn from './components/auth/signin';
-import SignUp from './components/auth/signup';
-import {Tasks} from './components/task';
-import { Alert } from '@mui/material';
-const rootUrl = process.env.REACT_APP_SERVER_URL;
+import { Task as TaskType } from './taskTypes';
+
+import ServicesContext from './services/servicesProvider';
+import { TaskServiceClientFactory } from './services/taskServiceClientFactory';
+
+import Tasks from './components/tasks';
+import AddTaskModal from './components/addTaskModal';
+import { DateCalendar } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [userId, setUserId] = useState(null)
+    const { serviceType } = useContext(ServicesContext);
+    const [viewingDate, setViewingDate] = useState<Date>(new Date());
+    const [showCalender, setShowCalendar] = useState<boolean>(false);
+    const service = new TaskServiceClientFactory(
+        serviceType,
+    ).getServiceClient();
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+    const [tasks, setTasks] = useState<Array<TaskType>>([]);
+    const [completedTasks, setCompletedTasks] = useState<Array<TaskType>>([]);
+    const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+    const handleAddTaskButtonClick = () => {
+        setIsAddTaskModalOpen(true);
+    };
+    const refreshTasks = async () => {
+        setIsRefreshing(true);
+        const tempTasks = await service.getAllTasks(viewingDate);
+        const tempCompletedTasks = await service.getAllTasks(viewingDate, true);
+        console.log(
+            JSON.stringify(tempTasks),
+            JSON.stringify(tempCompletedTasks),
+        );
+        setTasks(tempTasks);
+        setCompletedTasks(tempCompletedTasks);
+        setIsRefreshing(false);
+    };
+    const handleAddTaskModalClose = () => {
+        setIsAddTaskModalOpen(false);
+    };
+    const handleAddTaskModalSubmit = () => {
+        refreshTasks();
+        setIsAddTaskModalOpen(false);
+    };
 
-  const handleSignIn = async (signInFormData: {username: string, password: string}) => {
-    // Perform authentication logic here
-    fetch(`${rootUrl}/user/signin`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(signInFormData)
-    })
-    .then(response => {
-      if (response.ok) { 
-        return response.json();
-       }
-       return Promise.reject(response);
-    })
-    .then(data => {
-      setUserId(data.id)
-      setIsAuthenticated(true);
-      setErrorMessage("");
-    })
-    .catch(() => {
-      // if(isAuthenticated) setIsAuthenticated(false);
-      setErrorMessage('Error signing in')
-    });
-  };
+    const handleViewingDateChange = (value: Dayjs): void => {
+        setViewingDate(value.toDate());
+    };
 
-  const handleSignUp = (signUpFormData: {
-    username: string,
-    password: string,
-    confirmPassword: string
-  }) => {
-    // Perform authentication logic here
-    fetch(`${rootUrl}/user/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(signUpFormData)
-    })
-    .then(response => {
-      if (response.ok) { 
-        console.log(`response was successful`)
-        return response.json();
-       }
-       return Promise.reject(response); 
-    })
-    .then(data => {
-      console.log(`authenticating`)
-      setUserId(data.id)
-      setIsAuthenticated(true);
-      setErrorMessage("");
-    })
-    .catch(err => {
-      // if(isAuthenticated) setIsAuthenticated(false);
-      setErrorMessage('Error signing up')
-    });
-  };
+    useEffect(() => {
+        refreshTasks();
+    }, [viewingDate]);
 
-  return (
-    <>
-      {errorMessage && <Alert severity='error'>{errorMessage}</Alert>}
-      <Router>
-        <Routes>
-          <Route path="/" element={isAuthenticated ? <Navigate to="/tasks" /> : <SignIn onSignIn={handleSignIn} />} />
-          <Route path="/signup" element={isAuthenticated ? <Navigate to="/tasks" /> : <SignUp onSignUp={handleSignUp} />} />
-          <Route path="/tasks" element={isAuthenticated ? <Tasks userId={userId || ""} /> : <Navigate to="/" />} />
-        </Routes>
-      </Router>
-    </>
-  );
+    return (
+        <>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '2em',
+                }}
+            >
+                <Button
+                    onClick={handleAddTaskButtonClick}
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    disabled={isRefreshing}
+                >
+                    Create Task
+                </Button>
+                {tasks.length > 0 && (
+                    <h4>
+                        Completed Tasks : {completedTasks.length || 0}
+                        &nbsp;/&nbsp;
+                        {tasks.length}
+                    </h4>
+                )}
+                {isRefreshing && <CircularProgress />}
+            </div>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <Typography variant="body1">
+                    {viewingDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        day: 'numeric',
+                        month: 'long',
+                    })}
+                </Typography>
+                <Button onClick={() => setShowCalendar(value => !value)}>
+                    View Tasks At Different Date
+                </Button>
+                {showCalender && (
+                    <div>
+                        <DateCalendar
+                            value={dayjs(viewingDate) || dayjs(new Date())}
+                            onChange={handleViewingDateChange}
+                        />
+                    </div>
+                )}
+            </div>
+            <Tasks
+                tasks={tasks}
+                onTaskEdited={refreshTasks}
+                onTaskDeleted={refreshTasks}
+            />
+            {isAddTaskModalOpen && (
+                <AddTaskModal
+                    isAddTaskModalOpen={isAddTaskModalOpen}
+                    viewingDate={viewingDate}
+                    onClose={handleAddTaskModalClose}
+                    onSubmit={handleAddTaskModalSubmit}
+                />
+            )}
+        </>
+    );
 };
 
 export default App;
