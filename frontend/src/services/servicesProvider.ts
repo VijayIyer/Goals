@@ -2,7 +2,7 @@ import { createContext } from 'react';
 
 export enum ServiceType {
     MOCK,
-    EXPRESS,
+    HTTP,
 }
 
 type ServicesContextProviderType = {

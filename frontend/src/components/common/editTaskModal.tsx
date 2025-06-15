@@ -11,14 +11,19 @@ import {
     DialogContentText,
     FormControl,
     FormControlLabel,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
     TextField,
 } from '@mui/material';
-import { Task } from '../taskTypes';
+import { Task } from '../../types/task';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers';
 
-import ServicesContext from '../services/servicesProvider';
-import { TaskServiceClientFactory } from '../services/taskServiceClientFactory';
+import ServicesContext from '../../services/servicesProvider';
+import { TaskServiceClientFactory } from '../../services/taskServiceClientFactory';
+import { TaskPriority } from '../../enums';
 
 type EditTaskModalProps = {
     task: Task;
@@ -29,13 +34,10 @@ type EditTaskModalProps = {
 
 export default ({ task, isOpen, onClose, onSubmit }: EditTaskModalProps) => {
     const { serviceType } = useContext(ServicesContext);
-    const service = new TaskServiceClientFactory(
-        serviceType,
-    ).getServiceClient();
+    const service = new TaskServiceClientFactory(serviceType).getServiceClient();
 
     const [editTaskError, setEditTaskError] = useState<string>('');
-    const [isEditedTaskSubmitLoading, setIsEditTaskSubmitLoading] =
-        useState<boolean>(false);
+    const [isEditedTaskSubmitLoading, setIsEditTaskSubmitLoading] = useState<boolean>(false);
     const [editedTask, setEditedTask] = useState<Task>(task);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -51,11 +53,21 @@ export default ({ task, isOpen, onClose, onSubmit }: EditTaskModalProps) => {
             });
         }
     };
+
+    const handleSelectChange = (event: SelectChangeEvent<TaskPriority>) => {
+        setEditedTask({
+            ...editedTask,
+            priority: event.target.value as TaskPriority,
+        });
+    };
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsEditTaskSubmitLoading(true);
         service
-            .editTask(editedTask)
+            .editTask({
+                ...editedTask,
+                ...(task.deferred && { deferred: false }),
+            })
             .then(onSubmit)
             .catch(setEditTaskError)
             .finally(() => setIsEditTaskSubmitLoading(false));
@@ -78,9 +90,7 @@ export default ({ task, isOpen, onClose, onSubmit }: EditTaskModalProps) => {
         >
             <DialogContent>
                 <DialogContentText>Modify task contents</DialogContentText>
-                {editTaskError && (
-                    <Alert severity="error">{editTaskError}</Alert>
-                )}
+                {editTaskError && <Alert severity="error">{editTaskError}</Alert>}
                 <TextField
                     required
                     margin="dense"
@@ -107,13 +117,7 @@ export default ({ task, isOpen, onClose, onSubmit }: EditTaskModalProps) => {
                 />
                 <FormControl>
                     <FormControlLabel
-                        control={
-                            <Checkbox
-                                name="deferred"
-                                onChange={handleChange}
-                                checked={editedTask.deferred}
-                            />
-                        }
+                        control={<Checkbox name="deferred" onChange={handleChange} checked={editedTask.deferred} />}
                         label="Defer Task?"
                     />
                 </FormControl>
@@ -125,19 +129,39 @@ export default ({ task, isOpen, onClose, onSubmit }: EditTaskModalProps) => {
                         onChange={handleDateChange}
                     />
                 </div>
+                <FormControl fullWidth>
+                    <InputLabel>Priority</InputLabel>
+                    <Select name="priority" label="Priority" value={editedTask.priority} onChange={handleSelectChange}>
+                        <MenuItem value={'HIGH'}>High</MenuItem>
+                        <MenuItem value={'MEDIUM'}>Medium</MenuItem>
+                        <MenuItem value={'LOW'}>Low</MenuItem>
+                    </Select>
+                </FormControl>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} variant="contained">
                     Cancel
                 </Button>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    loading={isEditedTaskSubmitLoading}
-                    loadingPosition="start"
-                >
-                    Save
-                </Button>
+                {!task.deferred && (
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        loading={isEditedTaskSubmitLoading}
+                        loadingPosition="start"
+                    >
+                        Save
+                    </Button>
+                )}
+                {task.deferred && (
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        loading={isEditedTaskSubmitLoading}
+                        loadingPosition="start"
+                    >
+                        Move to Active
+                    </Button>
+                )}
             </DialogActions>
         </Dialog>
     );

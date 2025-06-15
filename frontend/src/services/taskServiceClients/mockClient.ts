@@ -1,60 +1,51 @@
 import dayjs from 'dayjs';
-import { NewTask, Task } from '../../taskTypes';
+import { NewTask, Task, TasksByDay } from '../../types';
 import { TaskServiceClient } from './client';
+import { createTasks } from '../../utils/tasks';
 
 class MockClient implements TaskServiceClient {
     mockTasks: Array<Task> = [];
+    constructor() {
+        this.mockTasks = createTasks(parseInt(process.env.REACT_APP_NUMBER_OF_INITIAL_TASKS || '100'));
+    }
     createTask(newTask: NewTask): Promise<Task> {
-        console.log(`creating new task in mock client`);
         return new Promise<Task>((res, rej) => {
             const now = new Date();
             setTimeout(() => {
                 const { title, description, deadline } = newTask;
-                console.log(
-                    `${dayjs(now).isValid()} - ${dayjs(now).isSame(now, 'day')}`,
-                );
-                if (!title || !description || !deadline)
-                    rej('Error creating new task!');
+                if (!title || !description || !deadline) rej('Error creating new task!');
                 if (dayjs(deadline).isBefore(now, 'day')) {
                     rej('Deadline cannot be in the past!');
                 }
-                this.mockTasks.push({
+                // adding id, completed and deferred are only required in mock server because it also is the store or acts like the db
+                const createdTask = {
                     id: this.mockTasks.length,
+                    completed: false,
+                    deferred: false,
                     ...newTask,
-                });
-                res({
-                    id: this.mockTasks.length,
-                    ...newTask,
-                });
+                };
+                this.mockTasks.push(createdTask);
+                res(createdTask);
             }, 10);
         });
     }
-    async getAllTasks(viewingDate: Date | null, completed: boolean = false): Promise<Array<Task>> {
-        console.log(viewingDate);
+    async getTasks(viewingDate: Date | null, completed: boolean = false): Promise<Array<Task>> {
         return new Promise<Array<Task>>(res => {
             setTimeout(() => {
+                console.log(`retrieving all tasks!`);
                 res(
                     this.mockTasks
-                        .filter(task =>
-                            viewingDate
-                                ? dayjs(task.deadline).isSame(
-                                      viewingDate,
-                                      'day',
-                                  )
-                                : true,
-                        )
-                        .filter(task => completed ? task.completed === completed : true)
+                        .filter(task => (viewingDate ? dayjs(task.deadline).isSame(viewingDate, 'day') : true))
+                        .filter(task => (completed ? task.completed === completed : true))
                         .slice(),
                 );
             }, 10);
         });
-    } // need a better solution OR reading up on it. This .slice() makes sure we get an updated reference of mockTasks array
+    }
     getTaskById(id: number): Promise<Task> {
         return new Promise<Task>((res, rej) => {
             setTimeout(() => {
-                const task = this.mockTasks.find(
-                    task => task.id === id,
-                ) as Task;
+                const task = this.mockTasks.find(task => task.id === id) as Task;
                 if (!task) rej('No task with id found');
                 res(task);
             }, 10);
@@ -63,12 +54,9 @@ class MockClient implements TaskServiceClient {
     deleteTaskById(deletedTaskId: number) {
         return new Promise<object>((res, rej) => {
             setTimeout(() => {
-                const taskToBeEditedIndex = this.mockTasks.findIndex(
-                    task => task.id === deletedTaskId,
-                );
+                const taskToBeEditedIndex = this.mockTasks.findIndex(task => task.id === deletedTaskId);
                 this.mockTasks.splice(taskToBeEditedIndex, 1);
-                if (taskToBeEditedIndex === null)
-                    return rej(`No task with id ${deletedTaskId} exists`);
+                if (taskToBeEditedIndex === null) return rej(`No task with id ${deletedTaskId} exists`);
                 res({ message: `Deleted task with id ${deletedTaskId}` });
             }, 10);
         });
@@ -76,13 +64,47 @@ class MockClient implements TaskServiceClient {
     editTask(editedTask: Task) {
         return new Promise<Task>((res, rej) => {
             setTimeout(() => {
-                const taskToBeEditedIndex = this.mockTasks.findIndex(
-                    task => task.id === editedTask.id,
-                );
+                const taskToBeEditedIndex = this.mockTasks.findIndex(task => task.id === editedTask.id);
                 this.mockTasks[taskToBeEditedIndex] = editedTask;
-                if (taskToBeEditedIndex === null)
-                    return rej(`No task with id ${editedTask.id} exists`);
+                if (taskToBeEditedIndex === null) return rej(`No task with id ${editedTask.id} exists`);
                 res(editedTask);
+            }, 10);
+        });
+    }
+    async getDeferredTasks() {
+        return new Promise<Array<Task>>(res => {
+            setTimeout(() => {
+                res(this.mockTasks.filter(task => task.deferred));
+            }, 10);
+        });
+    }
+
+    async getCompletionInfo(): Promise<Array<TasksByDay>> {
+        return new Promise<Array<TasksByDay>>(res => {
+            const taskCompletionByDate: Array<TasksByDay> = this.mockTasks.reduce((acc: Array<TasksByDay>, obj) => {
+                if (!acc.find(a => obj.deadline.toDateString() === a.date))
+                    acc.push({
+                        date: obj.deadline.toDateString(),
+                        total: 1,
+                        totalCompleted: obj.completed ? 1 : 0,
+                    });
+                else {
+                    const objectToUpdate = acc.find(a => obj.deadline.toDateString() === a.date);
+                    if (!objectToUpdate)
+                        acc.push({
+                            date: obj.deadline.toDateString(),
+                            total: 0,
+                            totalCompleted: 0,
+                        });
+                    else {
+                        objectToUpdate.total += 1;
+                        objectToUpdate.totalCompleted += obj.completed ? 1 : 0;
+                    }
+                }
+                return acc;
+            }, []);
+            setTimeout(() => {
+                res(taskCompletionByDate);
             }, 10);
         });
     }

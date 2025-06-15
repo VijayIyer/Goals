@@ -1,41 +1,35 @@
 import { useContext, useEffect, useState } from 'react';
-import { Button, CircularProgress, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
-import { Task as TaskType } from './taskTypes';
+//import dayjs, { Dayjs } from 'dayjs';
+import { Button, ButtonGroup, CircularProgress } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 import ServicesContext from './services/servicesProvider';
 import { TaskServiceClientFactory } from './services/taskServiceClientFactory';
+import { Task as TaskType } from './types';
 
-import Tasks from './components/tasks';
-import AddTaskModal from './components/addTaskModal';
-import { DateCalendar } from '@mui/x-date-pickers';
-import dayjs, { Dayjs } from 'dayjs';
+import Dashboard from './components/dashboard';
+import Tasks from './components/activeTasks';
+import AddTaskModal from './components/common/addTaskModal';
+import CalendarView from './components/calendarView';
+import BackloggedTasks from './components/backloggedTasks';
 
 const App = () => {
     const { serviceType } = useContext(ServicesContext);
-    const [viewingDate, setViewingDate] = useState<Date>(new Date());
-    const [showCalender, setShowCalendar] = useState<boolean>(false);
-    const service = new TaskServiceClientFactory(
-        serviceType,
-    ).getServiceClient();
+    const service = new TaskServiceClientFactory(serviceType).getServiceClient();
     const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     const [tasks, setTasks] = useState<Array<TaskType>>([]);
     const [completedTasks, setCompletedTasks] = useState<Array<TaskType>>([]);
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+
     const handleAddTaskButtonClick = () => {
         setIsAddTaskModalOpen(true);
     };
     const refreshTasks = async () => {
         setIsRefreshing(true);
-        const tempTasks = await service.getAllTasks(viewingDate);
-        const tempCompletedTasks = await service.getAllTasks(viewingDate, true);
-        console.log(
-            JSON.stringify(tempTasks),
-            JSON.stringify(tempCompletedTasks),
-        );
-        setTasks(tempTasks);
-        setCompletedTasks(tempCompletedTasks);
+        setTasks(await service.getTasks(null));
+        setCompletedTasks(await service.getTasks(null, true));
         setIsRefreshing(false);
     };
     const handleAddTaskModalClose = () => {
@@ -45,25 +39,16 @@ const App = () => {
         refreshTasks();
         setIsAddTaskModalOpen(false);
     };
-
-    const handleViewingDateChange = (value: Dayjs): void => {
-        setViewingDate(value.toDate());
-    };
+    const activeTasks: Array<TaskType> = tasks.filter(task => !task.deferred);
+    const deferredTasks: Array<TaskType> = tasks.filter(task => task.deferred);
 
     useEffect(() => {
         refreshTasks();
-    }, [viewingDate]);
+    }, []);
 
     return (
-        <>
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: '2em',
-                }}
-            >
+        <BrowserRouter>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2em' }}>
                 <Button
                     onClick={handleAddTaskButtonClick}
                     variant="contained"
@@ -75,53 +60,49 @@ const App = () => {
                 {tasks.length > 0 && (
                     <h4>
                         Completed Tasks : {completedTasks.length || 0}
-                        &nbsp;/&nbsp;
-                        {tasks.length}
+                        &nbsp;/&nbsp;{tasks.length}
                     </h4>
                 )}
+                <ButtonGroup>
+                    <Link to="/">
+                        <Button>Active Tasks</Button>
+                    </Link>
+                    <Link to="/backlogged">
+                        <Button>Deferred Tasks</Button>
+                    </Link>
+                    <Link to="/dashboard">
+                        <Button>Summary</Button>
+                    </Link>
+                </ButtonGroup>
                 {isRefreshing && <CircularProgress />}
             </div>
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <Typography variant="body1">
-                    {viewingDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        day: 'numeric',
-                        month: 'long',
-                    })}
-                </Typography>
-                <Button onClick={() => setShowCalendar(value => !value)}>
-                    View Tasks At Different Date
-                </Button>
-                {showCalender && (
-                    <div>
-                        <DateCalendar
-                            value={dayjs(viewingDate) || dayjs(new Date())}
-                            onChange={handleViewingDateChange}
+
+            <Routes>
+                <Route
+                    path="/"
+                    element={<Tasks tasks={activeTasks} onTaskEdited={refreshTasks} onTaskDeleted={refreshTasks} />}
+                />
+                <Route path="/dashboard" element={<Dashboard tasks={tasks} />} />
+                <Route path="/calendar" element={<CalendarView />} />
+                <Route
+                    path="/backlogged"
+                    element={
+                        <BackloggedTasks
+                            deferredTasks={deferredTasks}
+                            onTaskEdited={refreshTasks}
+                            onTaskDeleted={refreshTasks}
                         />
-                    </div>
-                )}
-            </div>
-            <Tasks
-                tasks={tasks}
-                onTaskEdited={refreshTasks}
-                onTaskDeleted={refreshTasks}
-            />
+                    }
+                />
+            </Routes>
             {isAddTaskModalOpen && (
                 <AddTaskModal
                     isAddTaskModalOpen={isAddTaskModalOpen}
-                    viewingDate={viewingDate}
                     onClose={handleAddTaskModalClose}
                     onSubmit={handleAddTaskModalSubmit}
                 />
             )}
-        </>
+        </BrowserRouter>
     );
 };
 

@@ -1,7 +1,7 @@
-import { NewTask, Task } from '../../taskTypes';
+import { NewTask, Task, TasksByDay } from '../../types';
 import { TaskServiceClient } from './client';
 
-class ExpressClient implements TaskServiceClient {
+class HttpClient implements TaskServiceClient {
     baseUrl: string = '';
     constructor(baseUrl: string) {
         this.baseUrl = baseUrl;
@@ -31,11 +31,15 @@ class ExpressClient implements TaskServiceClient {
                 };
             });
     }
-    async getAllTasks(viewingDate: Date | null, completed: boolean = false): Promise<Array<Task>> {
-        return fetch(`${this.baseUrl}/tasks?${new URLSearchParams({
-                    viewingDate: viewingDate?.toISOString().split('T')[0] || '',
-                    completed: completed.toString()
-                })}`,
+    async getTasks(
+        viewingDate: Date | null,
+        completed: boolean = false,
+    ): Promise<Array<Task>> {
+        return fetch(
+            `${this.baseUrl}/tasks?${new URLSearchParams({
+                viewingDate: viewingDate?.toISOString().split('T')[0] || '',
+                completed: completed.toString(),
+            })}`,
             {
                 method: 'GET',
                 headers: {
@@ -116,7 +120,13 @@ class ExpressClient implements TaskServiceClient {
                 deadline: new Date(res.deadline),
             }));
     }
+    getDeferredTasks(): Promise<Array<Task>> {
+        return Promise.resolve([]);
+    }
+    getCompletionInfo(): Promise<Array<TasksByDay>> {
+        return Promise.resolve([]);
+    }
 }
 
 const baseUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:9000';
-export default new ExpressClient(baseUrl);
+export default new HttpClient(baseUrl);

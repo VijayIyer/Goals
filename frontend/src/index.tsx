@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(
 const serviceType =
     process.env.REACT_APP_SERVICE_TYPE === 'MOCK'
         ? ServiceType.MOCK
-        : ServiceType.EXPRESS;
+        : ServiceType.HTTP;
 
 root.render(
     <React.StrictMode>

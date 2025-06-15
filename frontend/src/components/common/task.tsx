@@ -1,28 +1,21 @@
 import { useEffect, useState, useContext } from 'react';
-import {
-    Box,
-    Card,
-    CardActions,
-    CardContent,
-    IconButton,
-    Tooltip,
-    Typography,
-} from '@mui/material';
+import { Button, Box, Card, CardActions, CardContent, IconButton, Tooltip, Typography } from '@mui/material';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
-import { Task } from '../taskTypes';
+import { Task } from '../../types';
 
 import { Edit } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
+import MoveTaskToActiveModal from './moveTaskToActiveModal';
 import EditTaskModal from './editTaskModal';
 import DeleteTaskModal from './deleteTaskModal';
 
-import ServicesContext from '../services/servicesProvider';
-import { TaskServiceClientFactory } from '../services/taskServiceClientFactory';
-import { TaskServiceClient } from '../services/taskServiceClients/client';
+import ServicesContext from '../../services/servicesProvider';
+import { TaskServiceClientFactory } from '../../services/taskServiceClientFactory';
+import { TaskServiceClient } from '../../services/taskServiceClients/client';
 
 export default ({
     task,
@@ -34,13 +27,12 @@ export default ({
     onTaskDeleted: () => Promise<void>;
 }) => {
     const { serviceType } = useContext(ServicesContext);
-    const service: TaskServiceClient = new TaskServiceClientFactory(
-        serviceType,
-    ).getServiceClient();
+    const service: TaskServiceClient = new TaskServiceClientFactory(serviceType).getServiceClient();
     const [editedTask, setEditedTask] = useState<Task>(task);
     const [isTaskCompleted, setIsTaskCompleted] = useState<boolean>(false);
     const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
     const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
+    const [showMoveTaskToActiveModal, setShowMoveTaskToActiveModal] = useState(false);
 
     const handleEditTaskModalButtonClick = () => {
         setIsEditTaskModalOpen(true);
@@ -66,11 +58,26 @@ export default ({
                 ...editedTask,
                 completed: !editedTask.completed,
             })
-            .then((editedTask: Task) => {
-                setEditedTask(task => ({
-                    ...task,
-                    completed: !task.completed,
-                }));
+            .then((task: Task) => {
+                setEditedTask(task);
+                onTaskEdited(editedTask.id);
+            });
+    };
+
+    const handleMoveToActiveTasksClick = () => {
+        setShowMoveTaskToActiveModal(true);
+    };
+
+    const handleConfirmMoveTaskToActive = async () => {
+        await service
+            .editTask({
+                ...editedTask,
+                deferred: false,
+                deadline: new Date(),
+            })
+            .then((task: Task) => {
+                setEditedTask(task);
+                setShowMoveTaskToActiveModal(false);
                 onTaskEdited(editedTask.id);
             });
     };
@@ -83,12 +90,7 @@ export default ({
         <>
             <Card sx={{ maxWidth: 345, borderRadius: 5 }} raised>
                 <CardContent>
-                    <Typography
-                        noWrap
-                        gutterBottom
-                        variant="h5"
-                        component="div"
-                    >
+                    <Typography noWrap gutterBottom variant="h5" component="div">
                         {editedTask.title}
                     </Typography>
                     {!editedTask.description && (
@@ -96,16 +98,10 @@ export default ({
                             No description added
                         </Typography>
                     )}
-                    {editedTask.description && (
-                        <Typography gutterBottom>
-                            {editedTask.description}
-                        </Typography>
-                    )}
+                    {editedTask.description && <Typography gutterBottom>{editedTask.description}</Typography>}
+                    <Typography>{editedTask.priority}</Typography>
                     {editedTask.deferred && (
-                        <Typography>
-                            This task is backlogged. Please update with a new
-                            deadline
-                        </Typography>
+                        <Typography>This task is backlogged. Please update with a new deadline</Typography>
                     )}
                     {!editedTask.deferred && (
                         <Tooltip title="Deadline for completing task">
@@ -119,14 +115,11 @@ export default ({
                                     }}
                                 >
                                     <HourglassTopIcon color="primary" />
-                                    {editedTask.deadline.toLocaleDateString(
-                                        'en-US',
-                                        {
-                                            year: 'numeric',
-                                            day: 'numeric',
-                                            month: 'long',
-                                        },
-                                    )}
+                                    {editedTask.deadline.toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        day: 'numeric',
+                                        month: 'long',
+                                    })}
                                 </Box>
                             </Typography>
                         </Tooltip>
@@ -134,35 +127,39 @@ export default ({
                 </CardContent>
                 <CardActions>
                     <Tooltip title="Edit Task Contents">
-                        <IconButton
-                            size="large"
-                            color="primary"
-                            onClick={handleEditTaskModalButtonClick}
-                        >
+                        <IconButton size="large" color="primary" onClick={handleEditTaskModalButtonClick}>
                             <Edit />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title="Mark Task as Completed">
-                        <IconButton
-                            size="large"
-                            color="primary"
-                            onClick={handleEditTaskMarkedCompletedClick}
-                        >
-                            {!isTaskCompleted && <CheckBoxOutlineBlankIcon />}
-                            {isTaskCompleted && <CheckBoxIcon />}
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete Task">
-                        <IconButton
-                            size="large"
-                            color="primary"
-                            onClick={handleDeleteTaskModalButtonClick}
-                        >
+                    {!editedTask.deferred && (
+                        <Tooltip title="Mark Task as Completed">
+                            <IconButton size="large" color="primary" onClick={handleEditTaskMarkedCompletedClick}>
+                                {!isTaskCompleted && <CheckBoxOutlineBlankIcon />}
+                                {isTaskCompleted && <CheckBoxIcon />}
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                    <Tooltip title="Defer Task">
+                        <IconButton size="large" color="primary" onClick={handleDeleteTaskModalButtonClick}>
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
+                    {editedTask.deferred && (
+                        <Button variant="contained" onClick={handleMoveToActiveTasksClick}>
+                            Move to Active
+                        </Button>
+                    )}
                 </CardActions>
             </Card>
+            <MoveTaskToActiveModal
+                isOpen={showMoveTaskToActiveModal}
+                onClose={() => setShowMoveTaskToActiveModal(false)}
+                onConfirm={handleConfirmMoveTaskToActive}
+                onEdit={() => {
+                    setShowMoveTaskToActiveModal(false);
+                    setIsEditTaskModalOpen(true);
+                }}
+            />
             <EditTaskModal
                 task={editedTask}
                 isOpen={isEditTaskModalOpen}
