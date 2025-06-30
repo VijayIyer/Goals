@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 //import dayjs, { Dayjs } from 'dayjs';
-import { Button, ButtonGroup, CircularProgress } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 import ServicesContext from './services/servicesProvider';
@@ -12,6 +12,7 @@ import { Task as TaskType } from './types';
 import Dashboard from './components/dashboard';
 import Tasks from './components/activeTasks';
 import AddTaskModal from './components/common/addTaskModal';
+import Navbar from './components/common/navbar';
 import CalendarView from './components/calendarView';
 import BackloggedTasks from './components/backloggedTasks';
 
@@ -63,17 +64,7 @@ const App = () => {
                         &nbsp;/&nbsp;{tasks.length}
                     </h4>
                 )}
-                <ButtonGroup>
-                    <Link to="/">
-                        <Button>Active Tasks</Button>
-                    </Link>
-                    <Link to="/backlogged">
-                        <Button>Deferred Tasks</Button>
-                    </Link>
-                    <Link to="/dashboard">
-                        <Button>Summary</Button>
-                    </Link>
-                </ButtonGroup>
+                <Navbar />
                 {isRefreshing && <CircularProgress />}
             </div>
 

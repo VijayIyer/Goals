@@ -114,6 +114,9 @@ June 11, 2025
 Use case
 [ ] Highlight the active path using react router dom!
 
+- [x] Used NavLink to add makeStyles class to the active route -> solution is too complicated?? Doesn't use material-ui's variant for button
+- [ ] Update solution, check current route and then apply variant
+
 June 15, 2025
 [X] Bug - when dateRange filter is day, no tasks are showing up!!
 [X] Collapse all commits - time to get more optimal -> completed with git reset --soft commands
