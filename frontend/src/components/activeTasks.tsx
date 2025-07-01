@@ -7,6 +7,9 @@ import SelectedDateRangeDisplay from './common/selectDateRange/selectedDateRange
 
 import { GROUP_BY } from '../enums';
 import { getDateWeek } from '../utils/week';
+import { getDefaultDateRange } from '../utils/date';
+import { filterTasks } from '../utils/tasks';
+import { useLocation } from 'react-router-dom';
 
 type TasksProps = {
     tasks: Array<TaskType>;
@@ -19,17 +22,7 @@ interface GroupedTasksType {
     tasks: Array<TaskType>;
 }
 
-function getDefaultDateRange(): DateRange {
-    const today = new Date();
-    return {
-        startDate: today,
-        week: getDateWeek(today),
-        month: today.toLocaleString('default', { month: 'long' }),
-        year: today.getFullYear(),
-        groupBy: GROUP_BY.DAY, // should this be here or part of a separate value
-    };
-}
-function toRange(deadline: Date, groupBy: GROUP_BY): string {
+function getRangeForDate(deadline: Date, groupBy: GROUP_BY): string {
     switch (groupBy) {
         case GROUP_BY.DAY: {
             return deadline.toLocaleDateString();
@@ -49,13 +42,19 @@ function toRange(deadline: Date, groupBy: GROUP_BY): string {
     }
 }
 
+interface LocationState {
+    dateRange: DateRange;
+}
+
 function groupTasks(tasks: Array<TaskType>, groupBy: GROUP_BY) {
     const groupedTasks: Array<GroupedTasksType> = [];
     tasks.forEach(task => {
-        const groupIndex: number = groupedTasks.findIndex(group => group.range === toRange(task.deadline, groupBy));
+        const groupIndex: number = groupedTasks.findIndex(
+            group => group.range === getRangeForDate(task.deadline, groupBy),
+        );
         if (groupIndex == -1) {
             groupedTasks.push({
-                range: toRange(task.deadline, groupBy),
+                range: getRangeForDate(task.deadline, groupBy),
                 tasks: [task],
             });
         } else {
@@ -65,37 +64,18 @@ function groupTasks(tasks: Array<TaskType>, groupBy: GROUP_BY) {
     return groupedTasks;
 }
 
-function filterTasks(tasks: Array<TaskType>, dateRange: DateRange): Array<TaskType> {
-    if (dateRange.groupBy === GROUP_BY.DAY) {
-        return tasks.filter(task => task.deadline.toDateString() === dateRange.startDate.toDateString());
-    }
-    if (dateRange.groupBy === GROUP_BY.WEEK || dateRange.groupBy === GROUP_BY.CUSTOM) {
-        return tasks.filter(
-            task =>
-                task.deadline >= dateRange.startDate &&
-                (dateRange.endDate ? task.deadline <= dateRange?.endDate : true),
-        );
-    }
-    if (dateRange.groupBy === GROUP_BY.MONTH) {
-        return tasks.filter(
-            task =>
-                task.deadline.getFullYear() === dateRange.year &&
-                task.deadline.toLocaleString('default', { month: 'long' }) === dateRange.month,
-        );
-    }
-    if (dateRange.groupBy === GROUP_BY.YEAR) {
-        return tasks.filter(task => task.deadline.getFullYear() === dateRange.year);
-    }
-    return tasks;
-}
-
 export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
+    const location = useLocation();
+    const locationState = location.state as LocationState;
     const [groupBy, setGroupBy] = useState<GROUP_BY>(GROUP_BY.DAY);
     const [showAllTasks, setShowAllTasks] = useState<boolean>(false);
-    const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange());
+    const [dateRange, setDateRange] = useState<DateRange>(
+        locationState?.dateRange ?? getDefaultDateRange(GROUP_BY.DAY),
+    );
     const filteredTasks: Array<TaskType> = filterTasks(tasks, dateRange);
     const groupedTasks = groupTasks(showAllTasks ? tasks : filteredTasks, groupBy);
 
+    console.log((location.state as LocationState)?.dateRange);
     console.log(dateRange.startDate);
     console.log(JSON.stringify(filteredTasks));
 

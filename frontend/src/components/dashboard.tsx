@@ -4,8 +4,12 @@ import { Button, Grid2 as Grid } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 import ServicesContext from '../services/servicesProvider';
+import SelectedDateRangeDisplay from './common/selectDateRange/selectedDateRangeDisplay';
 import { TaskServiceClientFactory } from '../services/taskServiceClientFactory';
-import { Task, TasksByDay } from '../types';
+import { DateRange, Task, TasksByDay } from '../types';
+import { getDefaultDateRange } from '../utils/date';
+import { GROUP_BY } from '../enums';
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles({
     summaryItem: {
@@ -16,17 +20,19 @@ const useStyles = makeStyles({
 
 function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
     const { serviceType } = useContext(ServicesContext);
+    const navigate = useNavigate();
+    const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange(GROUP_BY.DAY));
     const [completionInfo, setCompletionInfo] = useState<Array<TasksByDay>>([]);
 
     const service = new TaskServiceClientFactory(serviceType).getServiceClient();
 
     useEffect(() => {
         async function getCompletionInfo() {
-            const completionInfo = await service.getCompletionInfo();
+            const completionInfo = await service.getCompletionInfo(dateRange);
             setCompletionInfo(completionInfo);
         }
         getCompletionInfo();
-    }, [tasks]);
+    }, [tasks, dateRange]);
 
     const overAllCompleted = completionInfo.reduce((sum: number, taskByDay) => sum + taskByDay.totalCompleted, 0);
     const overall = completionInfo.reduce((sum: number, taskByDay) => sum + taskByDay.total, 0);
@@ -59,7 +65,12 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
 
     return (
         <>
-            <h1>This is the dashboard to see a summary of all tasks!</h1>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <SelectedDateRangeDisplay
+                    selectedDateRange={dateRange}
+                    onDateRangeUpdated={(updatedDateRange: DateRange) => setDateRange(updatedDateRange)}
+                />
+            </div>
             <Grid container gap={1}>
                 <Grid className={classes.summaryItem}>
                     <>
@@ -106,7 +117,9 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
                                         }}
                                     >
                                         {taskByDay.date} - {taskByDay.totalCompleted} / {taskByDay.total}
-                                        <Button>Go To Date</Button>
+                                        <Button onClick={() => navigate('/', { state: { dateRange } })}>
+                                            Go To Date
+                                        </Button>
                                     </div>
                                 </>
                             );

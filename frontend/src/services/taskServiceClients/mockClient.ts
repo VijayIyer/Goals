@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
-import { NewTask, Task, TasksByDay } from '../../types';
+import { DateRange, NewTask, Task, TasksByDay } from '../../types';
 import { TaskServiceClient } from './client';
-import { createTasks } from '../../utils/tasks';
+import { createTasks, filterTasks } from '../../utils/tasks';
+import { getDefaultDateRange } from '../../utils/date';
+import { GROUP_BY } from '../../enums';
 
 class MockClient implements TaskServiceClient {
     mockTasks: Array<Task> = [];
@@ -79,9 +81,10 @@ class MockClient implements TaskServiceClient {
         });
     }
 
-    async getCompletionInfo(): Promise<Array<TasksByDay>> {
+    async getCompletionInfo(dateRange: DateRange): Promise<Array<TasksByDay>> {
         return new Promise<Array<TasksByDay>>(res => {
-            const taskCompletionByDate: Array<TasksByDay> = this.mockTasks.reduce((acc: Array<TasksByDay>, obj) => {
+            const filteredTasks = filterTasks(this.mockTasks, dateRange ?? getDefaultDateRange(GROUP_BY.DAY));
+            const taskCompletionByDate: Array<TasksByDay> = filteredTasks.reduce((acc: Array<TasksByDay>, obj) => {
                 if (!acc.find(a => obj.deadline.toDateString() === a.date))
                     acc.push({
                         date: obj.deadline.toDateString(),
