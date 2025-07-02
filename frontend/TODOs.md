@@ -26,9 +26,9 @@ May 26, 2025
 - [ ] Week view showing wrong start and end date
 - [ ] Week date range format is hardcoded - should be user input or date method
 
-[ ] Seperate view for backlogged / deferred tasks
+[X] Seperate view for backlogged / deferred tasks
 
-[ ] When backlogged / deferred task is marked as no longer backlogged, prompt user for date with current viewing date as the default
+[X] When backlogged / deferred task is marked as no longer backlogged, prompt user for date with current viewing date as the default
 
 [ ] Task Description field should be rich-text
 
@@ -128,3 +128,7 @@ June 30, 2025
 - [ ] -> dont show all?
 
 [ ] Passing selectedDateRange from summary to active tasks is not working - work around by sharing value anyway??
+
+[ ] Group - ungroup view in active tasks
+
+[ ] Completion info for the date range in filter
