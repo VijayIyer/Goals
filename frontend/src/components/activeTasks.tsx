@@ -1,15 +1,15 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Button, FormControl, Grid2 as Grid, MenuItem, TextField, Typography } from '@mui/material';
-
 import Task from './common/task';
 import { Task as TaskType, DateRange } from '../types';
 import SelectedDateRangeDisplay from './common/selectDateRange/selectedDateRangeDisplay';
 
-import { GROUP_BY } from '../enums';
+import { FilterBy, GroupBy } from '../enums';
 import { getDateWeek } from '../utils/week';
 import { getDefaultDateRange } from '../utils/date';
 import { filterTasks } from '../utils/tasks';
 import { useLocation } from 'react-router-dom';
+import SortByButton from './common/sortBy/sortByButton';
 
 type TasksProps = {
     tasks: Array<TaskType>;
@@ -22,18 +22,18 @@ interface GroupedTasksType {
     tasks: Array<TaskType>;
 }
 
-function getRangeForDate(deadline: Date, groupBy: GROUP_BY): string {
+function getRangeForDate(deadline: Date, groupBy: GroupBy): string {
     switch (groupBy) {
-        case GROUP_BY.DAY: {
+        case GroupBy.DAY: {
             return deadline.toLocaleDateString();
         }
-        case GROUP_BY.WEEK: {
+        case GroupBy.WEEK: {
             return getDateWeek(deadline).toString();
         }
-        case GROUP_BY.MONTH: {
+        case GroupBy.MONTH: {
             return deadline.toLocaleString('default', { month: 'long' });
         }
-        case GROUP_BY.YEAR: {
+        case GroupBy.YEAR: {
             return deadline.getFullYear().toString();
         }
         default: {
@@ -46,7 +46,7 @@ interface LocationState {
     dateRange: DateRange;
 }
 
-function groupTasks(tasks: Array<TaskType>, groupBy: GROUP_BY) {
+function groupTasks(tasks: Array<TaskType>, groupBy: GroupBy) {
     const groupedTasks: Array<GroupedTasksType> = [];
     tasks.forEach(task => {
         const groupIndex: number = groupedTasks.findIndex(
@@ -67,20 +67,17 @@ function groupTasks(tasks: Array<TaskType>, groupBy: GROUP_BY) {
 export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
     const location = useLocation();
     const locationState = location.state as LocationState;
-    const [groupBy, setGroupBy] = useState<GROUP_BY>(GROUP_BY.DAY);
+    const [groupBy, setGroupBy] = useState<GroupBy>(GroupBy.DAY);
+    const [sortBy, setSortBy] = useState<string>('Date');
     const [showAllTasks, setShowAllTasks] = useState<boolean>(false);
     const [dateRange, setDateRange] = useState<DateRange>(
-        locationState?.dateRange ?? getDefaultDateRange(GROUP_BY.DAY),
+        locationState?.dateRange ?? getDefaultDateRange(FilterBy.DAY),
     );
     const filteredTasks: Array<TaskType> = filterTasks(tasks, dateRange);
     const groupedTasks = groupTasks(showAllTasks ? tasks : filteredTasks, groupBy);
 
-    console.log((location.state as LocationState)?.dateRange);
-    console.log(dateRange.startDate);
-    console.log(JSON.stringify(filteredTasks));
-
     const handleGroupByChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setGroupBy(event.target.value as GROUP_BY);
+        setGroupBy(event.target.value as GroupBy);
     };
     return (
         <>
@@ -92,23 +89,23 @@ export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
                 </Button>
             </div>
             {!showAllTasks && (
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <SelectedDateRangeDisplay
-                        selectedDateRange={dateRange}
-                        onDateRangeUpdated={(updatedDateRange: DateRange) => setDateRange(updatedDateRange)}
-                    />
-                </div>
+                <>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <SelectedDateRangeDisplay
+                            selectedDateRange={dateRange}
+                            onDateRangeUpdated={(updatedDateRange: DateRange) => setDateRange(updatedDateRange)}
+                        />
+                        <SortByButton onSortBySelection={setSortBy} sortBy={sortBy} />
+                        <FormControl sx={{ minWidth: 120 }}>
+                            <TextField value={groupBy} onChange={handleGroupByChange} label="Group By" select>
+                                {Object.values(GroupBy).map(value => (
+                                    <MenuItem value={value}>{value}</MenuItem>
+                                ))}
+                            </TextField>
+                        </FormControl>
+                    </div>
+                </>
             )}
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <FormControl sx={{ minWidth: 120 }}>
-                    <TextField value={groupBy} onChange={handleGroupByChange} label="Group By" select>
-                        <MenuItem value={GROUP_BY.DAY}>{GROUP_BY.DAY}</MenuItem>
-                        <MenuItem value={GROUP_BY.WEEK}>{GROUP_BY.WEEK}</MenuItem>
-                        <MenuItem value={GROUP_BY.MONTH}>{GROUP_BY.MONTH}</MenuItem>
-                        <MenuItem value={GROUP_BY.YEAR}>{GROUP_BY.YEAR}</MenuItem>
-                    </TextField>
-                </FormControl>
-            </div>
             {groupedTasks.map(group => {
                 return (
                     <Grid
@@ -123,7 +120,7 @@ export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
                     >
                         {/* Decide how to show for different groups */}
                         <Typography variant="h5">
-                            {groupBy === GROUP_BY.WEEK ? `Week ${group.range}` : `${group.range}`}
+                            {groupBy === GroupBy.WEEK ? `Week ${group.range}` : `${group.range}`}
                         </Typography>
                         <Grid key={group.range} container flexWrap="wrap" gap="2em">
                             {group.tasks.map(task => (

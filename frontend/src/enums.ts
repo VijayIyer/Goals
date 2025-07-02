@@ -11,12 +11,19 @@ export enum CompletionQuery {
     MIN = 'min',
 }
 
-export enum GROUP_BY {
+export enum FilterBy {
     DAY = 'Day',
     WEEK = 'Week',
     MONTH = 'Month',
     YEAR = 'Year',
     CUSTOM = 'Custom',
+}
+
+export enum GroupBy {
+    DAY = 'Day',
+    WEEK = 'Week',
+    MONTH = 'Month',
+    YEAR = 'Year',
 }
 
 export enum Month {

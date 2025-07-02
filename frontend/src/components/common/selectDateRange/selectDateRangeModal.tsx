@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
-import { GROUP_BY, Month } from '../../../enums';
+import { FilterBy, Month } from '../../../enums';
 import { DateRange } from '../../../types';
 import { getWeekStartDate, getWeekEndDate, getDateWeek } from '../../../utils/week';
 
@@ -43,7 +43,7 @@ function SelectDateRangeModal({
 }: SelectDateRangeModalProps) {
     const [selectedDateRange, setSelectedDateRange] = useState<DateRange>(currentSelectedDateRange);
     const handleConfirm = () => {
-        if (selectedDateRange.groupBy === GROUP_BY.WEEK && !selectedDateRange.endDate) {
+        if (selectedDateRange.filterBy === FilterBy.WEEK && !selectedDateRange.endDate) {
             const endDate = new Date(selectedDateRange.startDate);
             endDate.setDate(selectedDateRange.startDate.getDate() + 6);
             onSelectedDateRangeUpdate({
@@ -112,20 +112,20 @@ function SelectDateRangeModal({
             });
         }
     };
-    const handleGroupBySelectionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFilterBySelectionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         switch (event.target.value) {
-            case GROUP_BY.DAY:
-            case GROUP_BY.WEEK:
-            case GROUP_BY.MONTH:
-            case GROUP_BY.YEAR:
-            case GROUP_BY.CUSTOM: {
+            case FilterBy.DAY:
+            case FilterBy.WEEK:
+            case FilterBy.MONTH:
+            case FilterBy.YEAR:
+            case FilterBy.CUSTOM: {
                 setSelectedDateRange({
                     ...selectedDateRange,
-                    groupBy: event.target.value,
+                    filterBy: event.target.value,
                 });
                 onSelectedDateRangeUpdate({
                     ...selectedDateRange,
-                    groupBy: event.target.value,
+                    filterBy: event.target.value,
                 });
                 return;
             }
@@ -140,7 +140,7 @@ function SelectDateRangeModal({
                 <DialogContentText>
                     Please select a specific date or a date range (start and end date)
                 </DialogContentText>
-                {selectedDateRange.groupBy === GROUP_BY.DAY && (
+                {selectedDateRange.filterBy === FilterBy.DAY && (
                     <DatePicker
                         name="deadline"
                         label="Deadline"
@@ -149,7 +149,7 @@ function SelectDateRangeModal({
                         views={['day', 'month', 'year']}
                     />
                 )}
-                {selectedDateRange.groupBy === GROUP_BY.WEEK && (
+                {selectedDateRange.filterBy === FilterBy.WEEK && (
                     <FormControl>
                         <Select
                             onChange={handleDateRangeWeekNumberSelection}
@@ -174,7 +174,7 @@ function SelectDateRangeModal({
                         />
                     </FormControl>
                 )}{' '}
-                {selectedDateRange.groupBy === GROUP_BY.MONTH && (
+                {selectedDateRange.filterBy === FilterBy.MONTH && (
                     <FormControl>
                         <Select label="Month" value={selectedDateRange.month} onChange={handleDateRangeMonthSelection}>
                             {Object.values(Month).map(month => (
@@ -192,7 +192,7 @@ function SelectDateRangeModal({
                         />
                     </FormControl>
                 )}
-                {selectedDateRange.groupBy === GROUP_BY.YEAR && (
+                {selectedDateRange.filterBy === FilterBy.YEAR && (
                     <DatePicker
                         name="year"
                         label="Year"
@@ -201,7 +201,7 @@ function SelectDateRangeModal({
                         views={['year']}
                     />
                 )}
-                {selectedDateRange.groupBy === GROUP_BY.CUSTOM && (
+                {selectedDateRange.filterBy === FilterBy.CUSTOM && (
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <DatePicker
                             name="startDate"
@@ -219,19 +219,19 @@ function SelectDateRangeModal({
                     </div>
                 )}
                 <FormControl>
-                    <FormLabel id="group-by-label">Group By</FormLabel>
+                    <FormLabel id="filter-by-label">Filter By</FormLabel>
                     <RadioGroup
-                        onChange={handleGroupBySelectionChange}
-                        value={selectedDateRange.groupBy}
+                        onChange={handleFilterBySelectionChange}
+                        value={selectedDateRange.filterBy}
                         row
-                        aria-labelledby="groupby"
-                        name="group-by-radio-group"
+                        aria-labelledby="filterBy"
+                        name="filter-by-radio-group"
                     >
-                        <FormControlLabel value={GROUP_BY.DAY} control={<Radio />} label={GROUP_BY.DAY} />
-                        <FormControlLabel value={GROUP_BY.WEEK} control={<Radio />} label={GROUP_BY.WEEK} />
-                        <FormControlLabel value={GROUP_BY.MONTH} control={<Radio />} label={GROUP_BY.MONTH} />
-                        <FormControlLabel value={GROUP_BY.YEAR} control={<Radio />} label={GROUP_BY.YEAR} />
-                        <FormControlLabel value={GROUP_BY.CUSTOM} control={<Radio />} label={GROUP_BY.CUSTOM} />
+                        <FormControlLabel value={FilterBy.DAY} control={<Radio />} label={FilterBy.DAY} />
+                        <FormControlLabel value={FilterBy.WEEK} control={<Radio />} label={FilterBy.WEEK} />
+                        <FormControlLabel value={FilterBy.MONTH} control={<Radio />} label={FilterBy.MONTH} />
+                        <FormControlLabel value={FilterBy.YEAR} control={<Radio />} label={FilterBy.YEAR} />
+                        <FormControlLabel value={FilterBy.CUSTOM} control={<Radio />} label={FilterBy.CUSTOM} />
                     </RadioGroup>
                 </FormControl>
             </DialogContent>

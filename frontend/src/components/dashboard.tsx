@@ -8,7 +8,7 @@ import SelectedDateRangeDisplay from './common/selectDateRange/selectedDateRange
 import { TaskServiceClientFactory } from '../services/taskServiceClientFactory';
 import { DateRange, Task, TasksByDay } from '../types';
 import { getDefaultDateRange } from '../utils/date';
-import { GROUP_BY } from '../enums';
+import { FilterBy } from '../enums';
 import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles({
@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
     const { serviceType } = useContext(ServicesContext);
     const navigate = useNavigate();
-    const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange(GROUP_BY.DAY));
+    const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange(FilterBy.DAY));
     const [completionInfo, setCompletionInfo] = useState<Array<TasksByDay>>([]);
 
     const service = new TaskServiceClientFactory(serviceType).getServiceClient();

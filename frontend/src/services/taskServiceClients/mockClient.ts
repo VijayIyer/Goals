@@ -3,7 +3,7 @@ import { DateRange, NewTask, Task, TasksByDay } from '../../types';
 import { TaskServiceClient } from './client';
 import { createTasks, filterTasks } from '../../utils/tasks';
 import { getDefaultDateRange } from '../../utils/date';
-import { GROUP_BY } from '../../enums';
+import { FilterBy } from '../../enums';
 
 class MockClient implements TaskServiceClient {
     mockTasks: Array<Task> = [];
@@ -83,7 +83,7 @@ class MockClient implements TaskServiceClient {
 
     async getCompletionInfo(dateRange: DateRange): Promise<Array<TasksByDay>> {
         return new Promise<Array<TasksByDay>>(res => {
-            const filteredTasks = filterTasks(this.mockTasks, dateRange ?? getDefaultDateRange(GROUP_BY.DAY));
+            const filteredTasks = filterTasks(this.mockTasks, dateRange ?? getDefaultDateRange(FilterBy.DAY));
             const taskCompletionByDate: Array<TasksByDay> = filteredTasks.reduce((acc: Array<TasksByDay>, obj) => {
                 if (!acc.find(a => obj.deadline.toDateString() === a.date))
                     acc.push({

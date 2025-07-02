@@ -1,4 +1,4 @@
-import { GROUP_BY } from '../enums';
+import { FilterBy } from '../enums';
 
 export type DateRange = {
     startDate: Date;
@@ -6,5 +6,5 @@ export type DateRange = {
     week: number;
     month: string; // should this be enum
     year: number;
-    groupBy: GROUP_BY;
+    filterBy: FilterBy;
 };

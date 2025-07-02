@@ -3,12 +3,12 @@ import { Button, IconButton, Typography } from '@mui/material';
 import { CalendarIcon } from '@mui/x-date-pickers';
 import SelectDateRangeModal from './selectDateRangeModal';
 import { DateRange } from '../../../types';
-import { GROUP_BY } from '../../../enums';
+import { FilterBy } from '../../../enums';
 import { getWeekEndDate, getDateWeek } from '../../../utils/week';
 
 function getPreviousDateRange(dateRange: DateRange): DateRange {
-    switch (dateRange.groupBy) {
-        case GROUP_BY.DAY: {
+    switch (dateRange.filterBy) {
+        case FilterBy.DAY: {
             const newDate = new Date(dateRange.startDate);
             newDate.setDate(newDate.getDate() - 1);
             return {
@@ -19,7 +19,7 @@ function getPreviousDateRange(dateRange: DateRange): DateRange {
                 year: newDate.getFullYear(),
             };
         }
-        case GROUP_BY.WEEK: {
+        case FilterBy.WEEK: {
             const newStartDate = new Date(dateRange.startDate);
             newStartDate.setDate(newStartDate.getDate() - 6);
             const newEndDate = new Date(dateRange.endDate as Date);
@@ -35,7 +35,7 @@ function getPreviousDateRange(dateRange: DateRange): DateRange {
                 year: newStartDate.getFullYear(),
             };
         }
-        case GROUP_BY.MONTH: {
+        case FilterBy.MONTH: {
             const newDate = new Date(dateRange.startDate);
             const newMonth = dateRange.startDate.getMonth() - 1;
             newDate.setMonth(newMonth);
@@ -46,7 +46,7 @@ function getPreviousDateRange(dateRange: DateRange): DateRange {
                 year: newDate.getFullYear(),
             };
         }
-        case GROUP_BY.YEAR: {
+        case FilterBy.YEAR: {
             const newDate = new Date(dateRange.startDate);
             const newYear = dateRange.startDate.getFullYear() - 1;
             newDate.setFullYear(newYear);
@@ -62,8 +62,8 @@ function getPreviousDateRange(dateRange: DateRange): DateRange {
 }
 
 function getNextDateRange(dateRange: DateRange): DateRange {
-    switch (dateRange.groupBy) {
-        case GROUP_BY.DAY: {
+    switch (dateRange.filterBy) {
+        case FilterBy.DAY: {
             const newDate = new Date(dateRange.startDate);
             newDate.setDate(newDate.getDate() + 1);
             return {
@@ -74,7 +74,7 @@ function getNextDateRange(dateRange: DateRange): DateRange {
                 year: newDate.getFullYear(),
             };
         }
-        case GROUP_BY.WEEK: {
+        case FilterBy.WEEK: {
             const newStartDate = new Date(dateRange.startDate);
             newStartDate.setDate(newStartDate.getDate() + 6);
             const newEndDate = new Date(dateRange.endDate as Date);
@@ -90,7 +90,7 @@ function getNextDateRange(dateRange: DateRange): DateRange {
                 year: newStartDate.getFullYear(),
             };
         }
-        case GROUP_BY.MONTH: {
+        case FilterBy.MONTH: {
             const newDate = new Date(dateRange.startDate);
             const newMonth = dateRange.startDate.getMonth() + 1;
             newDate.setMonth(newMonth);
@@ -101,7 +101,7 @@ function getNextDateRange(dateRange: DateRange): DateRange {
                 year: newDate.getFullYear(),
             };
         }
-        case GROUP_BY.YEAR: {
+        case FilterBy.YEAR: {
             const newDate = new Date(dateRange.startDate);
             const newYear = dateRange.startDate.getFullYear() + 1;
             newDate.setFullYear(newYear);
@@ -134,7 +134,7 @@ export default ({ selectedDateRange, onDateRangeUpdated }: SelectedDateRangeDisp
     return (
         <>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Button onClick={handlePreviousClick} disabled={selectedDateRange.groupBy === GROUP_BY.CUSTOM}>
+                <Button onClick={handlePreviousClick} disabled={selectedDateRange.filterBy === FilterBy.CUSTOM}>
                     Previous
                 </Button>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -146,18 +146,19 @@ export default ({ selectedDateRange, onDateRangeUpdated }: SelectedDateRangeDisp
                         <CalendarIcon />
                     </IconButton>
                     <Typography>
-                        {selectedDateRange.groupBy === GROUP_BY.DAY && selectedDateRange.startDate.toLocaleDateString()}
-                        {selectedDateRange.groupBy === GROUP_BY.WEEK && (
+                        {selectedDateRange.filterBy === FilterBy.DAY &&
+                            selectedDateRange.startDate.toLocaleDateString()}
+                        {selectedDateRange.filterBy === FilterBy.WEEK && (
                             <>
                                 {selectedDateRange.startDate.toLocaleDateString()} -{' '}
                                 {selectedDateRange.endDate?.toLocaleDateString() ||
                                     getWeekEndDate(selectedDateRange.week, selectedDateRange.year).toLocaleDateString()}
                             </>
                         )}
-                        {selectedDateRange.groupBy === GROUP_BY.MONTH &&
+                        {selectedDateRange.filterBy === FilterBy.MONTH &&
                             selectedDateRange.month + `, ` + selectedDateRange.year}
-                        {selectedDateRange.groupBy === GROUP_BY.YEAR && selectedDateRange.year}
-                        {selectedDateRange.groupBy === GROUP_BY.CUSTOM && selectedDateRange.endDate && (
+                        {selectedDateRange.filterBy === FilterBy.YEAR && selectedDateRange.year}
+                        {selectedDateRange.filterBy === FilterBy.CUSTOM && selectedDateRange.endDate && (
                             <>
                                 {selectedDateRange.startDate.toLocaleDateString()} -{' '}
                                 {selectedDateRange.endDate.toLocaleDateString()}
@@ -165,7 +166,7 @@ export default ({ selectedDateRange, onDateRangeUpdated }: SelectedDateRangeDisp
                         )}
                     </Typography>
                 </div>
-                <Button onClick={handleNextClick} disabled={selectedDateRange.groupBy === GROUP_BY.CUSTOM}>
+                <Button onClick={handleNextClick} disabled={selectedDateRange.filterBy === FilterBy.CUSTOM}>
                     Next
                 </Button>
             </div>

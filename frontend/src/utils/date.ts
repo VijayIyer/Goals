@@ -1,6 +1,6 @@
 import { DateRange } from '../types';
 import { getDateWeek } from './week';
-import { GROUP_BY } from '../enums';
+import { FilterBy } from '../enums';
 export function getRandomDateWithinRange(startDate: Date, endDate: Date): Date {
     const startTime = startDate.getTime();
     const endTime = endDate.getTime();
@@ -8,16 +8,16 @@ export function getRandomDateWithinRange(startDate: Date, endDate: Date): Date {
     return new Date(randomTime);
 }
 
-export function getDefaultDateRange(groupBy: GROUP_BY | null): DateRange {
+export function getDefaultDateRange(filterBy: FilterBy | null): DateRange {
     const today = new Date();
     const todayPlusSevenDays = new Date();
     todayPlusSevenDays.setDate(todayPlusSevenDays.getDate() + 7);
     return {
         startDate: today,
-        endDate: groupBy === GROUP_BY.WEEK ? todayPlusSevenDays : undefined,
+        endDate: filterBy === FilterBy.WEEK ? todayPlusSevenDays : undefined,
         week: getDateWeek(today),
         month: today.toLocaleString('default', { month: 'long' }),
         year: today.getFullYear(),
-        groupBy: groupBy ?? GROUP_BY.DAY, // should this be here or part of a separate value
+        filterBy: filterBy ?? FilterBy.DAY, // should this be here or part of a separate value
     };
 }

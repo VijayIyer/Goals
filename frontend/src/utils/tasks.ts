@@ -1,4 +1,4 @@
-import { TaskPriority, GROUP_BY } from '../enums';
+import { TaskPriority, FilterBy } from '../enums';
 import { Task as TaskType, DateRange } from '../types';
 import { getRandomDateWithinRange } from './date';
 export function createTasks(numberOfTasks: number): Array<TaskType> {
@@ -18,24 +18,24 @@ export function createTasks(numberOfTasks: number): Array<TaskType> {
 }
 
 export function filterTasks(tasks: Array<TaskType>, dateRange: DateRange): Array<TaskType> {
-    if (dateRange.groupBy === GROUP_BY.DAY) {
+    if (dateRange.filterBy === FilterBy.DAY) {
         return tasks.filter(task => task.deadline.toDateString() === dateRange.startDate.toDateString());
     }
-    if (dateRange.groupBy === GROUP_BY.WEEK || dateRange.groupBy === GROUP_BY.CUSTOM) {
+    if (dateRange.filterBy === FilterBy.WEEK || dateRange.filterBy === FilterBy.CUSTOM) {
         return tasks.filter(
             task =>
                 task.deadline >= dateRange.startDate &&
                 (dateRange.endDate ? task.deadline <= dateRange?.endDate : true),
         );
     }
-    if (dateRange.groupBy === GROUP_BY.MONTH) {
+    if (dateRange.filterBy === FilterBy.MONTH) {
         return tasks.filter(
             task =>
                 task.deadline.getFullYear() === dateRange.year &&
                 task.deadline.toLocaleString('default', { month: 'long' }) === dateRange.month,
         );
     }
-    if (dateRange.groupBy === GROUP_BY.YEAR) {
+    if (dateRange.filterBy === FilterBy.YEAR) {
         return tasks.filter(task => task.deadline.getFullYear() === dateRange.year);
     }
     return tasks;
