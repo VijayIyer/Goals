@@ -126,3 +126,5 @@ June 30, 2025
 [ ] Deferred tasks page is really slow, make it faster
 
 - [ ] -> dont show all?
+
+[ ] Passing selectedDateRange from summary to active tasks is not working - work around by sharing value anyway??
