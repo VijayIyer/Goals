@@ -19,14 +19,16 @@ export function createTasks(numberOfTasks: number): Array<TaskType> {
 
 export function filterTasks(tasks: Array<TaskType>, dateRange: DateRange): Array<TaskType> {
     if (dateRange.filterBy === FilterBy.DAY) {
-        return tasks.filter(task => task.deadline.toDateString() === dateRange.startDate.toDateString());
+        return tasks.filter(task => task.deadline.toDateString() === dateRange.startDate.toDateString()); // TODO: is this a robust way of comparing
     }
     if (dateRange.filterBy === FilterBy.WEEK || dateRange.filterBy === FilterBy.CUSTOM) {
-        return tasks.filter(
-            task =>
-                task.deadline >= dateRange.startDate &&
-                (dateRange.endDate ? task.deadline <= dateRange?.endDate : true),
-        );
+        return tasks.filter(task => {
+            const taskDate = new Date(task.deadline);
+            taskDate.setHours(0, 0, 0, 0);
+            dateRange.startDate.setHours(0, 0, 0, 0);
+            if (dateRange.endDate) dateRange.endDate?.setHours(0, 0, 0, 0);
+            return taskDate >= dateRange.startDate && (dateRange.endDate ? taskDate <= dateRange?.endDate : true);
+        });
     }
     if (dateRange.filterBy === FilterBy.MONTH) {
         return tasks.filter(
