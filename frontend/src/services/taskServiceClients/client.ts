@@ -7,5 +7,5 @@ export interface TaskServiceClient {
     deleteTaskById: (id: number) => Promise<object>;
     editTask: (task: Task) => Promise<Task>;
     getDeferredTasks: () => Promise<Array<Task>>;
-    getCompletionInfo: (dateRange: DateRange) => Promise<Array<TasksByDay>>;
+    getCompletionInfo: (dateRange: DateRange, showAllTasks: boolean) => Promise<Array<TasksByDay>>;
 }

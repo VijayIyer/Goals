@@ -81,9 +81,11 @@ class MockClient implements TaskServiceClient {
         });
     }
 
-    async getCompletionInfo(dateRange: DateRange): Promise<Array<TasksByDay>> {
+    async getCompletionInfo(dateRange: DateRange, showAllTasks: boolean): Promise<Array<TasksByDay>> {
         return new Promise<Array<TasksByDay>>(res => {
-            const filteredTasks = filterTasks(this.mockTasks, dateRange ?? getDefaultDateRange(FilterBy.DAY));
+            const filteredTasks = showAllTasks
+                ? this.mockTasks
+                : filterTasks(this.mockTasks, dateRange ?? getDefaultDateRange(FilterBy.DAY));
             const taskCompletionByDate: Array<TasksByDay> = filteredTasks.reduce((acc: Array<TasksByDay>, obj) => {
                 if (!acc.find(a => obj.deadline.toDateString() === a.date))
                     acc.push({
