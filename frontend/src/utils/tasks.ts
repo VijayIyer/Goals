@@ -1,6 +1,8 @@
-import { TaskPriority, FilterBy } from '../enums';
+import { TaskPriority, FilterBy, GroupBy } from '../enums';
+import { GroupedTasksType } from '../interfaces/task';
 import { Task as TaskType, DateRange } from '../types';
-import { getRandomDateWithinRange } from './date';
+import { getRandomDateWithinRange, getRangeForDate } from './date';
+
 export function createTasks(numberOfTasks: number): Array<TaskType> {
     return Array.from({ length: numberOfTasks }, (_, i) => i + 1).map(taskNumber => ({
         id: taskNumber,
@@ -41,4 +43,22 @@ export function filterTasks(tasks: Array<TaskType>, dateRange: DateRange): Array
         return tasks.filter(task => task.deadline.getFullYear() === dateRange.year);
     }
     return tasks;
+}
+
+export function groupTasks(tasks: Array<TaskType>, groupBy: GroupBy) {
+    const groupedTasks: Array<GroupedTasksType> = [];
+    tasks.forEach(task => {
+        const groupIndex: number = groupedTasks.findIndex(
+            group => group.range === getRangeForDate(task.deadline, groupBy),
+        );
+        if (groupIndex == -1) {
+            groupedTasks.push({
+                range: getRangeForDate(task.deadline, groupBy),
+                tasks: [task],
+            });
+        } else {
+            groupedTasks[groupIndex].tasks.push(task);
+        }
+    });
+    return groupedTasks;
 }
