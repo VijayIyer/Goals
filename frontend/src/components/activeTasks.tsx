@@ -5,9 +5,8 @@ import { Task as TaskType, DateRange, CompletionInfo } from '../types';
 import SelectedDateRangeDisplay from './common/selectDateRange/selectedDateRangeDisplay';
 
 import { FilterBy, GroupBy } from '../enums';
-import { getDateWeek } from '../utils/week';
 import { getDefaultDateRange } from '../utils/date';
-import { filterTasks } from '../utils/tasks';
+import { filterTasks, groupTasks } from '../utils/tasks';
 import { useLocation } from 'react-router-dom';
 import SortByButton from './common/sortBy/sortByButton';
 
@@ -17,51 +16,8 @@ type TasksProps = {
     onTaskDeleted: () => Promise<void>;
 };
 
-interface GroupedTasksType {
-    range: string;
-    tasks: Array<TaskType>;
-}
-
-function getRangeForDate(deadline: Date, groupBy: GroupBy): string {
-    switch (groupBy) {
-        case GroupBy.DAY: {
-            return deadline.toLocaleDateString();
-        }
-        case GroupBy.WEEK: {
-            return getDateWeek(deadline).toString();
-        }
-        case GroupBy.MONTH: {
-            return deadline.toLocaleString('default', { month: 'long' });
-        }
-        case GroupBy.YEAR: {
-            return deadline.getFullYear().toString();
-        }
-        default: {
-            return deadline.toLocaleDateString();
-        }
-    }
-}
-
 interface LocationState {
     dateRange: DateRange;
-}
-
-function groupTasks(tasks: Array<TaskType>, groupBy: GroupBy) {
-    const groupedTasks: Array<GroupedTasksType> = [];
-    tasks.forEach(task => {
-        const groupIndex: number = groupedTasks.findIndex(
-            group => group.range === getRangeForDate(task.deadline, groupBy),
-        );
-        if (groupIndex == -1) {
-            groupedTasks.push({
-                range: getRangeForDate(task.deadline, groupBy),
-                tasks: [task],
-            });
-        } else {
-            groupedTasks[groupIndex].tasks.push(task);
-        }
-    });
-    return groupedTasks;
 }
 
 function getCompletionInfo(filteredTasks: Array<TaskType>) {
