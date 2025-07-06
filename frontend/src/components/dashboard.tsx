@@ -7,7 +7,7 @@ import ServicesContext from '../services/servicesProvider';
 import SelectedDateRangeDisplay from './common/selectDateRange/selectedDateRangeDisplay';
 import { TaskServiceClientFactory } from '../services/taskServiceClientFactory';
 import { DateRange, Task, TasksByDay } from '../types';
-import { getDefaultDateRange, formatWeekDateRange } from '../utils/date';
+import { getDefaultDateRange, formatWeekDateRange, formatDate } from '../utils/date';
 import { FilterBy, GroupBy } from '../enums';
 import { useNavigate } from 'react-router-dom';
 import { filterTasksByFilterBy, groupTasks } from '../utils/tasks';
@@ -210,7 +210,7 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
                 </Grid>
                 <Grid className={classes.summaryItem}>
                     <>
-                        <h3>Year ({new Date().getFullYear()})</h3>
+                        <h3>Current Year ({new Date().getFullYear()})</h3>
                         <h4>Total: {yearTotal}</h4>
                         <h4>Completed: {yearCompleted}</h4>
                         <h4>
@@ -241,7 +241,10 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
                 </Grid>
                 <Grid className={classes.summaryItem}>
                     <>
-                        <h3>Month ({new Date().toLocaleString('default', { month: 'long' })})</h3>
+                        <h3>
+                            Current Month ({new Date().toLocaleString('default', { month: 'long' })},{' '}
+                            {new Date().getFullYear()})
+                        </h3>
                         <h4>Total: {monthTotal}</h4>
                         <h4>Completed: {monthCompleted}</h4>
                         <h4>
@@ -264,7 +267,10 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
                 </Grid>
                 <Grid className={classes.summaryItem}>
                     <>
-                        <h3>Week ({formatWeekDateRange(getDateWeek(new Date()), new Date().getFullYear())})</h3>
+                        <h3>
+                            Current Week ({formatWeekDateRange(getDateWeek(new Date()), new Date().getFullYear())},
+                            {new Date().getFullYear()})
+                        </h3>
                         <h4>Total: {weekTotal}</h4>
                         <h4>Completed: {weekCompleted}</h4>
                         <h4>
@@ -279,7 +285,7 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
                 </Grid>
                 <Grid className={classes.summaryItem}>
                     <>
-                        <h3>Day</h3>
+                        <h3>Day ({formatDate(new Date())})</h3>
                         <h4>Total: {dayTotal}</h4>
                         <h4>Completed: {dayCompleted}</h4>
                     </>

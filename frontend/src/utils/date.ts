@@ -8,6 +8,16 @@ export function getRandomDateWithinRange(startDate: Date, endDate: Date): Date {
     return new Date(randomTime);
 }
 
+export function formatDate(date: Date): string {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        // 'en-US' for US English locale
+        month: 'long', // 'long' for full month name (e.g., "July")
+        day: 'numeric', // 'numeric' for day of the month (e.g., "5")
+        year: 'numeric', // 'numeric' for four-digit year (e.g., "2025")
+    });
+    return formatter.format(date);
+}
+
 export function formatWeekDateRange(weekNumber: number, year: number): string {
     const weekStartDate = getWeekStartDate(weekNumber, year);
     const weekEndDate = getWeekEndDate(weekNumber, year);
