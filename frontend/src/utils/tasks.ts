@@ -2,6 +2,7 @@ import { TaskPriority, FilterBy, GroupBy } from '../enums';
 import { GroupedTasksType } from '../interfaces/task';
 import { Task as TaskType, DateRange } from '../types';
 import { getRandomDateWithinRange, getRangeForDate } from './date';
+import { getDateWeek, getWeekEndDate, getWeekStartDate } from './week';
 
 export function createTasks(numberOfTasks: number): Array<TaskType> {
     return Array.from({ length: numberOfTasks }, (_, i) => i + 1).map(taskNumber => ({
@@ -19,7 +20,34 @@ export function createTasks(numberOfTasks: number): Array<TaskType> {
     }));
 }
 
-export function filterTasks(tasks: Array<TaskType>, dateRange: DateRange): Array<TaskType> {
+export function filterTasksByFilterBy(tasks: Array<TaskType>, filterBy: FilterBy) {
+    switch (filterBy) {
+        case FilterBy.DAY:
+            return tasks.filter(task => task.deadline.toDateString() === new Date().toDateString()); // TODO: is this a robust way of comparing
+        case FilterBy.WEEK:
+            return tasks.filter(task => {
+                const currentYear = new Date().getFullYear();
+                const taskDate = new Date(task.deadline);
+                taskDate.setHours(0, 0, 0, 0);
+                const weekNumber = getDateWeek(new Date());
+                const currentWeekStartDate = getWeekStartDate(weekNumber, currentYear);
+                const currentWeekEndDate = getWeekEndDate(weekNumber, currentYear);
+                currentWeekStartDate.setHours(0, 0, 0, 0);
+                if (currentWeekEndDate) currentWeekEndDate.setHours(0, 0, 0, 0);
+                return taskDate >= currentWeekStartDate && (currentWeekEndDate ? taskDate <= currentWeekEndDate : true);
+            });
+        case FilterBy.MONTH:
+            return tasks.filter(
+                task =>
+                    task.deadline.toLocaleString('default', { month: 'long' }) ===
+                    new Date().toLocaleDateString('default', { month: 'long' }),
+            );
+        default:
+            return tasks;
+    }
+}
+
+export function filterTasksByDateRange(tasks: Array<TaskType>, dateRange: DateRange): Array<TaskType> {
     if (dateRange.filterBy === FilterBy.DAY) {
         return tasks.filter(task => task.deadline.toDateString() === dateRange.startDate.toDateString()); // TODO: is this a robust way of comparing
     }

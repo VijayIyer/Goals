@@ -21,12 +21,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { FilterBy, Month } from '../../../enums';
 import { DateRange } from '../../../types';
 import { getWeekStartDate, getWeekEndDate, getDateWeek } from '../../../utils/week';
-
-function formatWeekDateRange(weekNumber: number, year: number): string {
-    const weekStartDate = getWeekStartDate(weekNumber, year);
-    const weekEndDate = getWeekEndDate(weekNumber, year);
-    return `${weekStartDate.getMonth() + 1}/${weekStartDate.getDate()}/${weekStartDate.getFullYear()} to ${weekEndDate.getMonth() + 1}/${weekEndDate.getDate()}/${weekEndDate.getFullYear()}`;
-}
+import { formatWeekDateRange } from '../../../utils/date';
 
 interface SelectDateRangeModalProps {
     currentSelectedDateRange: DateRange;
