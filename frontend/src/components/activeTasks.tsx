@@ -6,7 +6,7 @@ import SelectedDateRangeDisplay from './common/selectDateRange/selectedDateRange
 
 import { FilterBy, GroupBy } from '../enums';
 import { getDefaultDateRange } from '../utils/date';
-import { filterTasks, groupTasks } from '../utils/tasks';
+import { filterTasksByDateRange, groupTasks } from '../utils/tasks';
 import { useLocation } from 'react-router-dom';
 import SortByButton from './common/sortBy/sortByButton';
 
@@ -35,7 +35,7 @@ export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
     const [dateRange, setDateRange] = useState<DateRange>(
         locationState?.dateRange ?? getDefaultDateRange(FilterBy.DAY),
     );
-    const filteredTasks: Array<TaskType> = filterTasks(tasks, dateRange);
+    const filteredTasks: Array<TaskType> = filterTasksByDateRange(tasks, dateRange);
     const filteredTasksCompletionInfo: CompletionInfo = getCompletionInfo(filteredTasks);
     const groupedTasks = groupTasks(showAllTasks ? tasks : filteredTasks, groupBy);
 

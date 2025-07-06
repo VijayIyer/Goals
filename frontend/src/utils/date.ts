@@ -1,11 +1,17 @@
 import { DateRange } from '../types';
-import { getDateWeek } from './week';
+import { getDateWeek, getWeekEndDate, getWeekStartDate } from './week';
 import { FilterBy, GroupBy } from '../enums';
 export function getRandomDateWithinRange(startDate: Date, endDate: Date): Date {
     const startTime = startDate.getTime();
     const endTime = endDate.getTime();
     const randomTime = startTime + Math.random() * (endTime - startTime);
     return new Date(randomTime);
+}
+
+export function formatWeekDateRange(weekNumber: number, year: number): string {
+    const weekStartDate = getWeekStartDate(weekNumber, year);
+    const weekEndDate = getWeekEndDate(weekNumber, year);
+    return `${weekStartDate.toLocaleString('default', { month: 'long' })} ${weekStartDate.getDate()}, ${weekStartDate.getFullYear()} - ${weekEndDate.toLocaleString('default', { month: 'long' })} ${weekEndDate.getDate()}, ${weekEndDate.getFullYear()}`;
 }
 
 export function getRangeForDate(deadline: Date, groupBy: GroupBy): string {
