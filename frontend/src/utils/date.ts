@@ -33,7 +33,7 @@ export function getRangeForDate(deadline: Date, groupBy: GroupBy): string {
             return getDateWeek(deadline).toString();
         }
         case GroupBy.MONTH: {
-            return deadline.toLocaleString('default', { month: 'long' });
+            return `${deadline.toLocaleString('default', { month: 'long' })}, ${deadline.getFullYear()}`;
         }
         case GroupBy.YEAR: {
             return deadline.getFullYear().toString();

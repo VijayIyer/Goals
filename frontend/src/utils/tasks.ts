@@ -40,8 +40,11 @@ export function filterTasksByFilterBy(tasks: Array<TaskType>, filterBy: FilterBy
             return tasks.filter(
                 task =>
                     task.deadline.toLocaleString('default', { month: 'long' }) ===
-                    new Date().toLocaleDateString('default', { month: 'long' }),
+                        new Date().toLocaleDateString('default', { month: 'long' }) &&
+                    task.deadline.getFullYear() === new Date().getFullYear(),
             );
+        case FilterBy.YEAR:
+            return tasks.filter(task => task.deadline.getFullYear() === new Date().getFullYear());
         default:
             return tasks;
     }
