@@ -73,7 +73,7 @@ const App = () => {
                     path="/"
                     element={<Tasks tasks={activeTasks} onTaskEdited={refreshTasks} onTaskDeleted={refreshTasks} />}
                 />
-                <Route path="/dashboard" element={<Dashboard tasks={tasks} />} />
+                <Route path="/dashboard" element={<Dashboard tasks={activeTasks} />} />
                 <Route path="/calendar" element={<CalendarView />} />
                 <Route
                     path="/backlogged"
