@@ -17,6 +17,7 @@ export enum FilterBy {
     MONTH = 'Month',
     YEAR = 'Year',
     CUSTOM = 'Custom',
+    NONE = 'None',
 }
 
 export enum GroupBy {
@@ -39,4 +40,18 @@ export enum Month {
     OCTOBER = 'October',
     NOVEMBER = 'November',
     DECEMBER = 'December',
+}
+
+export enum StatType {
+    BEST_COMPLETION_PERCENTAGE = 'Best Completion Percentage',
+    WORST_COMPLETION_PERCENTAGE = 'Worst Completion Percentage',
+    MOST_COMPLETED = 'Most completed',
+    LEAST_COMPLETED = 'Least completed',
+}
+
+export enum StatPeriod {
+    MONTH = 'Month',
+    WEEK = 'Week',
+    YEAR = 'Year',
+    DAY = 'Day',
 }
