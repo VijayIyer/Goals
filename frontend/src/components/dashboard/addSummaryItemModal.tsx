@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 import SelectedDateRangeDisplay from '../common/selectDateRange/selectedDateRangeDisplay';
 import { DateRange } from '../../types';
-import { getDefaultDateRange } from '../../utils/date';
+import { getDefaultDateRange, getSummaryItemNameFromStatPeriodAndType } from '../../utils';
 import { FilterBy, GroupBy, RequiredStatType } from '../../enums';
-import { SummaryItem } from '../../interfaces';
+import { RequiredSummaryItemDetails } from '../../interfaces';
 
 export default function AddSummaryItemModal({
     isOpen,
@@ -25,9 +25,9 @@ export default function AddSummaryItemModal({
 }: {
     isOpen: boolean;
     onClose: () => void;
-    onAddSummaryItemSelection: (updatedSelection: SummaryItem) => void;
+    onAddSummaryItemSelection: (updatedSelection: RequiredSummaryItemDetails) => void;
 }) {
-    const [summaryItemTitle, setSummaryItemTitle] = useState<string>('');
+    const [summaryItemTitle, setSummaryItemTitle] = useState<string | null>(null);
     const [selectedDateRange, setSelectedDateRange] = useState<DateRange>(getDefaultDateRange(FilterBy.DAY));
     const [selectedStatType, setSelectedStatType] = useState<RequiredStatType>(
         RequiredStatType.BEST_COMPLETION_PERCENTAGE,
@@ -35,7 +35,9 @@ export default function AddSummaryItemModal({
     const [selectedStatPeriod, setSelectedStatPeriod] = useState<GroupBy>(GroupBy.DAY);
     const handleConfirm = () => {
         onAddSummaryItemSelection({
-            title: summaryItemTitle ?? selectedDateRange.startDate,
+            title:
+                summaryItemTitle ??
+                getSummaryItemNameFromStatPeriodAndType(selectedStatPeriod, selectedStatType, selectedDateRange),
             dateRange: selectedDateRange,
             statPeriod: selectedStatPeriod,
             statType: selectedStatType,

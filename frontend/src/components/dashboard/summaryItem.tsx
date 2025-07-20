@@ -1,10 +1,15 @@
 import { useMemo } from 'react';
-import { GroupedTasksType, SummaryItem as RequiredSumamryItemData } from '../../interfaces';
+import { GroupedTasksType, RequiredSummaryItemDetails } from '../../interfaces';
 
 import { Grid2 as Grid } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Completed, Percentage, Task } from '../../types';
-import { filterTasksByDateRange, getGroupRange, groupTasks } from '../../utils';
+import {
+    filterTasksByDateRange,
+    getGroupRange,
+    groupTasks,
+    getSummaryItemNameFromStatPeriodAndType,
+} from '../../utils';
 import { GroupBy, RequiredStatType } from '../../enums';
 
 const useStyles = makeStyles({
@@ -13,9 +18,7 @@ const useStyles = makeStyles({
         padding: '1em',
     },
 });
-function getSummaryItemNameFromStatPeriodAndType(statPeriod: GroupBy, statType: RequiredStatType): string {
-    return `${statPeriod} with ${statType}`;
-}
+
 function getBestPerformingTaskGroupWithStat(
     groupedTasksWithStat: Array<TaskGroupWithStat>,
     statType: RequiredStatType,
@@ -107,7 +110,7 @@ function getRequiredStat(
 }
 interface SummaryItemProps {
     tasks: Array<Task>;
-    summaryItem: RequiredSumamryItemData;
+    summaryItem: RequiredSummaryItemDetails;
 }
 export default function SummaryItem({ tasks, summaryItem }: SummaryItemProps) {
     const classes = useStyles();
@@ -142,7 +145,11 @@ export default function SummaryItem({ tasks, summaryItem }: SummaryItemProps) {
                     <h4>
                         {requiredStat.name
                             ? requiredStat.name
-                            : getSummaryItemNameFromStatPeriodAndType(summaryItem.statPeriod, summaryItem.statType)}
+                            : getSummaryItemNameFromStatPeriodAndType(
+                                  summaryItem.statPeriod,
+                                  summaryItem.statType,
+                                  summaryItem.dateRange,
+                              )}
                     </h4>
                     <h4>
                         Completion %:{' '}
