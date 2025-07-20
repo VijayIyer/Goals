@@ -1,8 +1,15 @@
-import { StatPeriod, StatType } from '../enums';
+import { GroupBy, RequiredStatType } from '../enums';
 import { DateRange } from '../types';
+import { DateRangePerformance } from '../types/summary';
 
 export interface SummaryItem {
+    title: string;
     dateRange: DateRange;
-    statType: StatType;
-    statPeriod: StatPeriod;
+    statType: RequiredStatType;
+    statPeriod: GroupBy;
+}
+
+export interface PerformanceInDateRange {
+    best: DateRangePerformance;
+    worst: DateRangePerformance;
 }
