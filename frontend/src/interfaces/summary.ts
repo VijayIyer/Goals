@@ -2,8 +2,8 @@ import { GroupBy, RequiredStatType } from '../enums';
 import { DateRange } from '../types';
 import { DateRangePerformance } from '../types/summary';
 
-export interface SummaryItem {
-    title: string;
+export interface RequiredSummaryItemDetails {
+    title?: string;
     dateRange: DateRange;
     statType: RequiredStatType;
     statPeriod: GroupBy;

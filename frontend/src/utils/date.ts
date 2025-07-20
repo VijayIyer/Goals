@@ -44,6 +44,26 @@ export function getGroupKeyForDateRange(deadline: Date, groupBy: GroupBy): strin
     }
 }
 
+export function getDateRangeString(dateRange: DateRange): string {
+    switch (dateRange.filterBy) {
+        case FilterBy.DAY: {
+            return dateRange.startDate.toLocaleDateString();
+        }
+        case FilterBy.WEEK: {
+            return formatWeekDateRange(getDateWeek(dateRange.startDate), dateRange.year);
+        }
+        case FilterBy.MONTH: {
+            return `${dateRange.startDate.toLocaleString('default', { month: 'long' })}, ${dateRange.year}`;
+        }
+        case FilterBy.YEAR: {
+            return dateRange.year.toString();
+        }
+        default: {
+            return dateRange.startDate.toLocaleDateString();
+        }
+    }
+}
+
 export function getDefaultDateRange(filterBy: FilterBy | null): DateRange {
     const today = new Date();
     const todayPlusSevenDays = new Date();

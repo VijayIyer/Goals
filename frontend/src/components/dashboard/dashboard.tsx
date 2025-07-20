@@ -13,7 +13,11 @@ import { useNavigate } from 'react-router-dom';
 import { filterTasksByFilterBy, getGroupRange, groupTasks } from '../../utils/tasks';
 import { getDateWeek, getWeekEndDate, getWeekStartDate } from '../../utils/week';
 
-import { GroupedTasksType, PerformanceInDateRange, SummaryItem as RequiredSummaryItemData } from '../../interfaces';
+import {
+    GroupedTasksType,
+    PerformanceInDateRange,
+    RequiredSummaryItemDetails as RequiredSummaryItemData,
+} from '../../interfaces';
 
 import AddSummaryItemModal from './addSummaryItemModal';
 import SummaryItem from './summaryItem';
