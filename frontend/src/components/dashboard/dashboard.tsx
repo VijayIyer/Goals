@@ -10,12 +10,13 @@ import { DateRange, Task, TasksByDay } from '../../types';
 import { getDefaultDateRange, formatWeekDateRange, formatDate } from '../../utils/date';
 import { FilterBy, GroupBy } from '../../enums';
 import { useNavigate } from 'react-router-dom';
-import { filterTasksByFilterBy, groupTasks } from '../../utils/tasks';
+import { filterTasksByFilterBy, getGroupRange, groupTasks } from '../../utils/tasks';
 import { getDateWeek, getWeekEndDate, getWeekStartDate } from '../../utils/week';
 
-import { GroupedTasksType, SummaryItem } from '../../interfaces';
+import { PerformanceInDateRange, SummaryItem as RequiredSummaryItemData } from '../../interfaces';
 
 import AddSummaryItemModal from './addSummaryItemModal';
+import SummaryItem from './summaryItem';
 
 const useStyles = makeStyles({
     summaryItem: {
@@ -24,25 +25,7 @@ const useStyles = makeStyles({
     },
 });
 
-function getGroupRange(group: GroupedTasksType, groupBy: GroupBy) {
-    switch (groupBy) {
-        case GroupBy.WEEK: {
-            const currentYear = new Date().getFullYear();
-            const weekNumber = getDateWeek(new Date());
-            return formatWeekDateRange(weekNumber, currentYear);
-        }
-        case GroupBy.MONTH: {
-            return `${group.range}`;
-        }
-        case GroupBy.DAY: {
-            return formatDate(new Date(group.range));
-        }
-        default:
-            return group.range;
-    }
-}
-
-function getPerformancesInDateRange(tasks: Array<Task>, filterBy: FilterBy, groupBy: GroupBy) {
+function getPerformancesInDateRange(tasks: Array<Task>, filterBy: FilterBy, groupBy: GroupBy): PerformanceInDateRange {
     const currentDateRangeTasks = filterTasksByFilterBy(tasks, filterBy);
     const groupedTasks = groupTasks(currentDateRangeTasks, groupBy);
     const groupedSummaryInCurrentDateRange = groupedTasks.map(group => {
@@ -105,7 +88,7 @@ function SummaryGridItem({ title, children }: { title: string; children: React.R
 function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
     const { serviceType } = useContext(ServicesContext);
     const navigate = useNavigate();
-    const [summaryItems, setSummaryItems] = useState<Array<SummaryItem>>([]);
+    const [summaryItems, setSummaryItems] = useState<Array<RequiredSummaryItemData>>([]);
     const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange(FilterBy.DAY));
     const [showAddSummaryItemModal, setShowAddSummaryItemModal] = useState(false);
     const [completionInfo, setCompletionInfo] = useState<Array<TasksByDay>>([]);
@@ -121,16 +104,11 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
         getCompletionInfo();
     }, [tasks, dateRange]);
 
-    // TODO: keeping entire array as dependency?
-    useEffect(() => {
-        console.log(summaryItems);
-    }, [JSON.stringify(summaryItems)]);
-
     const handleAddSummaryItemClick = () => {
         setShowAddSummaryItemModal(true);
     };
 
-    const handleAddSummaryItemSelection = (newSummaryItem: SummaryItem) => {
+    const handleAddSummaryItemSelection = (newSummaryItem: RequiredSummaryItemData) => {
         setSummaryItems([...summaryItems, newSummaryItem]);
     };
 
@@ -165,7 +143,6 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
     });
 
     const currentYearMonthPerformances = getPerformancesInDateRange(tasks, FilterBy.YEAR, GroupBy.MONTH);
-    console.log(currentYearMonthPerformances);
     const currentYearWeekPerformances = getPerformancesInDateRange(tasks, FilterBy.YEAR, GroupBy.WEEK);
     const currentYearDayPerformances = getPerformancesInDateRange(tasks, FilterBy.YEAR, GroupBy.DAY);
 
@@ -198,6 +175,9 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
                 )}
             </div>
             <Grid container gap={2} wrap="wrap">
+                {summaryItems.map(summaryItem => (
+                    <SummaryItem key={summaryItem.title} tasks={tasks} summaryItem={summaryItem} />
+                ))}
                 <SummaryGridItem title="Overall">
                     <>
                         <h4>Total: {overall}</h4>

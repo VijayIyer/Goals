@@ -1,7 +1,7 @@
 import { TaskPriority, FilterBy, GroupBy } from '../enums';
 import { GroupedTasksType } from '../interfaces/task';
 import { Task as TaskType, DateRange } from '../types';
-import { getRandomDateWithinRange, getRangeForDate } from './date';
+import { formatDate, formatWeekDateRange, getRandomDateWithinRange, getRangeForDate } from './date';
 import { getDateWeek, getWeekEndDate, getWeekStartDate } from './week';
 
 export function createTasks(numberOfTasks: number): Array<TaskType> {
@@ -92,4 +92,22 @@ export function groupTasks(tasks: Array<TaskType>, groupBy: GroupBy) {
         }
     });
     return groupedTasks;
+}
+
+export function getGroupRange(group: GroupedTasksType, groupBy: GroupBy): string {
+    switch (groupBy) {
+        case GroupBy.WEEK: {
+            const currentYear = new Date().getFullYear();
+            const weekNumber = parseInt(group.range);
+            return formatWeekDateRange(weekNumber, currentYear);
+        }
+        case GroupBy.MONTH: {
+            return `${group.range}`;
+        }
+        case GroupBy.DAY: {
+            return formatDate(new Date(group.range));
+        }
+        default:
+            return group.range;
+    }
 }
