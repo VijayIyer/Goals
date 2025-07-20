@@ -42,16 +42,9 @@ export enum Month {
     DECEMBER = 'December',
 }
 
-export enum StatType {
+export enum RequiredStatType {
     BEST_COMPLETION_PERCENTAGE = 'Best Completion Percentage',
     WORST_COMPLETION_PERCENTAGE = 'Worst Completion Percentage',
     MOST_COMPLETED = 'Most completed',
     LEAST_COMPLETED = 'Least completed',
-}
-
-export enum StatPeriod {
-    MONTH = 'Month',
-    WEEK = 'Week',
-    YEAR = 'Year',
-    DAY = 'Day',
 }
