@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { GroupedTasksType, SummaryItem as RequiredSumamryItemData } from '../../interfaces';
 
 import { Grid2 as Grid } from '@mui/material';
@@ -110,8 +111,15 @@ interface SummaryItemProps {
 }
 export default function SummaryItem({ tasks, summaryItem }: SummaryItemProps) {
     const classes = useStyles();
-    const filteredTasks: Array<Task> = filterTasksByDateRange(tasks, summaryItem.dateRange);
-    const groupedTasks: GroupedTasksType = groupTasks(filteredTasks, summaryItem.statPeriod);
+    const filteredTasks: Array<Task> = useMemo(
+        () => filterTasksByDateRange(tasks, summaryItem.dateRange),
+        [tasks, summaryItem.dateRange],
+    );
+    const groupedTasks: GroupedTasksType = useMemo(
+        () => groupTasks(filteredTasks, summaryItem.statPeriod),
+        [tasks, summaryItem.statPeriod],
+    );
+    console.log(`groupedTasks - ${JSON.stringify(groupedTasks, null, 2)}`);
     const groupedTasksWithStat: Array<TaskGroupWithStat> = getTaskGroupsWithStat(
         groupedTasks,
         summaryItem.statType,

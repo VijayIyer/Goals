@@ -1,7 +1,7 @@
 import { TaskPriority, FilterBy, GroupBy } from '../enums';
 import { GroupedTasksType } from '../interfaces/task';
 import { Task as TaskType, DateRange, Task } from '../types';
-import { formatDate, formatWeekDateRange, getRandomDateWithinRange, getGroupKeyForDateRange } from './date';
+import { formatDate, getRandomDateWithinRange, getGroupKeyForDateRange } from './date';
 import { getDateWeek, getWeekEndDate, getWeekStartDate } from './week';
 
 export function createTasks(numberOfTasks: number): Array<TaskType> {
@@ -77,12 +77,12 @@ export function filterTasksByDateRange(tasks: Array<TaskType>, dateRange: DateRa
 }
 
 export function groupTasks(tasks: Array<TaskType>, groupBy: GroupBy): GroupedTasksType {
-    const groupedTasksResult = tasks.reduce((groupedTasksAccumulator: GroupedTasksType, task: Task) => {
+    const groupedTasksResult = tasks.reduce((groupedTasks: GroupedTasksType, task: Task) => {
         const groupKey = getGroupKeyForDateRange(task.deadline, groupBy);
-        if (!groupedTasksAccumulator[groupKey]) {
-            groupedTasksAccumulator[groupKey] = [task];
-        } else groupedTasksAccumulator[groupKey].push(task);
-        return groupedTasksAccumulator;
+        if (!groupedTasks[groupKey]) {
+            groupedTasks[groupKey] = [task];
+        } else groupedTasks[groupKey].push(task);
+        return groupedTasks;
     }, {} as GroupedTasksType);
     // tasks.forEach(task => {
     //     const groupIndex: number = groupedTasks.findIndex(
@@ -103,9 +103,7 @@ export function groupTasks(tasks: Array<TaskType>, groupBy: GroupBy): GroupedTas
 export function getGroupRange(groupKey: string, groupBy: GroupBy): string {
     switch (groupBy) {
         case GroupBy.WEEK: {
-            const currentYear = new Date().getFullYear();
-            const weekNumber = parseInt(groupKey);
-            return formatWeekDateRange(weekNumber, currentYear);
+            return groupKey;
         }
         case GroupBy.MONTH: {
             return `${groupKey}`;

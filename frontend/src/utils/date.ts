@@ -21,7 +21,7 @@ export function formatDate(date: Date): string {
 export function formatWeekDateRange(weekNumber: number, year: number): string {
     const weekStartDate = getWeekStartDate(weekNumber, year);
     const weekEndDate = getWeekEndDate(weekNumber, year);
-    return `${weekStartDate.toLocaleString('default', { month: 'long' })} ${weekStartDate.getDate()}, ${weekStartDate.getFullYear()} - ${weekEndDate.toLocaleString('default', { month: 'long' })} ${weekEndDate.getDate()}, ${weekEndDate.getFullYear()}`;
+    return `${weekStartDate.toLocaleString('default', { month: 'short' })} ${weekStartDate.getDate()}, ${weekStartDate.getFullYear()} - ${weekEndDate.toLocaleString('default', { month: 'short' })} ${weekEndDate.getDate()}, ${weekEndDate.getFullYear()}`;
 }
 
 export function getGroupKeyForDateRange(deadline: Date, groupBy: GroupBy): string {
