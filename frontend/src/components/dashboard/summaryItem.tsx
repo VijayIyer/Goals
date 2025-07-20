@@ -1,4 +1,4 @@
-import { GroupedTasksType as TaskGroup, SummaryItem as RequiredSumamryItemData } from '../../interfaces';
+import { GroupedTasksType, SummaryItem as RequiredSumamryItemData } from '../../interfaces';
 
 import { Grid2 as Grid } from '@mui/material';
 import { makeStyles } from '@mui/styles';
@@ -67,15 +67,15 @@ interface TaskGroupWithStat {
     stat: Percentage | Completed;
 }
 function getTaskGroupsWithStat(
-    groupedTasks: Array<TaskGroup>,
+    groupedTasks: GroupedTasksType,
     statType: RequiredStatType,
     statPeriod: GroupBy,
 ): Array<TaskGroupWithStat> {
-    return groupedTasks.map(group => {
-        const total = group.tasks.length;
-        const completed = group.tasks.filter(task => task.completed === true).length;
+    return Object.keys(groupedTasks).map(groupKey => {
+        const total = groupedTasks[groupKey].length;
+        const completed = groupedTasks[groupKey].filter(task => task.completed === true).length;
         return {
-            key: getGroupRange(group, statPeriod),
+            key: getGroupRange(groupKey, statPeriod),
             stat: {
                 total,
                 completed,
@@ -111,7 +111,7 @@ interface SummaryItemProps {
 export default function SummaryItem({ tasks, summaryItem }: SummaryItemProps) {
     const classes = useStyles();
     const filteredTasks: Array<Task> = filterTasksByDateRange(tasks, summaryItem.dateRange);
-    const groupedTasks: Array<TaskGroup> = groupTasks(filteredTasks, summaryItem.statPeriod);
+    const groupedTasks: GroupedTasksType = groupTasks(filteredTasks, summaryItem.statPeriod);
     const groupedTasksWithStat: Array<TaskGroupWithStat> = getTaskGroupsWithStat(
         groupedTasks,
         summaryItem.statType,

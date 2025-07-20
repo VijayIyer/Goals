@@ -24,13 +24,13 @@ export function formatWeekDateRange(weekNumber: number, year: number): string {
     return `${weekStartDate.toLocaleString('default', { month: 'long' })} ${weekStartDate.getDate()}, ${weekStartDate.getFullYear()} - ${weekEndDate.toLocaleString('default', { month: 'long' })} ${weekEndDate.getDate()}, ${weekEndDate.getFullYear()}`;
 }
 
-export function getRangeForDate(deadline: Date, groupBy: GroupBy): string {
+export function getGroupKeyForDateRange(deadline: Date, groupBy: GroupBy): string {
     switch (groupBy) {
         case GroupBy.DAY: {
             return deadline.toLocaleDateString();
         }
         case GroupBy.WEEK: {
-            return getDateWeek(deadline).toString();
+            return formatWeekDateRange(getDateWeek(deadline), deadline.getFullYear());
         }
         case GroupBy.MONTH: {
             return `${deadline.toLocaleString('default', { month: 'long' })}, ${deadline.getFullYear()}`;

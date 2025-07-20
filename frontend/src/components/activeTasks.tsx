@@ -9,6 +9,7 @@ import { getDefaultDateRange } from '../utils/date';
 import { filterTasksByDateRange, groupTasks } from '../utils/tasks';
 import { useLocation } from 'react-router-dom';
 import SortByButton from './common/sortBy/sortByButton';
+import { GroupedTasksType } from '../interfaces';
 
 type TasksProps = {
     tasks: Array<TaskType>;
@@ -37,7 +38,7 @@ export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
     );
     const filteredTasks: Array<TaskType> = filterTasksByDateRange(tasks, dateRange);
     const filteredTasksCompletionInfo: CompletionInfo = getCompletionInfo(filteredTasks);
-    const groupedTasks = groupTasks(showAllTasks ? tasks : filteredTasks, groupBy);
+    const groupedTasks: GroupedTasksType = groupTasks(showAllTasks ? tasks : filteredTasks, groupBy);
 
     const handleGroupByChange = (event: ChangeEvent<HTMLInputElement>) => {
         setGroupBy(event.target.value as GroupBy);
@@ -98,10 +99,10 @@ export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
                     </TextField>
                 </FormControl>
             </div>
-            {groupedTasks.map(group => {
+            {Object.keys(groupedTasks).map(key => {
                 return (
                     <Grid
-                        key={group.range}
+                        key={key}
                         container
                         flexDirection={'column'}
                         style={{
@@ -111,11 +112,9 @@ export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
                         }}
                     >
                         {/* Decide how to show for different groups */}
-                        <Typography variant="h5">
-                            {groupBy === GroupBy.WEEK ? `Week ${group.range}` : `${group.range}`}
-                        </Typography>
-                        <Grid key={group.range} container flexWrap="wrap" gap="2em">
-                            {group.tasks.map(task => (
+                        <Typography variant="h5">{key}</Typography>
+                        <Grid key={key} container flexWrap="wrap" gap="2em">
+                            {groupedTasks[key].map(task => (
                                 <Task
                                     key={task.id}
                                     task={task}

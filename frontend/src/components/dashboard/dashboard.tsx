@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { filterTasksByFilterBy, getGroupRange, groupTasks } from '../../utils/tasks';
 import { getDateWeek, getWeekEndDate, getWeekStartDate } from '../../utils/week';
 
-import { PerformanceInDateRange, SummaryItem as RequiredSummaryItemData } from '../../interfaces';
+import { GroupedTasksType, PerformanceInDateRange, SummaryItem as RequiredSummaryItemData } from '../../interfaces';
 
 import AddSummaryItemModal from './addSummaryItemModal';
 import SummaryItem from './summaryItem';
@@ -26,13 +26,13 @@ const useStyles = makeStyles({
 });
 
 function getPerformancesInDateRange(tasks: Array<Task>, filterBy: FilterBy, groupBy: GroupBy): PerformanceInDateRange {
-    const currentDateRangeTasks = filterTasksByFilterBy(tasks, filterBy);
-    const groupedTasks = groupTasks(currentDateRangeTasks, groupBy);
-    const groupedSummaryInCurrentDateRange = groupedTasks.map(group => {
+    const currentDateRangeTasks: Array<Task> = filterTasksByFilterBy(tasks, filterBy);
+    const groupedTasks: GroupedTasksType = groupTasks(currentDateRangeTasks, groupBy);
+    const groupedSummaryInCurrentDateRange = Object.keys(groupedTasks).map(key => {
         return {
-            name: getGroupRange(group, groupBy),
-            total: group.tasks.length,
-            completed: group.tasks.filter(task => task.completed === true).length,
+            name: getGroupRange(key, groupBy),
+            total: groupedTasks[key].length,
+            completed: groupedTasks[key].filter(task => task.completed === true).length,
         };
     });
     const bestPerformingItem = groupedSummaryInCurrentDateRange.reduce(

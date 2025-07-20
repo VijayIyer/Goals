@@ -1,7 +1,7 @@
 import { TaskPriority, FilterBy, GroupBy } from '../enums';
 import { GroupedTasksType } from '../interfaces/task';
-import { Task as TaskType, DateRange } from '../types';
-import { formatDate, formatWeekDateRange, getRandomDateWithinRange, getRangeForDate } from './date';
+import { Task as TaskType, DateRange, Task } from '../types';
+import { formatDate, formatWeekDateRange, getRandomDateWithinRange, getGroupKeyForDateRange } from './date';
 import { getDateWeek, getWeekEndDate, getWeekStartDate } from './week';
 
 export function createTasks(numberOfTasks: number): Array<TaskType> {
@@ -76,38 +76,44 @@ export function filterTasksByDateRange(tasks: Array<TaskType>, dateRange: DateRa
     return tasks;
 }
 
-export function groupTasks(tasks: Array<TaskType>, groupBy: GroupBy) {
-    const groupedTasks: Array<GroupedTasksType> = [];
-    tasks.forEach(task => {
-        const groupIndex: number = groupedTasks.findIndex(
-            group => group.range === getRangeForDate(task.deadline, groupBy),
-        );
-        if (groupIndex == -1) {
-            groupedTasks.push({
-                range: getRangeForDate(task.deadline, groupBy),
-                tasks: [task],
-            });
-        } else {
-            groupedTasks[groupIndex].tasks.push(task);
-        }
-    });
-    return groupedTasks;
+export function groupTasks(tasks: Array<TaskType>, groupBy: GroupBy): GroupedTasksType {
+    const groupedTasksResult = tasks.reduce((groupedTasksAccumulator: GroupedTasksType, task: Task) => {
+        const groupKey = getGroupKeyForDateRange(task.deadline, groupBy);
+        if (!groupedTasksAccumulator[groupKey]) {
+            groupedTasksAccumulator[groupKey] = [task];
+        } else groupedTasksAccumulator[groupKey].push(task);
+        return groupedTasksAccumulator;
+    }, {} as GroupedTasksType);
+    // tasks.forEach(task => {
+    //     const groupIndex: number = groupedTasks.findIndex(
+    //         group => group.range === getGroupKeyForDateRange(task.deadline, groupBy),
+    //     );
+    //     if (groupIndex == -1) {
+    //         groupedTasks.push({
+    //             range: getGroupKeyForDateRange(task.deadline, groupBy),
+    //             tasks: [task],
+    //         });
+    //     } else {
+    //         groupedTasks[groupIndex].tasks.push(task);
+    //     }
+    // });
+    return groupedTasksResult;
 }
 
-export function getGroupRange(group: GroupedTasksType, groupBy: GroupBy): string {
+export function getGroupRange(groupKey: string, groupBy: GroupBy): string {
     switch (groupBy) {
         case GroupBy.WEEK: {
             const currentYear = new Date().getFullYear();
-            const weekNumber = parseInt(group.range);
+            const weekNumber = parseInt(groupKey);
             return formatWeekDateRange(weekNumber, currentYear);
         }
         case GroupBy.MONTH: {
-            return `${group.range}`;
+            return `${groupKey}`;
         }
         case GroupBy.DAY: {
-            return formatDate(new Date(group.range));
+            return formatDate(new Date(groupKey));
         }
         default:
-            return group.range;
+            return groupKey;
     }
 }
