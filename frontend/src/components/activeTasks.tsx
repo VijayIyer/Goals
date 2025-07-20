@@ -91,7 +91,9 @@ export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
                 <FormControl sx={{ minWidth: 120 }}>
                     <TextField value={groupBy} onChange={handleGroupByChange} label="Group By" select>
                         {Object.values(GroupBy).map(value => (
-                            <MenuItem value={value}>{value}</MenuItem>
+                            <MenuItem key={value} value={value}>
+                                {value}
+                            </MenuItem>
                         ))}
                     </TextField>
                 </FormControl>
