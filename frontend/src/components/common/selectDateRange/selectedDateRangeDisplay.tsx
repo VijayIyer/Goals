@@ -1,10 +1,16 @@
 import { useState } from 'react';
-import { Button, IconButton, Typography } from '@mui/material';
+
+import { IconButton, Typography } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { CalendarIcon } from '@mui/x-date-pickers';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import SelectDateRangeModal from './selectDateRangeModal';
 import { DateRange } from '../../../types';
 import { FilterBy } from '../../../enums';
-import { getWeekEndDate, getDateWeek } from '../../../utils/week';
+
+import { getWeekEndDate, getDateWeek, getWeekStartDate } from '../../../utils/week';
 
 function getPreviousDateRange(dateRange: DateRange): DateRange {
     switch (dateRange.filterBy) {
@@ -116,6 +122,30 @@ function getNextDateRange(dateRange: DateRange): DateRange {
     }
 }
 
+function getSelectedDateRangeDisplayText(dateRange: DateRange) {
+    switch (dateRange.filterBy) {
+        case FilterBy.DAY:
+            return dateRange.startDate.toLocaleDateString();
+        case FilterBy.WEEK:
+        case FilterBy.CUSTOM: {
+            return `${getWeekStartDate(dateRange.week, dateRange.year).toLocaleDateString()} - ${dateRange.endDate?.toLocaleDateString() || getWeekEndDate(dateRange.week, dateRange.year).toLocaleDateString()}`;
+        }
+        case FilterBy.MONTH:
+            return dateRange.month + `, ` + dateRange.year;
+        case FilterBy.YEAR:
+            return dateRange.year;
+        default:
+            return dateRange.startDate.toLocaleDateString();
+    }
+}
+
+const useStyles = makeStyles({
+    flexContainer: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+});
+
 interface SelectedDateRangeDisplayProps {
     selectedDateRange: DateRange;
     onDateRangeUpdated: (date: DateRange) => void;
@@ -131,44 +161,23 @@ export default ({ selectedDateRange, onDateRangeUpdated }: SelectedDateRangeDisp
         onDateRangeUpdated(getNextDateRange(selectedDateRange));
     };
 
+    const classes = useStyles();
+
     return (
         <>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Button onClick={handlePreviousClick} disabled={selectedDateRange.filterBy === FilterBy.CUSTOM}>
-                    Previous
-                </Button>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton
-                        onClick={() => {
-                            setIsSelectDateRangeSelectionModalOpen(true);
-                        }}
-                    >
-                        <CalendarIcon />
+            <div className={classes.flexContainer}>
+                <IconButton onClick={handlePreviousClick} disabled={selectedDateRange.filterBy === FilterBy.CUSTOM}>
+                    <ArrowBackIcon color="primary" />
+                </IconButton>
+                <div className={classes.flexContainer}>
+                    <IconButton onClick={() => setIsSelectDateRangeSelectionModalOpen(true)}>
+                        <CalendarIcon color="primary" />
                     </IconButton>
-                    <Typography>
-                        {selectedDateRange.filterBy === FilterBy.DAY &&
-                            selectedDateRange.startDate.toLocaleDateString()}
-                        {selectedDateRange.filterBy === FilterBy.WEEK && (
-                            <>
-                                {selectedDateRange.startDate.toLocaleDateString()} -{' '}
-                                {selectedDateRange.endDate?.toLocaleDateString() ||
-                                    getWeekEndDate(selectedDateRange.week, selectedDateRange.year).toLocaleDateString()}
-                            </>
-                        )}
-                        {selectedDateRange.filterBy === FilterBy.MONTH &&
-                            selectedDateRange.month + `, ` + selectedDateRange.year}
-                        {selectedDateRange.filterBy === FilterBy.YEAR && selectedDateRange.year}
-                        {selectedDateRange.filterBy === FilterBy.CUSTOM && selectedDateRange.endDate && (
-                            <>
-                                {selectedDateRange.startDate.toLocaleDateString()} -{' '}
-                                {selectedDateRange.endDate.toLocaleDateString()}
-                            </>
-                        )}
-                    </Typography>
+                    <Typography>{getSelectedDateRangeDisplayText(selectedDateRange)}</Typography>
                 </div>
-                <Button onClick={handleNextClick} disabled={selectedDateRange.filterBy === FilterBy.CUSTOM}>
-                    Next
-                </Button>
+                <IconButton onClick={handleNextClick} disabled={selectedDateRange.filterBy === FilterBy.CUSTOM}>
+                    <ArrowForwardIcon color="primary" />
+                </IconButton>
             </div>
             {isSelectDateRangeSelectionModalOpen && (
                 <SelectDateRangeModal
