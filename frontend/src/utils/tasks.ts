@@ -76,7 +76,7 @@ export function filterTasksByDateRange(tasks: Array<TaskType>, dateRange: DateRa
     return tasks;
 }
 
-export function groupTasks(tasks: Array<TaskType>, groupBy: GroupBy): GroupedTasksType {
+export function groupTasksByGroupByValue(tasks: Array<TaskType>, groupBy: GroupBy): GroupedTasksType {
     const groupedTasksResult = tasks.reduce((groupedTasks: GroupedTasksType, task: Task) => {
         const groupKey = getGroupKeyForDateRange(task.deadline, groupBy);
         if (!groupedTasks[groupKey]) {

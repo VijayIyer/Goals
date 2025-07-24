@@ -1,5 +1,5 @@
-import { Button, ButtonGroup } from '@mui/material';
 import { NavLink, useLocation } from 'react-router-dom';
+import { Button, ButtonGroup } from '@mui/material';
 
 export default function Navbar() {
     const { pathname } = useLocation();

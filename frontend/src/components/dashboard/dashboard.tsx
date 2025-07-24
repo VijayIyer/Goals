@@ -10,7 +10,7 @@ import { DateRange, Task, TasksByDay } from '../../types';
 import { getDefaultDateRange, formatWeekDateRange, formatDate } from '../../utils/date';
 import { FilterBy, GroupBy } from '../../enums';
 import { useNavigate } from 'react-router-dom';
-import { filterTasksByFilterBy, getGroupRange, groupTasks } from '../../utils/tasks';
+import { filterTasksByFilterBy, getGroupRange, groupTasksByGroupByValue } from '../../utils/tasks';
 import { getDateWeek, getWeekEndDate, getWeekStartDate } from '../../utils/week';
 
 import {
@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 
 function getPerformancesInDateRange(tasks: Array<Task>, filterBy: FilterBy, groupBy: GroupBy): PerformanceInDateRange {
     const currentDateRangeTasks: Array<Task> = filterTasksByFilterBy(tasks, filterBy);
-    const groupedTasks: GroupedTasksType = groupTasks(currentDateRangeTasks, groupBy);
+    const groupedTasks: GroupedTasksType = groupTasksByGroupByValue(currentDateRangeTasks, groupBy);
     const groupedSummaryInCurrentDateRange = Object.keys(groupedTasks).map(key => {
         return {
             name: getGroupRange(key, groupBy),

@@ -1,20 +1,35 @@
+// react core package imports
 import { useContext, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-//import dayjs, { Dayjs } from 'dayjs';
+// material imports
 import { Button, CircularProgress } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import AddIcon from '@mui/icons-material/Add';
 
+// internal services and types imports
 import ServicesContext from './services/servicesProvider';
 import { TaskServiceClientFactory } from './services/taskServiceClientFactory';
 import { Task as TaskType } from './types';
 
+// internal component imports
+import ActiveTasks from './components/activeTasks';
 import Dashboard from './components/dashboard';
-import Tasks from './components/activeTasks';
-import AddTaskModal from './components/common/addTaskModal';
-import Navbar from './components/common/navbar';
 import CalendarView from './components/calendarView';
 import BackloggedTasks from './components/backloggedTasks';
+
+// common component imports
+import AddTaskModal from './components/common/addTaskModal';
+import Navbar from './components/common/navbar';
+
+const useStyles = makeStyles({
+    topBar: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '2em',
+    },
+});
 
 const App = () => {
     const { serviceType } = useContext(ServicesContext);
@@ -24,34 +39,30 @@ const App = () => {
     const [completedTasks, setCompletedTasks] = useState<Array<TaskType>>([]);
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
 
-    const handleAddTaskButtonClick = () => {
-        setIsAddTaskModalOpen(true);
-    };
     const refreshTasks = async () => {
         setIsRefreshing(true);
         setTasks(await service.getTasks(null));
         setCompletedTasks(await service.getTasks(null, true));
         setIsRefreshing(false);
     };
-    const handleAddTaskModalClose = () => {
-        setIsAddTaskModalOpen(false);
-    };
     const handleAddTaskModalSubmit = () => {
         refreshTasks();
         setIsAddTaskModalOpen(false);
     };
     const activeTasks: Array<TaskType> = tasks.filter(task => !task.deferred);
-    const deferredTasks: Array<TaskType> = tasks.filter(task => task.deferred);
+    const deferredTasks: Array<TaskType> = tasks.filter(task => task.deferred === true);
 
     useEffect(() => {
         refreshTasks();
     }, []);
 
+    const classes = useStyles();
+
     return (
         <BrowserRouter>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2em' }}>
+            <div className={classes.topBar}>
                 <Button
-                    onClick={handleAddTaskButtonClick}
+                    onClick={() => setIsAddTaskModalOpen(true)}
                     variant="contained"
                     startIcon={<AddIcon />}
                     disabled={isRefreshing}
@@ -59,19 +70,23 @@ const App = () => {
                     Create Task
                 </Button>
                 {tasks.length > 0 && (
-                    <h4>
-                        Completed Tasks : {completedTasks.length || 0}
-                        &nbsp;/&nbsp;{tasks.length}
-                    </h4>
+                    <>
+                        <h4>
+                            Completed Tasks : {completedTasks.length}
+                            &nbsp;/&nbsp;{activeTasks.length}
+                        </h4>
+                        <h4>Deferred Tasks : {deferredTasks.length}</h4>
+                    </>
                 )}
                 <Navbar />
                 {isRefreshing && <CircularProgress />}
             </div>
-
             <Routes>
                 <Route
                     path="/"
-                    element={<Tasks tasks={activeTasks} onTaskEdited={refreshTasks} onTaskDeleted={refreshTasks} />}
+                    element={
+                        <ActiveTasks tasks={activeTasks} onTaskEdited={refreshTasks} onTaskDeleted={refreshTasks} />
+                    }
                 />
                 <Route path="/dashboard" element={<Dashboard tasks={activeTasks} />} />
                 <Route path="/calendar" element={<CalendarView />} />
@@ -89,7 +104,7 @@ const App = () => {
             {isAddTaskModalOpen && (
                 <AddTaskModal
                     isAddTaskModalOpen={isAddTaskModalOpen}
-                    onClose={handleAddTaskModalClose}
+                    onClose={() => setIsAddTaskModalOpen(false)}
                     onSubmit={handleAddTaskModalSubmit}
                 />
             )}

@@ -1,15 +1,39 @@
-import React, { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+
 import { Button, FormControl, Grid2 as Grid, MenuItem, TextField, Typography } from '@mui/material';
-import Task from './common/task';
-import { Task as TaskType, DateRange, CompletionInfo } from '../types';
-import SelectedDateRangeDisplay from './common/selectDateRange/selectedDateRangeDisplay';
+import { makeStyles } from '@mui/styles';
 
 import { FilterBy, GroupBy } from '../enums';
-import { getDefaultDateRange } from '../utils/date';
-import { filterTasksByDateRange, groupTasks } from '../utils/tasks';
-import { useLocation } from 'react-router-dom';
-import SortByButton from './common/sortBy/sortByButton';
 import { GroupedTasksType } from '../interfaces';
+import { Task as TaskType, DateRange, CompletionInfo } from '../types';
+
+import { getDefaultDateRange } from '../utils/date';
+import { filterTasksByDateRange, groupTasksByGroupByValue } from '../utils/tasks';
+
+import SelectedDateRangeDisplay from './common/selectDateRange/selectedDateRangeDisplay';
+import SortByButton from './common/sortBy/sortByButton';
+import Task from './common/task';
+
+const useStyles = makeStyles({
+    gridContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        textAlign: 'center',
+    },
+    completionInfoContainer: {
+        border: '1px solid',
+        borderRadius: '1em',
+        padding: '1em',
+    },
+    allTasksViewButtonContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+    },
+});
 
 type TasksProps = {
     tasks: Array<TaskType>;
@@ -37,50 +61,31 @@ export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
         locationState?.dateRange ?? getDefaultDateRange(FilterBy.DAY),
     );
     const filteredTasks: Array<TaskType> = filterTasksByDateRange(tasks, dateRange);
-    const filteredTasksCompletionInfo: CompletionInfo = getCompletionInfo(filteredTasks);
-    const groupedTasks: GroupedTasksType = groupTasks(showAllTasks ? tasks : filteredTasks, groupBy);
+    const { total: totalNumberOfTasks, completed: totalNumberOfCompletedTasks }: CompletionInfo =
+        getCompletionInfo(filteredTasks);
+    const groupedTasks: GroupedTasksType = groupTasksByGroupByValue(showAllTasks ? tasks : filteredTasks, groupBy);
 
     const handleGroupByChange = (event: ChangeEvent<HTMLInputElement>) => {
         setGroupBy(event.target.value as GroupBy);
     };
+
+    const classes = useStyles();
     return (
         <>
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    textAlign: 'center',
-                }}
-            >
-                <div style={{ border: '1px solid', borderRadius: '1em', padding: '1em' }}>
+            <div className={classes.gridContainer}>
+                <div className={classes.completionInfoContainer}>
                     <Typography style={{ fontWeight: 'bold' }}>Completed Tasks:</Typography>
-                    <Typography>Total: {filteredTasksCompletionInfo.total}</Typography>
-                    <Typography>Completed: {filteredTasksCompletionInfo.completed}</Typography>
+                    <Typography>Total: {totalNumberOfTasks}</Typography>
+                    <Typography>Completed: {totalNumberOfCompletedTasks}</Typography>
                 </div>
                 {showAllTasks && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-
-                            justifyContent: 'center',
-                        }}
-                    >
+                    <div className={classes.allTasksViewButtonContainer}>
                         <Typography>Viewing All Tasks</Typography>
                         <Button onClick={() => setShowAllTasks(value => !value)}>View Filtered Tasks</Button>
                     </div>
                 )}
                 {!showAllTasks && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-
-                            justifyContent: 'center',
-                        }}
-                    >
+                    <div className={classes.allTasksViewButtonContainer}>
                         <SelectedDateRangeDisplay
                             selectedDateRange={dateRange}
                             onDateRangeUpdated={(updatedDateRange: DateRange) => setDateRange(updatedDateRange)}

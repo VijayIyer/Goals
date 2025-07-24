@@ -7,7 +7,7 @@ import { Completed, Percentage, Task } from '../../types';
 import {
     filterTasksByDateRange,
     getGroupRange,
-    groupTasks,
+    groupTasksByGroupByValue,
     getSummaryItemNameFromStatPeriodAndType,
 } from '../../utils';
 import { GroupBy, RequiredStatType } from '../../enums';
@@ -119,7 +119,7 @@ export default function SummaryItem({ tasks, summaryItem }: SummaryItemProps) {
         [tasks, summaryItem.dateRange],
     );
     const groupedTasks: GroupedTasksType = useMemo(
-        () => groupTasks(filteredTasks, summaryItem.statPeriod),
+        () => groupTasksByGroupByValue(filteredTasks, summaryItem.statPeriod),
         [tasks, summaryItem.statPeriod],
     );
     console.log(`groupedTasks - ${JSON.stringify(groupedTasks, null, 2)}`);
