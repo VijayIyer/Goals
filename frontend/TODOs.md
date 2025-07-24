@@ -132,3 +132,7 @@ June 30, 2025
 [ ] Group - ungroup view in active tasks
 
 [ ] Completion info for the date range in filter
+
+### July 23, 2025
+
+[ ] Get default view for navbar from context (should be a saved value that is either tasks / calendar view / dashboard)
