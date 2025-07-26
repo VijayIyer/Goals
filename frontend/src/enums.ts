@@ -1,7 +1,7 @@
 export enum TaskPriority {
-    HIGH = 'HIGH',
-    MEDIUM = 'MEDIUM',
-    LOW = 'LOW',
+    HIGH = 'High',
+    MEDIUM = 'Medium',
+    LOW = 'Low',
 }
 
 export enum CompletionQuery {
