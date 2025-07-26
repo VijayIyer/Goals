@@ -42,7 +42,7 @@ const App = () => {
     const refreshTasks = async () => {
         setIsRefreshing(true);
         setTasks(await service.getTasks(null));
-        setCompletedTasks(await service.getTasks(null, true));
+        setCompletedTasks(await service.getTasks(null, true, true));
         setIsRefreshing(false);
     };
     const handleAddTaskModalSubmit = () => {
@@ -78,7 +78,11 @@ const App = () => {
                         <h4>Deferred Tasks : {deferredTasks.length}</h4>
                     </>
                 )}
-                <Navbar />
+                <Navbar
+                    numberOfActiveTasks={activeTasks.length}
+                    totalTasks={tasks.length}
+                    numberOfDeferredTasks={deferredTasks.length}
+                />
                 {isRefreshing && <CircularProgress />}
             </div>
             <Routes>
