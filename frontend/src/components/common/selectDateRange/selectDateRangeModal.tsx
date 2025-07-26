@@ -46,6 +46,7 @@ function SelectDateRangeModal({
                 endDate,
             });
         } else {
+            console.log(`startDate - ${selectedDateRange.startDate}`);
             onSelectedDateRangeUpdate(selectedDateRange);
         }
         onClose();
@@ -115,10 +116,6 @@ function SelectDateRangeModal({
             case FilterBy.YEAR:
             case FilterBy.CUSTOM: {
                 setSelectedDateRange({
-                    ...selectedDateRange,
-                    filterBy: event.target.value,
-                });
-                onSelectedDateRangeUpdate({
                     ...selectedDateRange,
                     filterBy: event.target.value,
                 });

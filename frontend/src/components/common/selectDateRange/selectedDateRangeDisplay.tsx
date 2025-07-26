@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { IconButton, Typography } from '@mui/material';
+import { IconButton, Tooltip, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { CalendarIcon } from '@mui/x-date-pickers';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -10,7 +10,7 @@ import SelectDateRangeModal from './selectDateRangeModal';
 import { DateRange } from '../../../types';
 import { FilterBy } from '../../../enums';
 
-import { getWeekEndDate, getDateWeek, getWeekStartDate } from '../../../utils/week';
+import { getWeekEndDate, getDateWeek } from '../../../utils/week';
 
 function getPreviousDateRange(dateRange: DateRange): DateRange {
     switch (dateRange.filterBy) {
@@ -128,7 +128,7 @@ function getSelectedDateRangeDisplayText(dateRange: DateRange) {
             return dateRange.startDate.toLocaleDateString();
         case FilterBy.WEEK:
         case FilterBy.CUSTOM: {
-            return `${getWeekStartDate(dateRange.week, dateRange.year).toLocaleDateString()} - ${dateRange.endDate?.toLocaleDateString() || getWeekEndDate(dateRange.week, dateRange.year).toLocaleDateString()}`;
+            return `${dateRange.startDate.toLocaleDateString()} - ${dateRange.endDate?.toLocaleDateString() || getWeekEndDate(dateRange.week, dateRange.year).toLocaleDateString()}`;
         }
         case FilterBy.MONTH:
             return dateRange.month + `, ` + dateRange.year;
@@ -166,18 +166,32 @@ export default ({ selectedDateRange, onDateRangeUpdated }: SelectedDateRangeDisp
     return (
         <>
             <div className={classes.flexContainer}>
-                <IconButton onClick={handlePreviousClick} disabled={selectedDateRange.filterBy === FilterBy.CUSTOM}>
-                    <ArrowBackIcon color="primary" />
-                </IconButton>
+                <Tooltip
+                    title={selectedDateRange.filterBy === FilterBy.CUSTOM ? 'Cannot go back for custom date range' : ''}
+                >
+                    <IconButton onClick={handlePreviousClick}>
+                        <ArrowBackIcon
+                            color={selectedDateRange.filterBy === FilterBy.CUSTOM ? 'disabled' : 'primary'}
+                        />
+                    </IconButton>
+                </Tooltip>
                 <div className={classes.flexContainer}>
                     <IconButton onClick={() => setIsSelectDateRangeSelectionModalOpen(true)}>
                         <CalendarIcon color="primary" />
                     </IconButton>
                     <Typography>{getSelectedDateRangeDisplayText(selectedDateRange)}</Typography>
                 </div>
-                <IconButton onClick={handleNextClick} disabled={selectedDateRange.filterBy === FilterBy.CUSTOM}>
-                    <ArrowForwardIcon color="primary" />
-                </IconButton>
+                <Tooltip
+                    title={
+                        selectedDateRange.filterBy === FilterBy.CUSTOM ? 'Cannot go forward for custom date range' : ''
+                    }
+                >
+                    <IconButton onClick={handleNextClick}>
+                        <ArrowForwardIcon
+                            color={selectedDateRange.filterBy === FilterBy.CUSTOM ? 'disabled' : 'primary'}
+                        />
+                    </IconButton>
+                </Tooltip>
             </div>
             {isSelectDateRangeSelectionModalOpen && (
                 <SelectDateRangeModal
