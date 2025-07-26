@@ -1,26 +1,39 @@
 import { FormEvent, useState, useContext } from 'react';
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
+import {
+    Alert,
+    Button,
+    Collapse,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    IconButton,
+    Typography,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import ServicesContext from '../../services/servicesProvider';
 import { TaskServiceClientFactory } from '../../services/taskServiceClientFactory';
+import { Task } from '../../types';
 
 type DeleteTaskModalProps = {
-    id: number;
+    task: Task;
     isOpen: boolean;
     onClose: () => void;
     onSubmit: () => void;
 };
 
-export default ({ id, isOpen, onClose, onSubmit }: DeleteTaskModalProps) => {
+export default ({ task, isOpen, onClose, onSubmit }: DeleteTaskModalProps) => {
     const { serviceType } = useContext(ServicesContext);
     const service = new TaskServiceClientFactory(serviceType).getServiceClient();
+    const [isExpanded, setIsExpanded] = useState(false);
     const [isDeleteTaskSubmitLoading, setIsDeleteTaskSubmitLoading] = useState<boolean>(false);
     const [deleteTaskError, setDeleteTaskError] = useState<string>('');
     const handleDeleteTaskSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsDeleteTaskSubmitLoading(true);
         service
-            .deleteTaskById(id)
+            .deleteTaskById(task.id)
             .then(() => {
                 onSubmit();
             })
@@ -38,8 +51,21 @@ export default ({ id, isOpen, onClose, onSubmit }: DeleteTaskModalProps) => {
         >
             <DialogContent>
                 <DialogContentText>
-                    Are you sure you want to delete the task?
+                    <Typography>Are you sure you want to delete the task?</Typography>
                     {deleteTaskError && <Alert severity="error">{deleteTaskError}</Alert>}
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="subtitle1">Task Details</Typography>
+                        <IconButton style={{ marginLeft: 'auto' }} onClick={() => setIsExpanded(val => !val)}>
+                            <ExpandMoreIcon />
+                        </IconButton>
+                    </div>
+                    <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+                        <Typography variant="subtitle2">Title: {task.title}</Typography>
+                        <Typography variant="subtitle2">Deadline: {task.deadline.toDateString()}</Typography>
+                        <Typography variant="subtitle2">
+                            Completion Status: {task.completed ? 'Completed' : 'Pending'}
+                        </Typography>
+                    </Collapse>
                 </DialogContentText>
             </DialogContent>
             <DialogActions>

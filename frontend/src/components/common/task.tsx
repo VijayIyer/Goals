@@ -167,7 +167,7 @@ export default ({
                 onSubmit={handleEditTaskModalSubmit}
             />
             <DeleteTaskModal
-                id={editedTask.id}
+                task={editedTask}
                 isOpen={isDeleteTaskModalOpen}
                 onClose={() => setIsDeleteTaskModalOpen(false)}
                 onSubmit={handleDeleteTaskModalSubmit}
