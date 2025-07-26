@@ -75,6 +75,7 @@ export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
             <div className={classes.gridContainer}>
                 <div className={classes.completionInfoContainer}>
                     <Typography style={{ fontWeight: 'bold' }}>Completed Tasks:</Typography>
+                    <Typography style={{ fontWeight: 'bold' }}>(Selected Date Range)</Typography>
                     <Typography>Total: {totalNumberOfTasks}</Typography>
                     <Typography>Completed: {totalNumberOfCompletedTasks}</Typography>
                 </div>
