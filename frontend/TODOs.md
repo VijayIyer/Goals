@@ -136,3 +136,7 @@ June 30, 2025
 ### July 23, 2025
 
 [ ] Get default view for navbar from context (should be a saved value that is either tasks / calendar view / dashboard)
+
+July 27, 2025 - Priority To-Dos / bug left for a functioning website
+[X] (bug) When I select a date filter, the filter is getting applied before confirm in the modal
+[ ] Authentication and user account creation, login, sign up
