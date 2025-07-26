@@ -31,7 +31,11 @@ class MockClient implements TaskServiceClient {
             }, 10);
         });
     }
-    async getTasks(viewingDate: Date | null, completed: boolean = false): Promise<Array<Task>> {
+    async getTasks(
+        viewingDate: Date | null,
+        completed: boolean = false,
+        shouldBeActive: boolean = false,
+    ): Promise<Array<Task>> {
         return new Promise<Array<Task>>(res => {
             setTimeout(() => {
                 console.log(`retrieving all tasks!`);
@@ -39,6 +43,7 @@ class MockClient implements TaskServiceClient {
                     this.mockTasks
                         .filter(task => (viewingDate ? dayjs(task.deadline).isSame(viewingDate, 'day') : true))
                         .filter(task => (completed ? task.completed === completed : true))
+                        .filter(task => (shouldBeActive ? task.deferred !== true : true))
                         .slice(),
                 );
             }, 10);
