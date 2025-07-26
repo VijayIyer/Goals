@@ -129,12 +129,14 @@ export default ({ task, isOpen, onClose, onSubmit }: EditTaskModalProps) => {
                         onChange={handleDateChange}
                     />
                 </div>
-                <FormControl fullWidth>
+                <FormControl style={{ minWidth: '10em' }}>
                     <InputLabel>Priority</InputLabel>
                     <Select name="priority" label="Priority" value={editedTask.priority} onChange={handleSelectChange}>
-                        <MenuItem value={'HIGH'}>High</MenuItem>
-                        <MenuItem value={'MEDIUM'}>Medium</MenuItem>
-                        <MenuItem value={'LOW'}>Low</MenuItem>
+                        {Object.values(TaskPriority).map(value => (
+                            <MenuItem key={value} value={value}>
+                                {value}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
             </DialogContent>

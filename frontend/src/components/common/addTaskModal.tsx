@@ -125,6 +125,8 @@ const AddTaskModal = ({
         }
     }, [viewingDate, formState.deadline]);
 
+    const shouldSubmitButtonBeDisabled = !formState.title || !formState.deadline || !formState.description;
+
     return (
         <Dialog
             open={isAddTaskModalOpen}
@@ -189,20 +191,35 @@ const AddTaskModal = ({
                     disablePast
                     defaultValue={dayjs(formState.deadline)}
                 />
-                <FormControl fullWidth>
-                    <InputLabel>Priority</InputLabel>
-                    <Select name="priority" label="Priority" value={formState.priority} onChange={handleSelectChange}>
-                        <MenuItem value={'HIGH'}>High</MenuItem>
-                        <MenuItem value={'MEDIUM'}>Medium</MenuItem>
-                        <MenuItem value={'LOW'}>Low</MenuItem>
-                    </Select>
-                </FormControl>
+                <div style={{ marginTop: '1em' }}>
+                    <FormControl style={{ minWidth: '10em' }}>
+                        <InputLabel>Priority</InputLabel>
+                        <Select
+                            name="priority"
+                            label="Priority"
+                            value={formState.priority}
+                            onChange={handleSelectChange}
+                        >
+                            {Object.values(TaskPriority).map(value => (
+                                <MenuItem key={value} value={value}>
+                                    {value}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </div>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} variant="contained">
                     Cancel
                 </Button>
-                <Button type="submit" loading={isAddTaskLoading} loadingPosition="start" variant="contained">
+                <Button
+                    disabled={shouldSubmitButtonBeDisabled}
+                    type="submit"
+                    loading={isAddTaskLoading}
+                    loadingPosition="start"
+                    variant="contained"
+                >
                     Create
                 </Button>
             </DialogActions>
