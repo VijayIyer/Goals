@@ -3,11 +3,11 @@ import { Button, ButtonGroup } from '@mui/material';
 
 export default function Navbar({
     numberOfActiveTasks,
-    totalTasks,
+    numberOfCompletedTasks,
     numberOfDeferredTasks,
 }: {
     numberOfActiveTasks: number;
-    totalTasks: number;
+    numberOfCompletedTasks: number;
     numberOfDeferredTasks: number;
 }) {
     const { pathname } = useLocation();
@@ -15,7 +15,7 @@ export default function Navbar({
         <ButtonGroup>
             <NavLink to="/">
                 <Button variant={pathname === '/' ? 'contained' : 'outlined'}>
-                    Active Tasks ({numberOfActiveTasks} / {totalTasks})
+                    Active Tasks ({numberOfCompletedTasks} / {numberOfActiveTasks})
                 </Button>
             </NavLink>
             <NavLink to="/backlogged">
