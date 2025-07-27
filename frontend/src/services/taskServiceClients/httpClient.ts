@@ -1,4 +1,4 @@
-import { NewTask, Task, TasksByDay } from '../../types';
+import { DateRange, NewTask, Task, TasksByDay } from '../../types';
 import { TaskServiceClient } from './client';
 
 class HttpClient implements TaskServiceClient {
@@ -31,13 +31,10 @@ class HttpClient implements TaskServiceClient {
                 };
             });
     }
-    async getTasks(
-        viewingDate: Date | null,
-        completed: boolean = false,
-    ): Promise<Array<Task>> {
+    async getTasks(filterByDateRange: DateRange | null, completed: boolean = false): Promise<Array<Task>> {
         return fetch(
             `${this.baseUrl}/tasks?${new URLSearchParams({
-                viewingDate: viewingDate?.toISOString().split('T')[0] || '',
+                dateRange: JSON.stringify(filterByDateRange) || '',
                 completed: completed.toString(),
             })}`,
             {
