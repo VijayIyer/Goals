@@ -28,6 +28,7 @@ const useStyles = makeStyles({
         justifyContent: 'center',
         alignItems: 'center',
         gap: '2em',
+        marginBottom: '2em',
     },
 });
 
@@ -69,18 +70,9 @@ const App = () => {
                 >
                     Create Task
                 </Button>
-                {tasks.length > 0 && (
-                    <>
-                        <h4>
-                            Completed Tasks : {completedTasks.length}
-                            &nbsp;/&nbsp;{activeTasks.length}
-                        </h4>
-                        <h4>Deferred Tasks : {deferredTasks.length}</h4>
-                    </>
-                )}
                 <Navbar
                     numberOfActiveTasks={activeTasks.length}
-                    totalTasks={tasks.length}
+                    numberOfCompletedTasks={completedTasks.length}
                     numberOfDeferredTasks={deferredTasks.length}
                 />
                 {isRefreshing && <CircularProgress />}
