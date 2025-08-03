@@ -39,7 +39,7 @@ class MockClient implements TaskServiceClient {
         });
     }
     getTasks(filterCriteria: TaskFilterCriteria): Promise<Array<Task>> {
-        const { dateRange, completed = false, shouldBeActive = true, deferred = false } = filterCriteria;
+        const { dateRange, completed, shouldBeActive, deferred } = filterCriteria;
         return new Promise<Array<Task>>(res => {
             setTimeout(() => {
                 res(
