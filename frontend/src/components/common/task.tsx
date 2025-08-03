@@ -98,9 +98,6 @@ export default ({ task, onTaskEdited, onTaskDeleted }: TaskProps) => {
                     )}
                     {editedTask.description && <Typography gutterBottom>{editedTask.description}</Typography>}
                     <Typography>{editedTask.priority}</Typography>
-                    {editedTask.deferred && (
-                        <Typography>This task is backlogged. Please update with a new deadline</Typography>
-                    )}
                     {!editedTask.deferred && (
                         <Tooltip title="Deadline for completing task">
                             <Typography>
