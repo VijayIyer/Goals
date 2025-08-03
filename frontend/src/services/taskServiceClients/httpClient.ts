@@ -1,4 +1,4 @@
-import { DateRange, NewTask, Task, TasksByDay } from '../../types';
+import { CompletionInfo, FilterCriteria, NewTask, Task } from '../../types';
 import { TaskServiceClient } from './client';
 
 class HttpClient implements TaskServiceClient {
@@ -31,11 +31,16 @@ class HttpClient implements TaskServiceClient {
                 };
             });
     }
-    async getTasks(filterByDateRange: DateRange | null, completed: boolean = false): Promise<Array<Task>> {
+    async getTasks(filterCriteria: FilterCriteria): Promise<Array<Task>> {
+        const { dateRange, completed, deferred, shouldBeActive } = filterCriteria;
         return fetch(
             `${this.baseUrl}/tasks?${new URLSearchParams({
-                dateRange: JSON.stringify(filterByDateRange) || '',
-                completed: completed.toString(),
+                ...(dateRange && { startDate: dateRange?.startDate.toDateString() }),
+                ...(dateRange && dateRange.endDate && { endDate: dateRange?.endDate?.toDateString() }),
+                // TODO: check why this is working and not {completed} without the toString()
+                ...(completed && { completed: completed.toString() }),
+                ...(deferred && { deferred: deferred.toString() }),
+                ...(shouldBeActive && { shouldBeActive: shouldBeActive.toString() }),
             })}`,
             {
                 method: 'GET',
@@ -117,12 +122,18 @@ class HttpClient implements TaskServiceClient {
                 deadline: new Date(res.deadline),
             }));
     }
-    getDeferredTasks(): Promise<Array<Task>> {
-        return Promise.resolve([]);
+    async getOverallTaskCompletionInfo(): Promise<CompletionInfo> {
+        return new Promise<CompletionInfo>(res => {
+            res({
+                total: 0,
+                completed: 0,
+                deferred: 0,
+            });
+        });
     }
-    getCompletionInfo(): Promise<Array<TasksByDay>> {
-        return Promise.resolve([]);
-    }
+    // getCompletionInfo(): Promise<Array<TasksByDay>> {
+    //     return Promise.resolve([]);
+    // }
 }
 
 const baseUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:9000';

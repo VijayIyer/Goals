@@ -1,4 +1,5 @@
 import { TaskPriority } from '../enums';
+import { DateRange } from './date';
 export type Task = {
     id: number;
     title: string;
@@ -19,6 +20,7 @@ export type NewTask = {
 
 export type CompletionInfo = {
     completed: number;
+    deferred: number;
     total: number;
 };
 
@@ -26,4 +28,12 @@ export type TasksByDay = {
     date: string;
     total: number;
     totalCompleted: number;
+};
+
+export type FilterCriteria = {
+    dateRange?: DateRange;
+    completed?: boolean;
+    deferred?: boolean;
+    shouldBeActive?: boolean;
+    priority?: TaskPriority;
 };

@@ -1,5 +1,12 @@
 import dayjs from 'dayjs';
-import { DateRange, NewTask, Task, TasksByDay } from '../../types';
+import {
+    DateRange,
+    FilterCriteria as TaskFilterCriteria,
+    NewTask,
+    Task,
+    TasksByDay,
+    CompletionInfo,
+} from '../../types';
 import { TaskServiceClient } from './client';
 import { createTasks, filterTasksByDateRange } from '../../utils/tasks';
 import { getDefaultDateRange } from '../../utils/date';
@@ -31,21 +38,19 @@ class MockClient implements TaskServiceClient {
             }, 10);
         });
     }
-    async getTasks(
-        filterByDateRange: DateRange | null,
-        completed: boolean = false,
-        shouldBeActive: boolean = false,
-    ): Promise<Array<Task>> {
+    getTasks(filterCriteria: TaskFilterCriteria): Promise<Array<Task>> {
+        const { dateRange, completed = false, shouldBeActive = true, deferred = false } = filterCriteria;
         return new Promise<Array<Task>>(res => {
             setTimeout(() => {
                 res(
                     this.mockTasks
                         .filter(task => {
-                            if (!filterByDateRange) return true;
-                            return filterTasksByDateRange([task], filterByDateRange).length;
+                            if (!dateRange) return true;
+                            return filterTasksByDateRange([task], dateRange).length;
                         })
                         .filter(task => (completed ? task.completed === completed : true))
-                        .filter(task => (shouldBeActive ? task.deferred !== true : true))
+                        .filter(task => (shouldBeActive ? task.deferred !== shouldBeActive : true))
+                        .filter(task => (deferred ? task.deferred === deferred : true))
                         .slice(),
                 );
             }, 10);
@@ -80,13 +85,6 @@ class MockClient implements TaskServiceClient {
             }, 10);
         });
     }
-    async getDeferredTasks() {
-        return new Promise<Array<Task>>(res => {
-            setTimeout(() => {
-                res(this.mockTasks.filter(task => task.deferred));
-            }, 10);
-        });
-    }
 
     async getCompletionInfo(dateRange: DateRange, showAllTasks: boolean): Promise<Array<TasksByDay>> {
         return new Promise<Array<TasksByDay>>(res => {
@@ -118,6 +116,16 @@ class MockClient implements TaskServiceClient {
             setTimeout(() => {
                 res(taskCompletionByDate);
             }, 10);
+        });
+    }
+
+    async getOverallTaskCompletionInfo(): Promise<CompletionInfo> {
+        return new Promise<CompletionInfo>(res => {
+            res({
+                total: this.mockTasks.length,
+                completed: this.mockTasks.filter(task => task.completed === true).length,
+                deferred: this.mockTasks.filter(task => task.deferred === true).length,
+            });
         });
     }
 }
