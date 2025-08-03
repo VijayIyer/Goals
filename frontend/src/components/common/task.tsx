@@ -17,15 +17,13 @@ import ServicesContext from '../../services/servicesProvider';
 import { TaskServiceClientFactory } from '../../services/taskServiceClientFactory';
 import { TaskServiceClient } from '../../services/taskServiceClients/client';
 
-export default ({
-    task,
-    onTaskEdited,
-    onTaskDeleted,
-}: {
+interface TaskProps {
     task: Task;
-    onTaskEdited: (id: number) => Promise<void>;
+    onTaskEdited: (id: number) => void;
     onTaskDeleted: () => Promise<void>;
-}) => {
+}
+
+export default ({ task, onTaskEdited, onTaskDeleted }: TaskProps) => {
     const { serviceType } = useContext(ServicesContext);
     const service: TaskServiceClient = new TaskServiceClientFactory(serviceType).getServiceClient();
     const [editedTask, setEditedTask] = useState<Task>(task);

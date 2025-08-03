@@ -1,12 +1,13 @@
-import { ChangeEvent, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { ChangeEvent, useEffect, useState, useContext } from 'react';
 
 import { Button, FormControl, Grid2 as Grid, MenuItem, TextField, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 import { FilterBy, GroupBy } from '../enums';
 import { GroupedTasksType } from '../interfaces';
-import { Task as TaskType, DateRange, CompletionInfo } from '../types';
+import { Task as TaskType, DateRange } from '../types';
+import ServicesContext from '../services/servicesProvider';
+import { TaskServiceClientFactory } from '../services/taskServiceClientFactory';
 
 import { getDefaultDateRange } from '../utils/date';
 import { filterTasksByDateRange, groupTasksByGroupByValue } from '../utils/tasks';
@@ -35,41 +36,61 @@ const useStyles = makeStyles({
     },
 });
 
-type TasksProps = {
-    tasks: Array<TaskType>;
+// TODO: should these functions be promise void or just void
+type ActiveTasksProps = {
     onTaskEdited: (id: number) => Promise<void>;
     onTaskDeleted: () => Promise<void>;
 };
-
-interface LocationState {
-    dateRange: DateRange;
-}
-
-function getCompletionInfo(filteredTasks: Array<TaskType>) {
-    return {
-        total: filteredTasks.length,
-        completed: filteredTasks.filter(task => task.completed === true).length,
-    };
-}
-export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
-    const location = useLocation();
-    const locationState = location.state as LocationState;
+export default ({ onTaskEdited, onTaskDeleted }: ActiveTasksProps) => {
+    const { serviceType } = useContext(ServicesContext);
+    const service = new TaskServiceClientFactory(serviceType).getServiceClient();
+    const [tasks, setTasks] = useState<Array<TaskType>>([]);
     const [groupBy, setGroupBy] = useState<GroupBy>(GroupBy.DAY);
     const [sortBy, setSortBy] = useState<string>('Date');
     const [showAllTasks, setShowAllTasks] = useState<boolean>(false);
-    const [dateRange, setDateRange] = useState<DateRange>(
-        locationState?.dateRange ?? getDefaultDateRange(FilterBy.DAY),
-    );
+    const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange(FilterBy.DAY));
     const filteredTasks: Array<TaskType> = filterTasksByDateRange(tasks, dateRange);
-    const { total: totalNumberOfTasks, completed: totalNumberOfCompletedTasks }: CompletionInfo =
-        getCompletionInfo(filteredTasks);
     const groupedTasks: GroupedTasksType = groupTasksByGroupByValue(showAllTasks ? tasks : filteredTasks, groupBy);
 
     const handleGroupByChange = (event: ChangeEvent<HTMLInputElement>) => {
         setGroupBy(event.target.value as GroupBy);
     };
 
+    useEffect(() => {
+        refreshTasks();
+    }, [dateRange]);
+
+    const refreshTasks = async () => {
+        console.log(`full refresh`);
+        setTasks(
+            await service.getTasks({
+                dateRange,
+                shouldBeActive: true,
+            }),
+        );
+    };
+
+    const refreshTask = async (taskId: number) => {
+        console.log(`single refresh`);
+        const updatedTask = await service.getTaskById(taskId);
+        const taskToUpdateIndex = tasks.findIndex(task => task.id === taskId);
+        const newTasks = [...tasks];
+        newTasks[taskToUpdateIndex] = updatedTask;
+        setTasks(newTasks);
+    };
+
+    const handleTaskEdited = (editedTaskId: number) => {
+        refreshTask(editedTaskId);
+        // TODO: should ActiveTasks component know that this call is to be made?
+        onTaskEdited(editedTaskId);
+    };
+
+    console.log(`tasks - ${JSON.stringify(tasks, null, 2)}`);
+    const totalNumberOfCompletedTasks = tasks.filter(task => task.completed === true).length;
+    const totalNumberOfTasks = tasks.length;
+
     const classes = useStyles();
+
     return (
         <>
             <div className={classes.gridContainer}>
@@ -124,7 +145,7 @@ export default ({ tasks, onTaskEdited, onTaskDeleted }: TasksProps) => {
                                 <Task
                                     key={task.id}
                                     task={task}
-                                    onTaskEdited={onTaskEdited}
+                                    onTaskEdited={handleTaskEdited}
                                     onTaskDeleted={onTaskDeleted}
                                 />
                             ))}
