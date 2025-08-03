@@ -10,7 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 // internal services and types imports
 import ServicesContext from './services/servicesProvider';
 import { TaskServiceClientFactory } from './services/taskServiceClientFactory';
-import { Task as TaskType } from './types';
+import { CompletionInfo } from './types';
 
 // internal component imports
 import ActiveTasks from './components/activeTasks';
@@ -36,22 +36,18 @@ const App = () => {
     const { serviceType } = useContext(ServicesContext);
     const service = new TaskServiceClientFactory(serviceType).getServiceClient();
     const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-    const [tasks, setTasks] = useState<Array<TaskType>>([]);
-    const [completedTasks, setCompletedTasks] = useState<Array<TaskType>>([]);
+    const [completedTasks, setCompletedTasks] = useState<CompletionInfo>();
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
 
     const refreshTasks = async () => {
         setIsRefreshing(true);
-        setTasks(await service.getTasks(null));
-        setCompletedTasks(await service.getTasks(null, true, true));
+        setCompletedTasks(await service.getOverallTaskCompletionInfo());
         setIsRefreshing(false);
     };
     const handleAddTaskModalSubmit = () => {
         refreshTasks();
         setIsAddTaskModalOpen(false);
     };
-    const activeTasks: Array<TaskType> = tasks.filter(task => !task.deferred);
-    const deferredTasks: Array<TaskType> = tasks.filter(task => task.deferred === true);
 
     useEffect(() => {
         refreshTasks();
@@ -71,30 +67,20 @@ const App = () => {
                     Create Task
                 </Button>
                 <Navbar
-                    numberOfActiveTasks={activeTasks.length}
-                    numberOfCompletedTasks={completedTasks.length}
-                    numberOfDeferredTasks={deferredTasks.length}
+                    loading={isRefreshing}
+                    numberOfActiveTasks={completedTasks?.total || 0}
+                    numberOfCompletedTasks={completedTasks?.completed || 0}
+                    numberOfDeferredTasks={completedTasks?.deferred || 0}
                 />
                 {isRefreshing && <CircularProgress />}
             </div>
             <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <ActiveTasks tasks={activeTasks} onTaskEdited={refreshTasks} onTaskDeleted={refreshTasks} />
-                    }
-                />
-                <Route path="/dashboard" element={<Dashboard tasks={activeTasks} />} />
+                <Route path="/" element={<ActiveTasks onTaskEdited={refreshTasks} onTaskDeleted={refreshTasks} />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/calendar" element={<CalendarView />} />
                 <Route
                     path="/backlogged"
-                    element={
-                        <BackloggedTasks
-                            deferredTasks={deferredTasks}
-                            onTaskEdited={refreshTasks}
-                            onTaskDeleted={refreshTasks}
-                        />
-                    }
+                    element={<BackloggedTasks onTaskEdited={refreshTasks} onTaskDeleted={refreshTasks} />}
                 />
             </Routes>
             {isAddTaskModalOpen && (
