@@ -1,25 +1,38 @@
-import { useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Button, Grid2 as Grid, Typography } from '@mui/material';
+import { Button, CircularProgress, Grid2 as Grid, Typography } from '@mui/material';
 
 import Task from './common/task';
 import { Task as TaskType } from '../types';
 
+// internal services and types imports
+import ServicesContext from '../services/servicesProvider';
+import { TaskServiceClientFactory } from '../services/taskServiceClientFactory';
+
 interface BackloggedTasksProps {
-    deferredTasks: Array<TaskType>;
     onTaskEdited: (id: number) => Promise<void>;
     onTaskDeleted: () => Promise<void>;
 }
 
-export default function BackloggedTasks({ deferredTasks, onTaskEdited, onTaskDeleted }: BackloggedTasksProps) {
+export default function BackloggedTasks({ onTaskEdited, onTaskDeleted }: BackloggedTasksProps) {
+    const { serviceType } = useContext(ServicesContext);
+    const service = new TaskServiceClientFactory(serviceType).getServiceClient();
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     const [numberOfTasksToDisplay, setNumberOfTasksToDisplay] = useState(10);
+    const [deferredTasks, setDeferredTasks] = useState<Array<TaskType>>([]);
     const handleShowMoreClick = () => {
         setNumberOfTasksToDisplay(numberOfTasksToDisplay => numberOfTasksToDisplay + 10);
     };
     const handleShowAllClick = () => {
         setNumberOfTasksToDisplay(deferredTasks.length);
     };
+    useEffect(() => {
+        setIsRefreshing(true);
+        const fetchDeferredTasks = async () => setDeferredTasks(await service.getTasks({ deferred: true }));
+        fetchDeferredTasks();
+        setIsRefreshing(false);
+    }, []);
     return (
         <>
             <div>
@@ -38,6 +51,7 @@ export default function BackloggedTasks({ deferredTasks, onTaskEdited, onTaskDel
                     <Typography>{`Showing ${numberOfTasksToDisplay} backlogged tasks`}</Typography>
                 </div>
             </div>
+            {isRefreshing && <CircularProgress />}
             <Grid container alignItems="center" justifyContent="center">
                 {deferredTasks.slice(0, numberOfTasksToDisplay).map(task => (
                     <Task key={task.id} task={task} onTaskEdited={onTaskEdited} onTaskDeleted={onTaskDeleted} />
