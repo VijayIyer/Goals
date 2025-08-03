@@ -1,17 +1,21 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Button, ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 
 import InformationTooltip from './informationTooltip';
 
-export default function Navbar({
-    numberOfActiveTasks,
-    numberOfCompletedTasks,
-    numberOfDeferredTasks,
-}: {
+interface NavbarProps {
+    loading: boolean;
     numberOfActiveTasks: number;
     numberOfCompletedTasks: number;
     numberOfDeferredTasks: number;
-}) {
+}
+
+export default function Navbar({
+    loading,
+    numberOfActiveTasks,
+    numberOfCompletedTasks,
+    numberOfDeferredTasks,
+}: NavbarProps) {
     const { pathname } = useLocation();
     return (
         <ButtonGroup>
@@ -22,7 +26,8 @@ export default function Navbar({
                     }
                     variant={pathname === '/' ? 'contained' : 'outlined'}
                 >
-                    Active Tasks ({numberOfCompletedTasks} / {numberOfActiveTasks})
+                    {loading && <CircularProgress />}&nbsp;Active Tasks ({numberOfCompletedTasks} /{' '}
+                    {numberOfActiveTasks})
                 </Button>
             </NavLink>
             <NavLink to="/backlogged">
@@ -30,7 +35,7 @@ export default function Navbar({
                     startIcon={<InformationTooltip title="See tasks that have been deferred for later" />}
                     variant={pathname === '/backlogged' ? 'contained' : 'outlined'}
                 >
-                    Deferred Tasks ({numberOfDeferredTasks})
+                    {loading && <CircularProgress />}&nbsp;Deferred Tasks ({numberOfDeferredTasks})
                 </Button>
             </NavLink>
             <NavLink to="/dashboard">
@@ -38,7 +43,7 @@ export default function Navbar({
                     startIcon={<InformationTooltip title="See overall stats" />}
                     variant={pathname === '/dashboard' ? 'contained' : 'outlined'}
                 >
-                    Summary
+                    {loading && <CircularProgress />}&nbsp;Summary
                 </Button>
             </NavLink>
         </ButtonGroup>
