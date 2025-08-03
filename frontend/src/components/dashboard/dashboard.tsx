@@ -1,15 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { Button, Grid2 as Grid } from '@mui/material';
+import { Button, CircularProgress, Grid2 as Grid } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 import ServicesContext from '../../services/servicesProvider';
-import SelectedDateRangeDisplay from '../common/selectDateRange/selectedDateRangeDisplay';
 import { TaskServiceClientFactory } from '../../services/taskServiceClientFactory';
-import { DateRange, Task, TasksByDay } from '../../types';
-import { getDefaultDateRange, formatWeekDateRange, formatDate } from '../../utils/date';
+import { Task } from '../../types';
+import { formatWeekDateRange, formatDate } from '../../utils/date';
 import { FilterBy, GroupBy } from '../../enums';
-import { useNavigate } from 'react-router-dom';
 import { filterTasksByFilterBy, getGroupRange, groupTasksByGroupByValue } from '../../utils/tasks';
 import { getDateWeek, getWeekEndDate, getWeekStartDate } from '../../utils/week';
 
@@ -89,25 +87,25 @@ function SummaryGridItem({ title, children }: { title: string; children: React.R
     );
 }
 
-function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
+function Dashboard() {
     const { serviceType } = useContext(ServicesContext);
-    const navigate = useNavigate();
-    const [summaryItems, setSummaryItems] = useState<Array<RequiredSummaryItemData>>([]);
-    const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange(FilterBy.DAY));
-    const [showAddSummaryItemModal, setShowAddSummaryItemModal] = useState(false);
-    const [completionInfo, setCompletionInfo] = useState<Array<TasksByDay>>([]);
-    const [showAllTasks, setShowAllTasks] = useState<boolean>(false);
-
     const service = new TaskServiceClientFactory(serviceType).getServiceClient();
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [tasks, setTasks] = useState<Array<Task>>([]);
+    //const navigate = useNavigate();
+    const [summaryItems, setSummaryItems] = useState<Array<RequiredSummaryItemData>>([]);
+    const [showAddSummaryItemModal, setShowAddSummaryItemModal] = useState(false);
+    // const [showAllTasks, setShowAllTasks] = useState<boolean>(false);
 
     useEffect(() => {
-        async function getCompletionInfo() {
-            const completionInfo = await service.getCompletionInfo(dateRange, showAllTasks);
-            setCompletionInfo(completionInfo);
+        async function fetchTasks() {
+            setIsRefreshing(true);
+            setTasks(await service.getTasks({}));
+            setIsRefreshing(false);
         }
-        getCompletionInfo();
-    }, [tasks, dateRange]);
-
+        fetchTasks();
+    }, []);
+    console.log(`isRefreshing - ${isRefreshing}`);
     const handleAddSummaryItemClick = () => {
         setShowAddSummaryItemModal(true);
     };
@@ -155,20 +153,22 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
 
     const currentWeekDayPerformances = getPerformancesInDateRange(tasks, FilterBy.WEEK, GroupBy.DAY);
 
+    if (isRefreshing) return <CircularProgress />;
+
     return (
         <>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                {!showAllTasks && (
+                {/* {!showAllTasks && (
                     <>
                         <SelectedDateRangeDisplay
                             selectedDateRange={dateRange}
                             onDateRangeUpdated={(updatedDateRange: DateRange) => setDateRange(updatedDateRange)}
                         />
                     </>
-                )}
-                <Button onClick={() => setShowAllTasks(value => !value)}>
+                )} */}
+                {/* <Button onClick={() => setShowAllTasks(value => !value)}>
                     {showAllTasks ? 'Show summary for all tasks' : 'Show summary for selected date range'}
-                </Button>
+                </Button> */}
                 <Button onClick={handleAddSummaryItemClick}>Add Summary Item</Button>
                 {showAddSummaryItemModal && (
                     <AddSummaryItemModal
@@ -289,7 +289,7 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
                         {currentWeekDayPerformances.worst.completed} / {currentWeekDayPerformances.worst.total})
                     </h4>
                 </SummaryGridItem>
-                <Grid>
+                {/* <Grid>
                     <div
                         style={{
                             display: 'flex',
@@ -314,7 +314,7 @@ function Dashboard({ tasks = [] }: { tasks: Array<Task> }) {
                             );
                         })}
                     </div>
-                </Grid>
+                </Grid> */}
             </Grid>
         </>
     );
