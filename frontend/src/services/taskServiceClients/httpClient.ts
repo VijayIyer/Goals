@@ -1,4 +1,5 @@
-import { CompletionInfo, FilterCriteria, NewTask, Task } from '../../types';
+import { GroupBy, RankStatType, StatType } from '../../enums';
+import { Completed, CompletionInfo, DateRange, FilterCriteria, NewTask, Percentage, RankStat, Task } from '../../types';
 import { TaskServiceClient } from './client';
 
 class HttpClient implements TaskServiceClient {
@@ -130,6 +131,32 @@ class HttpClient implements TaskServiceClient {
                 deferred: 0,
             });
         });
+    }
+    async getTaskCompletionInfo(requestedStatType: StatType, dateRange?: DateRange): Promise<Completed | Percentage> {
+        //TODO: implement
+        console.log(`getting ${requestedStatType} in dateRange ${dateRange}`);
+        return {
+            completed: 5,
+            total: 5,
+        };
+    }
+    async getRankStat(
+        requestedStatType: StatType,
+        rankStatType: RankStatType,
+        rankStatGroupPeriod: GroupBy,
+        dateRange?: DateRange,
+    ): Promise<RankStat> {
+        //TODO: implement
+        console.log(
+            `fetching ${rankStatType} ${rankStatGroupPeriod} ${requestedStatType} in ${JSON.stringify(dateRange)}`,
+        );
+        return {
+            name: 'Best',
+            value: {
+                completed: 5,
+                total: 1,
+            },
+        };
     }
     // getCompletionInfo(): Promise<Array<TasksByDay>> {
     //     return Promise.resolve([]);
