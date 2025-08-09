@@ -48,3 +48,13 @@ export enum RequiredStatType {
     MOST_COMPLETED = 'Most completed',
     LEAST_COMPLETED = 'Least completed',
 }
+
+export enum StatType {
+    PERCENTAGE = 'Percentage',
+    COMPLETED = 'Completed',
+}
+
+export enum RankStatType {
+    BEST = 'Best',
+    WORST = 'Worst',
+}
