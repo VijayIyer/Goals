@@ -77,3 +77,29 @@ export function getDefaultDateRange(filterBy: FilterBy | null): DateRange {
         filterBy: filterBy ?? FilterBy.DAY, // should this be here or part of a separate value
     };
 }
+
+// Helper function to create a date range object when it is not the user inputting this
+export function createDateRangeObject(
+    startDate: Date,
+    endDate: Date | null = null,
+    filterBy: FilterBy | null = null,
+): DateRange {
+    const datePlusSevenDays = new Date(startDate);
+    datePlusSevenDays.setDate(datePlusSevenDays.getDate() + 7);
+    if (filterBy === FilterBy.WEEK)
+        console.log(
+            `startDate ${startDate}, endDate - ${endDate ? endDate : filterBy === FilterBy.WEEK ? datePlusSevenDays : startDate}`,
+        );
+    return {
+        startDate: startDate,
+        endDate: endDate ? endDate : filterBy === FilterBy.WEEK ? datePlusSevenDays : startDate, //TODO keeping default endDate as startDate (is this correct?)
+        week: getDateWeek(startDate),
+        month: startDate.toLocaleString('default', { month: 'long' }),
+        year: startDate.getFullYear(),
+        filterBy: filterBy ?? FilterBy.DAY, // should this be here or part of a separate value
+    };
+}
+
+export function getCurrentYear(index: number = 0) {
+    return new Date().getFullYear() + (index ?? 0);
+}
