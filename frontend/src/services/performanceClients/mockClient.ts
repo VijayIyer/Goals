@@ -7,6 +7,7 @@ export class MockClient implements PerformanceClient {
         return {
             completed: 8,
             total: 10,
+            deferred: 0,
         };
     }
 }
