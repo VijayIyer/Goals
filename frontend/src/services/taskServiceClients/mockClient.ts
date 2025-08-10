@@ -14,7 +14,8 @@ import { TaskServiceClient } from './client';
 import { createTasks, filterTasksByDateRange, getGroupRange, groupTasksByGroupByValue } from '../../utils/tasks';
 import { getDefaultDateRange } from '../../utils/date';
 import { FilterBy, GroupBy, RankStatType, StatType } from '../../enums';
-import { GroupedTasksType } from '../../interfaces';
+import { GroupedTasksType, GroupedTasksSummary } from '../../interfaces';
+import { getBestPerformingItem, getWorstPerformingItem } from '../../utils';
 
 class MockClient implements TaskServiceClient {
     mockTasks: Array<Task> = [];
@@ -135,14 +136,16 @@ class MockClient implements TaskServiceClient {
 
     async getTaskCompletionInfo(requestedStatType: StatType, dateRange?: DateRange): Promise<Completed | Percentage> {
         const filteredTasks = dateRange ? filterTasksByDateRange(this.mockTasks, dateRange) : this.mockTasks;
-        const overAllCompleted = filteredTasks.filter(task => task.completed === true).length;
-        const overall = filteredTasks.length;
+        const completed = filteredTasks.filter(task => task.completed === true).length;
+        const total = filteredTasks.length;
         return {
-            completed: overAllCompleted,
-            total: overall,
-            ...(requestedStatType === StatType.PERCENTAGE && { percentage: (overAllCompleted / overall) * 100 }),
+            completed,
+            total,
+            ...(requestedStatType === StatType.PERCENTAGE && { percentage: (completed / total) * 100 }),
         };
     }
+
+    // TODO: is this function doing a lot of work - Single Responsibility Principle being broken?
     async getRankStat(
         requestedStatType: StatType,
         rankStatType: RankStatType,
@@ -151,36 +154,15 @@ class MockClient implements TaskServiceClient {
     ): Promise<RankStat> {
         const filteredTasks = dateRange ? filterTasksByDateRange(this.mockTasks, dateRange) : this.mockTasks;
         const groupedTasks: GroupedTasksType = groupTasksByGroupByValue(filteredTasks, rankStatGroupPeriod);
-        const groupedSummaryInCurrentDateRange = Object.keys(groupedTasks).map(key => {
+        const groupedSummaryInCurrentDateRange: Array<GroupedTasksSummary> = Object.keys(groupedTasks).map(key => {
             return {
                 name: getGroupRange(key, rankStatGroupPeriod),
                 total: groupedTasks[key].length,
                 completed: groupedTasks[key].filter(task => task.completed === true).length,
             };
         });
-        const bestPerformingItem = groupedSummaryInCurrentDateRange.reduce(
-            (prev, current) => {
-                return !prev.name
-                    ? current
-                    : prev.completed / prev.total > current.completed / current.total
-                      ? prev
-                      : current;
-            },
-            { name: '', completed: 0, total: 1 },
-        );
-        const worstPerformingItem = groupedSummaryInCurrentDateRange.reduce(
-            (prev, current) => {
-                return !prev.name
-                    ? current
-                    : prev.completed / prev.total < current.completed / current.total
-                      ? prev
-                      : current;
-            },
-            { name: '', completed: 0, total: 1 },
-        );
-        console.log(
-            `bestperformingitem name - ${bestPerformingItem.name}, worstperforming item name - ${worstPerformingItem.name}`,
-        );
+        const bestPerformingItem = getBestPerformingItem(groupedSummaryInCurrentDateRange, requestedStatType);
+        const worstPerformingItem = getWorstPerformingItem(groupedSummaryInCurrentDateRange, requestedStatType);
         const name = rankStatType === RankStatType.BEST ? bestPerformingItem.name : worstPerformingItem.name;
         const completed =
             rankStatType === RankStatType.BEST ? bestPerformingItem.completed : worstPerformingItem.completed;

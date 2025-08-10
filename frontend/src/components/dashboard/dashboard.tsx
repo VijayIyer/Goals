@@ -9,7 +9,7 @@ import { getDateWeek, getWeekStartDate } from '../../utils/week';
 import { RequestedSummaryItem } from '../../interfaces';
 
 import AddSummaryItemModal from './addSummaryItemModal';
-import SummaryItemFromRequestedObject from './summaryItemFromRequestedObject';
+import SummaryItem from './summaryItem';
 
 function Dashboard() {
     //const navigate = useNavigate();
@@ -50,7 +50,7 @@ function Dashboard() {
             </div>
             <Grid container gap={2} wrap="wrap">
                 {summaryItems.map((summaryItem, index) => (
-                    <SummaryItemFromRequestedObject
+                    <SummaryItem
                         key={index}
                         title={summaryItem.title}
                         dateRange={summaryItem.dateRange}
@@ -59,13 +59,13 @@ function Dashboard() {
                         rankStatGroupPeriod={summaryItem.rankStatPeriod}
                     />
                 ))}
-                <SummaryItemFromRequestedObject title="Overall" statType={StatType.PERCENTAGE} />
-                <SummaryItemFromRequestedObject
+                <SummaryItem title="Overall" statType={StatType.PERCENTAGE} />
+                <SummaryItem
                     title="This Year"
                     statType={StatType.PERCENTAGE}
                     dateRange={createDateRangeObject(new Date(getCurrentYear(), 0, 1), null, FilterBy.YEAR)}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="This Month"
                     statType={StatType.PERCENTAGE}
                     dateRange={createDateRangeObject(
@@ -74,7 +74,7 @@ function Dashboard() {
                         FilterBy.MONTH,
                     )}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="This Week"
                     statType={StatType.PERCENTAGE}
                     dateRange={createDateRangeObject(
@@ -83,35 +83,35 @@ function Dashboard() {
                         FilterBy.WEEK,
                     )}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Best Month this year"
                     statType={StatType.PERCENTAGE}
                     rankStatType={RankStatType.BEST}
                     rankStatGroupPeriod={GroupBy.MONTH}
                     dateRange={createDateRangeObject(new Date(getCurrentYear(), 0, 1), null, FilterBy.YEAR)}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Worst Month this year"
                     statType={StatType.PERCENTAGE}
                     rankStatType={RankStatType.WORST}
                     rankStatGroupPeriod={GroupBy.MONTH}
                     dateRange={createDateRangeObject(new Date(getCurrentYear(), 0, 1), null, FilterBy.YEAR)}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Best Week this year"
                     statType={StatType.PERCENTAGE}
                     rankStatType={RankStatType.BEST}
                     rankStatGroupPeriod={GroupBy.WEEK}
                     dateRange={createDateRangeObject(new Date(getCurrentYear(), 0, 1), null, FilterBy.YEAR)}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Worst Week this year"
                     statType={StatType.PERCENTAGE}
                     rankStatType={RankStatType.WORST}
                     rankStatGroupPeriod={GroupBy.WEEK}
                     dateRange={createDateRangeObject(new Date(getCurrentYear(), 0, 1), null, FilterBy.YEAR)}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Best Week this month"
                     statType={StatType.PERCENTAGE}
                     rankStatType={RankStatType.BEST}
@@ -122,7 +122,7 @@ function Dashboard() {
                         FilterBy.MONTH,
                     )}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Worst Week this month"
                     statType={StatType.PERCENTAGE}
                     rankStatType={RankStatType.WORST}
@@ -133,7 +133,7 @@ function Dashboard() {
                         FilterBy.MONTH,
                     )}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Best day this week"
                     statType={StatType.PERCENTAGE}
                     rankStatType={RankStatType.BEST}
@@ -144,7 +144,7 @@ function Dashboard() {
                         FilterBy.WEEK,
                     )}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Worst day this week"
                     statType={StatType.COMPLETED}
                     rankStatType={RankStatType.WORST}
@@ -155,7 +155,7 @@ function Dashboard() {
                         FilterBy.WEEK,
                     )}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Best day this month"
                     statType={StatType.PERCENTAGE}
                     rankStatType={RankStatType.BEST}
@@ -166,7 +166,7 @@ function Dashboard() {
                         FilterBy.MONTH,
                     )}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Worst day this month"
                     statType={StatType.COMPLETED}
                     rankStatType={RankStatType.WORST}
@@ -177,7 +177,7 @@ function Dashboard() {
                         FilterBy.MONTH,
                     )}
                 />
-                <SummaryItemFromRequestedObject
+                <SummaryItem
                     title="Today"
                     statType={StatType.COMPLETED}
                     dateRange={createDateRangeObject(new Date(), new Date(), FilterBy.DAY)}
