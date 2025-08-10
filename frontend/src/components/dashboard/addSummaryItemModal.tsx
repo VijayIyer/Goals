@@ -68,14 +68,16 @@ export default function AddSummaryItemModal({
                 <DialogContentText>
                     {/*TODO: validation - length, allowed letters, etc*/}
                     <TextField
-                        label="Summary Stat Label"
+                        label="What to call this Stat Item?"
                         value={summaryItemTitle}
                         onChange={handleSummaryItemTitleChange}
                     />
+                    <Typography>What period to calculate stats over?</Typography>
                     <SelectedDateRangeDisplay
                         onDateRangeUpdated={updatedDateRange => setSelectedDateRange(updatedDateRange)}
                         selectedDateRange={selectedDateRange}
                     />
+                    {/* TODO: Add styling to associate text field with selection */}
                     <Typography>What Stat do you want to see from this period?</Typography>
                     <Select
                         name="statType"
@@ -89,7 +91,8 @@ export default function AddSummaryItemModal({
                             </MenuItem>
                         ))}
                     </Select>
-                    <Typography>For selected Stat, which results do you want</Typography>
+                    {/* TODO: Add styling to associate text field with selection */}
+                    <Typography>Do you want to find rank stats - best or worst, in this period?</Typography>
                     <Select
                         name="statType"
                         label="Rank Stat Type"
@@ -102,6 +105,8 @@ export default function AddSummaryItemModal({
                             </MenuItem>
                         ))}
                     </Select>
+                    {/* TODO: Add styling to associate text field with selection */}
+                    <Typography>What should each rank stat period be over? - For e.g best day, best week?</Typography>
                     <Select
                         name="stat"
                         label="Rank Stat Group Period"
@@ -114,6 +119,7 @@ export default function AddSummaryItemModal({
                             </MenuItem>
                         ))}
                     </Select>
+                    <Typography>What should each rank stat period be over? - For e.g best day, best week?</Typography>
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
