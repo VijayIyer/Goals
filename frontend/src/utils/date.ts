@@ -86,10 +86,6 @@ export function createDateRangeObject(
 ): DateRange {
     const datePlusSevenDays = new Date(startDate);
     datePlusSevenDays.setDate(datePlusSevenDays.getDate() + 7);
-    if (filterBy === FilterBy.WEEK)
-        console.log(
-            `startDate ${startDate}, endDate - ${endDate ? endDate : filterBy === FilterBy.WEEK ? datePlusSevenDays : startDate}`,
-        );
     return {
         startDate: startDate,
         endDate: endDate ? endDate : filterBy === FilterBy.WEEK ? datePlusSevenDays : startDate, //TODO keeping default endDate as startDate (is this correct?)

@@ -61,7 +61,6 @@ export default ({ onTaskEdited, onTaskDeleted }: ActiveTasksProps) => {
     }, [dateRange]);
 
     const refreshTasks = async () => {
-        console.log(`full refresh`);
         setTasks(
             await service.getTasks({
                 dateRange,
@@ -71,7 +70,6 @@ export default ({ onTaskEdited, onTaskDeleted }: ActiveTasksProps) => {
     };
 
     const refreshTask = async (taskId: number) => {
-        console.log(`single refresh`);
         const updatedTask = await service.getTaskById(taskId);
         const taskToUpdateIndex = tasks.findIndex(task => task.id === taskId);
         const newTasks = [...tasks];
@@ -85,7 +83,6 @@ export default ({ onTaskEdited, onTaskDeleted }: ActiveTasksProps) => {
         onTaskEdited(editedTaskId);
     };
 
-    console.log(`tasks - ${JSON.stringify(tasks, null, 2)}`);
     const totalNumberOfCompletedTasks = tasks.filter(task => task.completed === true).length;
     const totalNumberOfTasks = tasks.length;
 

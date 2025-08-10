@@ -46,7 +46,6 @@ function SelectDateRangeModal({
                 endDate,
             });
         } else {
-            console.log(`startDate - ${selectedDateRange.startDate}`);
             onSelectedDateRangeUpdate(selectedDateRange);
         }
         onClose();
