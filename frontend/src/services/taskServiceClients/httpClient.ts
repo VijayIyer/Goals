@@ -134,7 +134,7 @@ class HttpClient implements TaskServiceClient {
     }
     async getTaskCompletionInfo(requestedStatType: StatType, dateRange?: DateRange): Promise<Completed | Percentage> {
         //TODO: implement
-        console.log(`getting ${requestedStatType} in dateRange ${dateRange}`);
+        console.log(`fetching ${requestedStatType} in ${JSON.stringify(dateRange)}`);
         return {
             completed: 5,
             total: 5,
@@ -158,9 +158,6 @@ class HttpClient implements TaskServiceClient {
             },
         };
     }
-    // getCompletionInfo(): Promise<Array<TasksByDay>> {
-    //     return Promise.resolve([]);
-    // }
 }
 
 const baseUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:9000';
