@@ -16,20 +16,20 @@ const useStyles = makeStyles({
     },
 });
 
-interface SummaryItemFromRequestedObjectProps {
+interface SummaryItemProps {
     title: string;
     statType: StatType;
     dateRange?: DateRange;
     rankStatType?: RankStatType;
     rankStatGroupPeriod?: GroupBy;
 }
-export default function SummaryItemFromRequestedObject({
+export default function SummaryItem({
     title,
     statType,
     dateRange,
     rankStatType,
     rankStatGroupPeriod,
-}: SummaryItemFromRequestedObjectProps) {
+}: SummaryItemProps) {
     const { serviceType } = useContext(ServicesContext);
     const service = new TaskServiceClientFactory(serviceType).getServiceClient();
     const [stat, setStat] = useState<Percentage | Completed | RankStat>();
