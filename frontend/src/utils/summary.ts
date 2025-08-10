@@ -1,11 +1,12 @@
-import { GroupBy, RequiredStatType } from '../enums';
+import { GroupBy, RankStatType, StatType } from '../enums';
 import { DateRange } from '../types';
 import { getDateRangeString } from './date';
 
 export function getSummaryItemNameFromStatPeriodAndType(
-    statPeriod: GroupBy,
-    statType: RequiredStatType,
+    statType: StatType,
     dateRange: DateRange,
+    rankStatPeriod: GroupBy,
+    rankStatType: RankStatType,
 ): string {
-    return `${statPeriod} with ${statType} in ${getDateRangeString(dateRange)}`;
+    return `${rankStatPeriod} with ${rankStatType} ${statType} in ${getDateRangeString(dateRange)}`;
 }

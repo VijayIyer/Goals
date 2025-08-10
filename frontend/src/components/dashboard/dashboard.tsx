@@ -1,48 +1,29 @@
-import { useContext, useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { Button, CircularProgress, Grid2 as Grid } from '@mui/material';
+import { Button, Grid2 as Grid } from '@mui/material';
 
-import ServicesContext from '../../services/servicesProvider';
-import { TaskServiceClientFactory } from '../../services/taskServiceClientFactory';
-import { Task } from '../../types';
 import { createDateRangeObject, getCurrentYear } from '../../utils/date';
 import { FilterBy, GroupBy, RankStatType, StatType } from '../../enums';
 import { getDateWeek, getWeekStartDate } from '../../utils/week';
 
-import { RequiredSummaryItemDetails as RequiredSummaryItemData } from '../../interfaces';
+import { RequestedSummaryItem } from '../../interfaces';
 
 import AddSummaryItemModal from './addSummaryItemModal';
-import SummaryItem from './summaryItem';
 import SummaryItemFromRequestedObject from './summaryItemFromRequestedObject';
 
 function Dashboard() {
-    const { serviceType } = useContext(ServicesContext);
-    const service = new TaskServiceClientFactory(serviceType).getServiceClient();
-    const [isRefreshing, setIsRefreshing] = useState(false);
-    const [tasks, setTasks] = useState<Array<Task>>([]);
     //const navigate = useNavigate();
-    const [summaryItems, setSummaryItems] = useState<Array<RequiredSummaryItemData>>([]);
+    const [summaryItems, setSummaryItems] = useState<Array<RequestedSummaryItem>>([]);
     const [showAddSummaryItemModal, setShowAddSummaryItemModal] = useState(false);
     // const [showAllTasks, setShowAllTasks] = useState<boolean>(false);
 
-    useEffect(() => {
-        async function fetchTasks() {
-            setIsRefreshing(true);
-            setTasks(await service.getTasks({}));
-            setIsRefreshing(false);
-        }
-        fetchTasks();
-    }, []);
-    console.log(`isRefreshing - ${isRefreshing}`);
     const handleAddSummaryItemClick = () => {
         setShowAddSummaryItemModal(true);
     };
 
-    const handleAddSummaryItemSelection = (newSummaryItem: RequiredSummaryItemData) => {
+    const handleAddSummaryItemSelection = (newSummaryItem: RequestedSummaryItem) => {
         setSummaryItems([...summaryItems, newSummaryItem]);
     };
-
-    if (isRefreshing) return <CircularProgress />;
 
     return (
         <>
@@ -68,8 +49,15 @@ function Dashboard() {
                 )}
             </div>
             <Grid container gap={2} wrap="wrap">
-                {summaryItems.map(summaryItem => (
-                    <SummaryItem key={summaryItem.title} tasks={tasks} summaryItem={summaryItem} />
+                {summaryItems.map((summaryItem, index) => (
+                    <SummaryItemFromRequestedObject
+                        key={index}
+                        title={summaryItem.title}
+                        dateRange={summaryItem.dateRange}
+                        statType={summaryItem.statType}
+                        rankStatType={summaryItem.rankStatType}
+                        rankStatGroupPeriod={summaryItem.rankStatPeriod}
+                    />
                 ))}
                 <SummaryItemFromRequestedObject title="Overall" statType={StatType.PERCENTAGE} />
                 <SummaryItemFromRequestedObject

@@ -15,8 +15,8 @@ import {
 import SelectedDateRangeDisplay from '../common/selectDateRange/selectedDateRangeDisplay';
 import { DateRange } from '../../types';
 import { getDefaultDateRange, getSummaryItemNameFromStatPeriodAndType } from '../../utils';
-import { FilterBy, GroupBy, RequiredStatType } from '../../enums';
-import { RequiredSummaryItemDetails } from '../../interfaces';
+import { FilterBy, GroupBy, RankStatType, StatType } from '../../enums';
+import { RequestedSummaryItem } from '../../interfaces';
 
 export default function AddSummaryItemModal({
     isOpen,
@@ -25,30 +25,38 @@ export default function AddSummaryItemModal({
 }: {
     isOpen: boolean;
     onClose: () => void;
-    onAddSummaryItemSelection: (updatedSelection: RequiredSummaryItemDetails) => void;
+    onAddSummaryItemSelection: (updatedSelection: RequestedSummaryItem) => void;
 }) {
     const [summaryItemTitle, setSummaryItemTitle] = useState<string | null>(null);
     const [selectedDateRange, setSelectedDateRange] = useState<DateRange>(getDefaultDateRange(FilterBy.DAY));
-    const [selectedStatType, setSelectedStatType] = useState<RequiredStatType>(
-        RequiredStatType.BEST_COMPLETION_PERCENTAGE,
-    );
-    const [selectedStatPeriod, setSelectedStatPeriod] = useState<GroupBy>(GroupBy.DAY);
+    const [selectedStatType, setSelectedStatType] = useState<StatType>(StatType.PERCENTAGE);
+    const [selectedRankStatType, setSelectedRankStatType] = useState<RankStatType>(RankStatType.BEST);
+    const [selectedRankStatGroupPeriod, setSelectedRankStatGroupPeriod] = useState<GroupBy>(GroupBy.DAY);
     const handleConfirm = () => {
         onAddSummaryItemSelection({
             title:
                 summaryItemTitle ??
-                getSummaryItemNameFromStatPeriodAndType(selectedStatPeriod, selectedStatType, selectedDateRange),
+                getSummaryItemNameFromStatPeriodAndType(
+                    selectedStatType,
+                    selectedDateRange,
+                    selectedRankStatGroupPeriod,
+                    selectedRankStatType,
+                ),
             dateRange: selectedDateRange,
-            statPeriod: selectedStatPeriod,
             statType: selectedStatType,
+            rankStatPeriod: selectedRankStatGroupPeriod,
+            rankStatType: selectedRankStatType,
         });
         onClose();
     };
-    const handleStatTypeSelectionChange = (event: SelectChangeEvent<RequiredStatType>) => {
-        setSelectedStatType(event.target.value as RequiredStatType);
+    const handleStatTypeSelectionChange = (event: SelectChangeEvent<StatType>) => {
+        setSelectedStatType(event.target.value as StatType);
     };
-    const handleStatPeriodSelectionChange = (event: SelectChangeEvent<GroupBy>) => {
-        setSelectedStatPeriod(event.target.value as GroupBy);
+    const handleRankStatTypeSelectionChange = (event: SelectChangeEvent<RankStatType>) => {
+        setSelectedRankStatType(event.target.value as RankStatType);
+    };
+    const handleRankStatGroupPeriodSelectionChange = (event: SelectChangeEvent<GroupBy>) => {
+        setSelectedRankStatGroupPeriod(event.target.value as GroupBy);
     };
     const handleSummaryItemTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
         setSummaryItemTitle(event.target.value);
@@ -75,7 +83,7 @@ export default function AddSummaryItemModal({
                         value={selectedStatType}
                         onChange={handleStatTypeSelectionChange}
                     >
-                        {Object.values(RequiredStatType).map(statType => (
+                        {Object.values(StatType).map(statType => (
                             <MenuItem key={statType} value={statType}>
                                 {statType}
                             </MenuItem>
@@ -83,10 +91,22 @@ export default function AddSummaryItemModal({
                     </Select>
                     <Typography>For selected Stat, which results do you want</Typography>
                     <Select
+                        name="statType"
+                        label="Rank Stat Type"
+                        value={selectedRankStatType}
+                        onChange={handleRankStatTypeSelectionChange}
+                    >
+                        {Object.values(RankStatType).map(statType => (
+                            <MenuItem key={statType} value={statType}>
+                                {statType}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    <Select
                         name="stat"
-                        label="Stat Period"
-                        value={selectedStatPeriod}
-                        onChange={handleStatPeriodSelectionChange}
+                        label="Rank Stat Group Period"
+                        value={selectedRankStatGroupPeriod}
+                        onChange={handleRankStatGroupPeriodSelectionChange}
                     >
                         {Object.values(GroupBy).map(statPeriod => (
                             <MenuItem key={statPeriod} value={statPeriod}>
