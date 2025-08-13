@@ -1,5 +1,6 @@
 import { GroupBy, RankStatType, StatType } from '../../enums';
 import { Completed, CompletionInfo, DateRange, FilterCriteria, NewTask, Percentage, RankStat, Task } from '../../types';
+import { getEndDateFromDateRange, getStartDateFromDateRange } from '../../utils';
 import { TaskServiceClient } from './client';
 
 class HttpClient implements TaskServiceClient {
@@ -7,7 +8,7 @@ class HttpClient implements TaskServiceClient {
     constructor(baseUrl: string) {
         this.baseUrl = baseUrl;
     }
-    createTask(newTask: NewTask): Promise<Task> {
+    async createTask(newTask: NewTask): Promise<Task> {
         return fetch(`${this.baseUrl}/tasks`, {
             method: 'POST',
             body: JSON.stringify({
@@ -60,6 +61,7 @@ class HttpClient implements TaskServiceClient {
                 res.map(
                     (task: Task): Task => ({
                         ...task,
+                        // TODO: why is this required?
                         deadline: new Date(task.deadline),
                     }),
                 ),
@@ -70,7 +72,7 @@ class HttpClient implements TaskServiceClient {
             });
     }
 
-    getTaskById(id: number): Promise<Task> {
+    async getTaskById(id: number): Promise<Task> {
         return fetch(this.baseUrl + `/tasks/${id}`, {
             method: 'GET',
             headers: {
@@ -86,7 +88,7 @@ class HttpClient implements TaskServiceClient {
             })
             .catch(console.error);
     }
-    deleteTaskById(deletedTaskId: number) {
+    async deleteTaskById(deletedTaskId: number) {
         return fetch(this.baseUrl + `/tasks/${deletedTaskId}`, {
             method: 'DELETE',
             headers: {
@@ -102,7 +104,7 @@ class HttpClient implements TaskServiceClient {
             })
             .catch(console.error);
     }
-    editTask(editedTask: Task) {
+    async editTask(editedTask: Task) {
         return fetch(this.baseUrl + `/tasks/${editedTask.id}`, {
             method: 'PUT',
             body: JSON.stringify(editedTask),
@@ -123,21 +125,53 @@ class HttpClient implements TaskServiceClient {
             }));
     }
     async getOverallTaskCompletionInfo(): Promise<CompletionInfo> {
-        return new Promise<CompletionInfo>(res => {
-            res({
-                total: 0,
-                completed: 0,
-                deferred: 0,
+        return fetch(`${this.baseUrl}/completionInfo`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw `HTTP error ${response.status}`;
+                }
+                return response.json();
+            })
+            .catch(err => {
+                console.error(err);
+                return err;
             });
-        });
     }
-    async getTaskCompletionInfo(requestedStatType: StatType, dateRange?: DateRange): Promise<Completed | Percentage> {
+    async getCompletionStat(requestedStatType: StatType, dateRange?: DateRange): Promise<Completed | Percentage> {
         //TODO: implement
         console.log(`fetching ${requestedStatType} in ${JSON.stringify(dateRange)}`);
-        return {
-            completed: 5,
-            total: 5,
-        };
+        const startDate = getStartDateFromDateRange(dateRange || null); // FIXME: this should not be required once date range only consists of start and end date
+        const endDate = getEndDateFromDateRange(dateRange || null); // FIXME: this should not be required once date range only consists of start and end date
+        return fetch(
+            `${this.baseUrl}/completionStat?${new URLSearchParams({
+                stat: requestedStatType,
+                ...(dateRange && { startDate: startDate.toDateString() }),
+                ...(dateRange && dateRange.endDate && { endDate: endDate.toDateString() }),
+            })}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                },
+            },
+        )
+            .then(response => {
+                if (!response.ok) {
+                    throw `HTTP error ${response.status}`;
+                }
+                return response.json();
+            })
+            .catch(err => {
+                console.error(err);
+                return err;
+            });
     }
     async getRankStat(
         requestedStatType: StatType,
@@ -149,13 +183,36 @@ class HttpClient implements TaskServiceClient {
         console.log(
             `fetching ${rankStatType} ${rankStatGroupPeriod} ${requestedStatType} in ${JSON.stringify(dateRange)}`,
         );
-        return {
-            name: 'Best',
-            value: {
-                completed: 5,
-                total: 1,
+        //TODO: implement
+        console.log(`fetching ${requestedStatType} in ${JSON.stringify(dateRange)}`);
+        const startDate = getStartDateFromDateRange(dateRange || null); // FIXME: this should not be required once date range only consists of start and end date
+        const endDate = getEndDateFromDateRange(dateRange || null); // FIXME: this should not be required once date range only consists of start and end date
+        return fetch(
+            `${this.baseUrl}/completionStat?${new URLSearchParams({
+                stat: requestedStatType,
+                rankStat: rankStatType,
+                groupPeriod: rankStatGroupPeriod,
+                ...(dateRange && { startDate: startDate.toDateString() }),
+                ...(dateRange && dateRange.endDate && { endDate: endDate.toDateString() }),
+            })}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                },
             },
-        };
+        )
+            .then(response => {
+                if (!response.ok) {
+                    throw `HTTP error ${response.status}`;
+                }
+                return response.json();
+            })
+            .catch(err => {
+                console.error(err);
+                return err;
+            });
     }
 }
 

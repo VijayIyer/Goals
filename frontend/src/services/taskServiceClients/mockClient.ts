@@ -134,7 +134,7 @@ class MockClient implements TaskServiceClient {
         });
     }
 
-    async getTaskCompletionInfo(requestedStatType: StatType, dateRange?: DateRange): Promise<Completed | Percentage> {
+    async getCompletionStat(requestedStatType: StatType, dateRange?: DateRange): Promise<Completed | Percentage> {
         const filteredTasks = dateRange ? filterTasksByDateRange(this.mockTasks, dateRange) : this.mockTasks;
         const completed = filteredTasks.filter(task => task.completed === true).length;
         const total = filteredTasks.length;

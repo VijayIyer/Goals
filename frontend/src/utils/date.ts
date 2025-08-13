@@ -99,3 +99,60 @@ export function createDateRangeObject(
 export function getCurrentYear(index: number = 0) {
     return new Date().getFullYear() + (index ?? 0);
 }
+
+export function getStartDateFromDateRange(dateRange: DateRange | null) {
+    if (!dateRange) return new Date(0);
+    switch (dateRange.filterBy) {
+        case FilterBy.DAY: {
+            return new Date(dateRange.startDate);
+        }
+        case FilterBy.WEEK: {
+            return new Date(getWeekStartDate(getDateWeek(dateRange.startDate), dateRange.startDate.getFullYear()));
+        }
+        case FilterBy.MONTH: {
+            return new Date(dateRange.startDate.getFullYear(), dateRange.startDate.getMonth(), 1);
+        }
+        case FilterBy.YEAR: {
+            return new Date(dateRange.startDate.getFullYear(), 0, 1);
+        }
+        default: {
+            return new Date(0);
+        }
+    }
+}
+export function getEndDateFromDateRange(dateRange: DateRange | null) {
+    if (!dateRange) return new Date(Number.MAX_SAFE_INTEGER);
+    switch (dateRange.filterBy) {
+        case FilterBy.DAY: {
+            return dateRange.endDate ? new Date(dateRange.endDate) : new Date(dateRange.startDate.getDate() + 1);
+        }
+        case FilterBy.WEEK: {
+            return new Date(dateRange.startDate.getDate() + 6);
+        }
+        case FilterBy.MONTH: {
+            const firstDayOfNextMonth = new Date(
+                dateRange.startDate.getFullYear(),
+                dateRange.startDate.getMonth() + 1,
+                1,
+            );
+            return new Date(
+                dateRange.startDate.getFullYear(),
+                dateRange.startDate.getMonth(),
+                firstDayOfNextMonth.getDate() - 1,
+            );
+        }
+        case FilterBy.YEAR: {
+            const firstDayOfNextYear = new Date(
+                dateRange.startDate.getFullYear() + 1,
+                dateRange.startDate.getMonth(),
+                1,
+            );
+            const lastDayOfCurrentYear = new Date(firstDayOfNextYear);
+            lastDayOfCurrentYear.setDate(firstDayOfNextYear.getDate() - 1);
+            return lastDayOfCurrentYear;
+        }
+        default: {
+            return new Date(0);
+        }
+    }
+}

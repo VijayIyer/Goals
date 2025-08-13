@@ -18,7 +18,7 @@ export interface TaskServiceClient {
     editTask: (task: Task) => Promise<Task>;
     getOverallTaskCompletionInfo: () => Promise<CompletionInfo>;
     // TODO: this is temporary till other things are sorted
-    getTaskCompletionInfo: (requestedStatType: StatType, dateRange?: DateRange) => Promise<Completed | Percentage>;
+    getCompletionStat: (requestedStatType: StatType, dateRange?: DateRange) => Promise<Completed | Percentage>;
     getRankStat: (
         statType: StatType,
         rankStatName: RankStatType,
