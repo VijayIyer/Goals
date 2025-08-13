@@ -39,9 +39,8 @@ class HttpClient implements TaskServiceClient {
                 ...(dateRange && { startDate: dateRange?.startDate.toDateString() }),
                 ...(dateRange && dateRange.endDate && { endDate: dateRange?.endDate?.toDateString() }),
                 // TODO: check why this is working and not {completed} without the toString()
-                ...(completed && { completed: completed.toString() }),
-                ...(deferred && { deferred: deferred.toString() }),
-                ...(shouldBeActive && { shouldBeActive: shouldBeActive.toString() }),
+                ...(completed && { completed: completed === true ? '1' : '0' }),
+                ...(deferred && { deferred: shouldBeActive ? '0' : deferred === true ? '1' : '0' }),
             })}`,
             {
                 method: 'GET',
