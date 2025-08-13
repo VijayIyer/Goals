@@ -36,7 +36,7 @@ export default function SummaryItem({
 
     useEffect(() => {
         async function getCompletionStat() {
-            setStat(await service.getTaskCompletionInfo(statType, dateRange));
+            setStat(await service.getCompletionStat(statType, dateRange));
         }
 
         async function getRankStat() {
