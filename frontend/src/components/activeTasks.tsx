@@ -38,10 +38,11 @@ const useStyles = makeStyles({
 
 // TODO: should these functions be promise void or just void
 type ActiveTasksProps = {
+    totalNumberOfTasks: number;
     onTaskEdited: (id: number) => Promise<void>;
     onTaskDeleted: () => Promise<void>;
 };
-export default ({ onTaskEdited, onTaskDeleted }: ActiveTasksProps) => {
+export default ({ totalNumberOfTasks, onTaskEdited, onTaskDeleted }: ActiveTasksProps) => {
     const { serviceType } = useContext(ServicesContext);
     const service = new TaskServiceClientFactory(serviceType).getServiceClient();
     const [tasks, setTasks] = useState<Array<TaskType>>([]);
@@ -58,7 +59,7 @@ export default ({ onTaskEdited, onTaskDeleted }: ActiveTasksProps) => {
 
     useEffect(() => {
         refreshTasks();
-    }, [dateRange]);
+    }, [dateRange, totalNumberOfTasks]);
 
     const refreshTasks = async () => {
         setTasks(
@@ -84,7 +85,7 @@ export default ({ onTaskEdited, onTaskDeleted }: ActiveTasksProps) => {
     };
 
     const totalNumberOfCompletedTasks = tasks.filter(task => task.completed === true).length;
-    const totalNumberOfTasks = tasks.length;
+    const totalNumberOfTasksInDateRange = tasks.length;
 
     const classes = useStyles();
 
@@ -94,7 +95,7 @@ export default ({ onTaskEdited, onTaskDeleted }: ActiveTasksProps) => {
                 <div className={classes.completionInfoContainer}>
                     <Typography style={{ fontWeight: 'bold' }}>Completed Tasks:</Typography>
                     <Typography style={{ fontWeight: 'bold' }}>(Selected Date Range)</Typography>
-                    <Typography>Total: {totalNumberOfTasks}</Typography>
+                    <Typography>Total: {totalNumberOfTasksInDateRange}</Typography>
                     <Typography>Completed: {totalNumberOfCompletedTasks}</Typography>
                 </div>
                 {showAllTasks && (
