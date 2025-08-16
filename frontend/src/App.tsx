@@ -75,7 +75,17 @@ const App = () => {
                 {isRefreshing && <CircularProgress />}
             </div>
             <Routes>
-                <Route path="/" element={<ActiveTasks onTaskEdited={refreshTasks} onTaskDeleted={refreshTasks} />} />
+                <Route
+                    path="/"
+                    element={
+                        <ActiveTasks
+                            // FIXME: is there really no better way for triggering get tasks refresh from parent
+                            totalNumberOfTasks={completedTasks?.total || 0}
+                            onTaskEdited={refreshTasks}
+                            onTaskDeleted={refreshTasks}
+                        />
+                    }
+                />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/calendar" element={<CalendarView />} />
                 <Route
