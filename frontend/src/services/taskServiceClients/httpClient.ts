@@ -188,7 +188,7 @@ class HttpClient implements TaskServiceClient {
         const startDate = getStartDateFromDateRange(dateRange || null); // FIXME: this should not be required once date range only consists of start and end date
         const endDate = getEndDateFromDateRange(dateRange || null); // FIXME: this should not be required once date range only consists of start and end date
         return fetch(
-            `${this.baseUrl}/completionStat?${new URLSearchParams({
+            `${this.baseUrl}/rankStat?${new URLSearchParams({
                 stat: requestedStatType,
                 rankStat: rankStatType,
                 groupPeriod: rankStatGroupPeriod,
